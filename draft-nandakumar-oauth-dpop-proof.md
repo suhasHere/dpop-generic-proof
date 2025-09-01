@@ -9,20 +9,20 @@ number:
 date:
 consensus: true
 v: 3
-area: Security
-workgroup: "OAuth Working Group"
+area: "Security"
+workgroup: "Web Authorization Protocol"
 keyword:
  - DPoP
  - Proof of Posession
  - Authentication
  - Authorization
 venue:
-  group: OAuth Working Group
-  type: Working Group
-  mail: oauth@ietf.org
-  arch: https://mailarchive.ietf.org/arch/browse/oauth/
-  github: https://github.com/suhasHere/dpop-generic-proof
-  latest: https://github.com/suhasHere/dpop-generic-proof/LATEST
+  group: "Web Authorization Protocol"
+  type: "Working Group"
+  mail: "oauth@ietf.org"
+  arch: "https://mailarchive.ietf.org/arch/browse/oauth/"
+  github: "suhasHere/dpop-generic-proof"
+  latest: "https://suhasHere.github.io/dpop-generic-proof/draft-nandakumar-oauth-dpop-proof.html"
 
 author:
  -
