@@ -2,7 +2,7 @@
 title: "Multi-Protocol  Proof of Possession (DPoP) Framework"
 abbrev: "dpop-proof"
 category: std
-docname: draft-nandakumar-multi-dpop-framework-latest
+docname: draft-nandakumar-oauth-dpop-proof-latest
 submissiontype: IETF
 number:
 date:
@@ -25,8 +25,8 @@ venue:
 
 author:
  -
-    fullname: Suhas Nandakumar 
-    organization: Cisco Systems 
+    fullname: Suhas Nandakumar
+    organization: Cisco Systems
     email:  snandaku@cisco.com
 
 normative:
@@ -257,7 +257,7 @@ claims instead of the `actx` object:
 
 ~~~json
 {
-  "jti": "unique-request-id-789", 
+  "jti": "unique-request-id-789",
   "iat": 1705123456,
   "htm": "POST",
   "htu": "https://media.example.com/subscribe",
@@ -319,7 +319,7 @@ Servers processing MOQ authorization contexts MUST:
 
 1. Verify that the `action` field contains a recognized MOQ operation
 2. Validate that the `tns` field represents a properly formatted track
-   namespace URI  
+   namespace URI
 3. Ensure the requested action is permitted for the specified track
    namespace
 4. If present, ensure the requested action is permitted for the specified
@@ -334,7 +334,7 @@ JWT Header:
 {
   "typ": "dpop-proof+jwt",
   "alg": "ES256",
-  "jwk": { 
+  "jwk": {
     "kty": "EC",
     "x": "l8tFrhx-34tV3hRICRDY9zCkDlpBhF42UQUfWVAWBFs",
     "y": "9VE4jf_Ok_o64zbTTlcuNJajHmt6v9TDVrU0CdvGRDA",
@@ -404,7 +404,7 @@ Existing RFC 9449 implementations can adopt this framework incrementally:
 1. **HTTP-Only Phase**: Continue using standard RFC 9449 DPoP for HTTP
    resources
 2. **Hybrid Phase**: Support both HTTP DPoP (with `htm`/`htu`) and generic
-   DPoP (with `actx`) 
+   DPoP (with `actx`)
 3. **Generic Phase**: Migrate to using Authorization Context objects for all
    protocols, including HTTP
 
@@ -444,7 +444,7 @@ within the "JSON Web Token (JWT)" registry group.
 
 Registry Name: DPoP Authorization Context Types
 Registration Policy: Specification Required
-Expert Review Guidelines: 
+Expert Review Guidelines:
 
 Specifications submitted for registration MUST include:
 
@@ -476,7 +476,7 @@ Required Fields:
 
 Optional Fields:
 
-: List of optional fields in the authorization context object  
+: List of optional fields in the authorization context object
 
 Validation Rules:
 
