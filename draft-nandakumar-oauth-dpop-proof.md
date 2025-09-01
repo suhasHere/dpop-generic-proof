@@ -20,8 +20,8 @@ venue:
   type: "Working Group"
   mail: "oauth@ietf.org"
   arch: "https://mailarchive.ietf.org/arch/browse/oauth/"
-  github: "suhasHere/dpop-generic-proof"
-  latest: "https://suhasHere.github.io/dpop-generic-proof/draft-nandakumar-oauth-dpop-proof.html"
+  github: "oauth-wg/oauth-dpop-generic"
+  latest: "https://oauth-wg.github.io/oauth-dpop-generic/draft-generic-dpop-framework.html"
 
 author:
  -
