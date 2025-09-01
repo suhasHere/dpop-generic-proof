@@ -19,40 +19,46 @@
 # Change the file extension to match the format (.xml for XML, etc...)
 #
 ###
-title: "TODO - Your title"
-abbrev: "TODO - Abbreviation"
+title: "Multi-Protocol  Proof of Possession (DPoP) Framework"
+abbrev: "dpop-proof"
 category: info
 
-docname: draft-todo-yourname-protocol-latest
+docname: draft-nandakumar-oauth-dpop-proof-latest
 submissiontype: IETF  # also: "independent", "editorial", "IAB", or "IRTF"
 number:
 date:
 consensus: true
 v: 3
-area: AREA
-workgroup: WG Working Group
+area: Security
+workgroup: "OAuth Working Group"
 keyword:
- - next generation
- - unicorn
- - sparkling distributed ledger
+ - DPoP
+ - Proof of Posession
+ - Authentication
+ - Authorization
 venue:
-  group: WG
+  group: OAuth Working Group
   type: Working Group
-  mail: WG@example.com
-  arch: https://example.com/WG
-  github: USER/REPO
-  latest: https://example.com/LATEST
+  mail: oauth@ietf.org
+  arch: https://mailarchive.ietf.org/arch/browse/oauth/
+  github: https://github.com/suhasHere/dpop-generic-proof
+  latest: https://github.com/suhasHere/dpop-generic-proof/LATEST
 
 author:
  -
-    fullname: Your Name Here
-    organization: Your Organization Here
-    email: your.email@example.com
+    fullname: Suhas Nandakumar
+    organization: Cisco
+    email: snandaku@cisco.com
 
 normative:
+  RFC2119:
+  RFC7519:
+  RFC7515:
+  RFC9449:
+  MOQTransport: I-D.draft-ietf-moq-transport-13
 
 informative:
-
+  RFC6749:
 ...
 
 --- abstract
