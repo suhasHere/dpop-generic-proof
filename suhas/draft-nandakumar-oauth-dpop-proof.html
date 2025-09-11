@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta content="Common,Latin" name="scripts">
 <meta content="initial-scale=1.0" name="viewport">
-<title>Multi-Protocol Proof of Possession (DPoP) Framework</title>
+<title>Application-Agnostic Demonstration Proof of Possession (DPoP) Framework</title>
 <meta content="Suhas Nandakumar" name="author">
 <meta content="
        This document describes a generic framework for Demonstrating Proof of
@@ -13,24 +13,24 @@ upon RFC 9449, this framework provides a protocol-agnostic approach for
 sender-constraining tokens through cryptographic proof of possession, enabling
 secure token binding across various application protocols and contexts. 
     " name="description">
-<meta content="xml2rfc 3.30.0" name="generator">
+<meta content="xml2rfc 3.30.1" name="generator">
 <meta content="DPoP" name="keyword">
 <meta content="Proof of Possession" name="keyword">
 <meta content="Authentication" name="keyword">
 <meta content="Authorization" name="keyword">
 <meta content="draft-nandakumar-oauth-dpop-proof-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.30.0
+  xml2rfc 3.30.1
     Python 3.12.11
     ConfigArgParse 1.7
     google-i18n-address 3.1.1
     intervaltree 3.1.0
     Jinja2 3.1.6
     lxml 5.3.1
-    platformdirs 4.3.8
+    platformdirs 4.4.0
     pycountry 24.6.1
     PyYAML 6.0.2
-    requests 2.32.4
+    requests 2.32.5
     setuptools 80.9.0
     wcwidth 0.2.13
 -->
@@ -1055,7 +1055,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Nandakumar</td>
-<td class="center">Expires 5 March 2026</td>
+<td class="center">Expires 15 March 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1068,12 +1068,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-nandakumar-oauth-dpop-proof-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-09-01" class="published">1 September 2025</time>
+<time datetime="2025-09-11" class="published">11 September 2025</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2026-03-05">5 March 2026</time></dd>
+<dd class="expires"><time datetime="2026-03-15">15 March 2026</time></dd>
 <dt class="label-authors">Author:</dt>
 <dd class="authors">
 <div class="author">
@@ -1083,7 +1083,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </dd>
 </dl>
 </div>
-<h1 id="title">Multi-Protocol Proof of Possession (DPoP) Framework</h1>
+<h1 id="title">Application-Agnostic Demonstration Proof of Possession (DPoP) Framework</h1>
 <section id="section-abstract">
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
 <p id="section-abstract-1">This document describes a generic framework for Demonstrating Proof of
@@ -1127,7 +1127,7 @@ secure token binding across various application protocols and contexts.<a href="
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 5 March 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 15 March 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1165,13 +1165,27 @@ secure token binding across various application protocols and contexts.<a href="
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
-            <p id="section-toc.1-1.2.1" class="keepWithNext"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-framework-overview" class="internal xref">Framework Overview</a></p>
+            <p id="section-toc.1-1.2.1" class="keepWithNext"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-protocol-overview-and-conce" class="internal xref">Protocol Overview and Concept</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
-            <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-concept" class="internal xref">Concept</a></p>
+            <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-application-protocol-requir" class="internal xref">Application Protocol Requirements</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1">
+                <p id="section-toc.1-1.3.2.1.1"><a href="#section-3.1" class="auto internal xref">3.1</a>.  <a href="#name-binding-fields-definition" class="internal xref">Binding Fields Definition</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.2">
+                <p id="section-toc.1-1.3.2.2.1"><a href="#section-3.2" class="auto internal xref">3.2</a>.  <a href="#name-nonce-support" class="internal xref">Nonce Support</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.3">
+                <p id="section-toc.1-1.3.2.3.1"><a href="#section-3.3" class="auto internal xref">3.3</a>.  <a href="#name-security-requirements" class="internal xref">Security Requirements</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.4">
+                <p id="section-toc.1-1.3.2.4.1"><a href="#section-3.4" class="auto internal xref">3.4</a>.  <a href="#name-example-binding-implementat" class="internal xref">Example Binding Implementation</a></p>
+</li>
+            </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
-            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-generic-dpop-proof-structur" class="internal xref">Generic DPoP Proof Structure</a></p>
+            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-application-agnostic-dpop-p" class="internal xref">Application-Agnostic DPoP Proof Structure</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1">
                 <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="auto internal xref">4.1</a>.  <a href="#name-authorization-context-objec" class="internal xref">Authorization Context Object</a></p>
@@ -1190,35 +1204,35 @@ secure token binding across various application protocols and contexts.<a href="
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
-            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-generic-dpop-proof-jwt-exam" class="internal xref">Generic DPoP Proof JWT Examples</a></p>
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-protocol-type-registry" class="internal xref">Protocol Type Registry</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1">
-                <p id="section-toc.1-1.5.2.1.1"><a href="#section-5.1" class="auto internal xref">5.1</a>.  <a href="#name-example-moq-context-dpop-pr" class="internal xref">Example: MOQ Context DPoP Proof</a></p>
+                <p id="section-toc.1-1.5.2.1.1"><a href="#section-5.1" class="auto internal xref">5.1</a>.  <a href="#name-moq-context-type" class="internal xref">MOQ Context Type</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1.2.1">
+                    <p id="section-toc.1-1.5.2.1.2.1.1"><a href="#section-5.1.1" class="auto internal xref">5.1.1</a>.  <a href="#name-required-fields" class="internal xref">Required Fields</a></p>
 </li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.2">
-                <p id="section-toc.1-1.5.2.2.1"><a href="#section-5.2" class="auto internal xref">5.2</a>.  <a href="#name-comparing-with-http-dpop" class="internal xref">Comparing with HTTP DPoP</a></p>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1.2.2">
+                    <p id="section-toc.1-1.5.2.1.2.2.1"><a href="#section-5.1.2" class="auto internal xref">5.1.2</a>.  <a href="#name-optional-fields" class="internal xref">Optional Fields</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1.2.3">
+                    <p id="section-toc.1-1.5.2.1.2.3.1"><a href="#section-5.1.3" class="auto internal xref">5.1.3</a>.  <a href="#name-string-encoding-for-binary-" class="internal xref">String Encoding for Binary Data</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1.2.4">
+                    <p id="section-toc.1-1.5.2.1.2.4.1"><a href="#section-5.1.4" class="auto internal xref">5.1.4</a>.  <a href="#name-validation-requirements" class="internal xref">Validation Requirements</a></p>
+</li>
+                </ul>
 </li>
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
-            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-protocol-type-registry" class="internal xref">Protocol Type Registry</a></p>
+            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-application-agnostic-dpop-pr" class="internal xref">Application-Agnostic DPoP Proof JWT Examples</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1">
-                <p id="section-toc.1-1.6.2.1.1"><a href="#section-6.1" class="auto internal xref">6.1</a>.  <a href="#name-moq-context-type" class="internal xref">MOQ Context Type</a></p>
-<ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1.2.1">
-                    <p id="section-toc.1-1.6.2.1.2.1.1"><a href="#section-6.1.1" class="auto internal xref">6.1.1</a>.  <a href="#name-required-fields" class="internal xref">Required Fields</a></p>
+                <p id="section-toc.1-1.6.2.1.1"><a href="#section-6.1" class="auto internal xref">6.1</a>.  <a href="#name-example-moq-context-dpop-pr" class="internal xref">Example: MOQ Context DPoP Proof</a></p>
 </li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1.2.2">
-                    <p id="section-toc.1-1.6.2.1.2.2.1"><a href="#section-6.1.2" class="auto internal xref">6.1.2</a>.  <a href="#name-optional-fields" class="internal xref">Optional Fields</a></p>
-</li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1.2.3">
-                    <p id="section-toc.1-1.6.2.1.2.3.1"><a href="#section-6.1.3" class="auto internal xref">6.1.3</a>.  <a href="#name-validation-requirements" class="internal xref">Validation Requirements</a></p>
-</li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1.2.4">
-                    <p id="section-toc.1-1.6.2.1.2.4.1"><a href="#section-6.1.4" class="auto internal xref">6.1.4</a>.  <a href="#name-moq-examples" class="internal xref">MOQ Examples</a></p>
-</li>
-                </ul>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.2">
+                <p id="section-toc.1-1.6.2.2.1"><a href="#section-6.2" class="auto internal xref">6.2</a>.  <a href="#name-comparing-with-http-dpop" class="internal xref">Comparing with HTTP DPoP</a></p>
 </li>
             </ul>
 </li>
@@ -1252,6 +1266,9 @@ secure token binding across various application protocols and contexts.<a href="
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.3">
                 <p id="section-toc.1-1.8.2.3.1"><a href="#section-8.3" class="auto internal xref">8.3</a>.  <a href="#name-cross-context-token-binding" class="internal xref">Cross-Context Token Binding</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.4">
+                <p id="section-toc.1-1.8.2.4.1"><a href="#section-8.4" class="auto internal xref">8.4</a>.  <a href="#name-application-separation-requ" class="internal xref">Application Separation Requirements</a></p>
 </li>
             </ul>
 </li>
@@ -1309,11 +1326,18 @@ secure token binding across various application protocols and contexts.<a href="
 <a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
       </h2>
 <p id="section-1-1">RFC 9449 <span>[<a href="#RFC9449" class="cite xref">RFC9449</a>]</span> defines a mechanism for sender-constraining OAuth 2.0
-tokens via a proof-of-possession mechanism on the application level. This
-document presents a generic framework that abstracts the core concepts of DPoP
-into a protocol-agnostic approach, enabling proof-of-possession token binding
-for various application contexts while maintaining the security properties
-established in RFC 9449.<a href="#section-1-1" class="pilcrow">¶</a></p>
+tokens via a proof-of-possession mechanism on the application level. DPoP as
+defined in RFC 9449 has two separable parts: the first part (covered in
+sections 4, 5, 6, and 8) describes how a client obtains a DPoP-bound token
+from an authorization server, while the second part (covered in sections 7 and
+9) describes how the client proves control of the private key associated with
+a DPoP token when accessing protected resources.<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-2">This specification defines bindings for Media Over QUIC Transport (MOQT) and
+presents a generic framework that abstracts the core concepts of DPoP into a
+protocol-agnostic approach. While keeping the first part unchanged, this
+framework generalizes the second part to enable proof-of-possession token
+binding for various application contexts beyond HTTP while maintaining the
+security properties established in RFC 9449.<a href="#section-1-2" class="pilcrow">¶</a></p>
 <div id="conventions-and-terminology">
 <section id="section-1.1">
         <h3 id="name-conventions-and-terminology">
@@ -1328,62 +1352,32 @@ server", "client", and "public client" are defined by "The OAuth 2.0
 Authorization Framework" <span>[<a href="#RFC6749" class="cite xref">RFC6749</a>]</span>.<a href="#section-1.1-2" class="pilcrow">¶</a></p>
 <p id="section-1.1-3">The terms "JSON Web Token (JWT)", "JOSE Header", and "JWS" are defined in
 <span>[<a href="#RFC7519" class="cite xref">RFC7519</a>]</span> and <span>[<a href="#RFC7515" class="cite xref">RFC7515</a>]</span>.<a href="#section-1.1-3" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-1.1-4">
+          <dt id="section-1.1-4.1">Application protocol:</dt>
+          <dd style="margin-left: 1.5em" id="section-1.1-4.2">
+            <p id="section-1.1-4.2.1">The protocol which uses DPoP tokens as proof of authorization. This may be
+HTTP (as in RFC 9449) or any other application-layer protocol that requires
+proof-of-possession token binding.<a href="#section-1.1-4.2.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
 </section>
 </div>
 </section>
 </div>
-<div id="framework-overview">
+<div id="protocol-overview-and-concept">
 <section id="section-2">
-      <h2 id="name-framework-overview">
-<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-framework-overview" class="section-name selfRef">Framework Overview</a>
+      <h2 id="name-protocol-overview-and-conce">
+<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-protocol-overview-and-conce" class="section-name selfRef">Protocol Overview and Concept</a>
       </h2>
-<p id="section-2-1">The Generic DPoP Framework separates the DPoP mechanism into two distinct and
-separable parts:<a href="#section-2-1" class="pilcrow">¶</a></p>
-<ol start="1" type="1" class="normal type-1" id="section-2-2">
-<li id="section-2-2.1">
-          <p id="section-2-2.1.1">Token Acquisition: How a client obtains a DPoP-bound token<a href="#section-2-2.1.1" class="pilcrow">¶</a></p>
-</li>
-        <li id="section-2-2.2">
-          <p id="section-2-2.2.1">Proof of Possession: How a client proves control of the private key
-associated with a DPoP token<a href="#section-2-2.2.1" class="pilcrow">¶</a></p>
-</li>
-      </ol>
-<p id="section-2-3">The framework specified in this document provides a protocol-agnostic approach
-for both parts, enabling secure proof-of-possession across various application
-protocols and contexts.<a href="#section-2-3" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="concept">
-<section id="section-3">
-      <h2 id="name-concept">
-<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-concept" class="section-name selfRef">Concept</a>
-      </h2>
-<p id="section-3-1">The main data structure introduced by this specification is a generic DPoP
-proof JWT that can be used across various application protocols and contexts,
-as described in detail below. A client uses a generic DPoP proof JWT to prove
-the possession of a private key corresponding to a certain public key.<a href="#section-3-1" class="pilcrow">¶</a></p>
-<p id="section-3-2">Roughly speaking, a generic DPoP proof is a signature over:<a href="#section-3-2" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-3-3.1">
-          <p id="section-3-3.1.1">protocol-specific authorization context data,<a href="#section-3-3.1.1" class="pilcrow">¶</a></p>
-</li>
-        <li class="normal" id="section-3-3.2">
-          <p id="section-3-3.2.1">a timestamp,<a href="#section-3-3.2.1" class="pilcrow">¶</a></p>
-</li>
-        <li class="normal" id="section-3-3.3">
-          <p id="section-3-3.3.1">a unique identifier,<a href="#section-3-3.3.1" class="pilcrow">¶</a></p>
-</li>
-        <li class="normal" id="section-3-3.4">
-          <p id="section-3-3.4.1">an optional server-provided nonce, and<a href="#section-3-3.4.1" class="pilcrow">¶</a></p>
-</li>
-        <li class="normal" id="section-3-3.5">
-          <p id="section-3-3.5.1">a hash of the associated access token when an access token is present
-within the request.<a href="#section-3-3.5.1" class="pilcrow">¶</a></p>
-</li>
-      </ul>
-<span id="name-basic-generic-dpop-flow"></span><div id="fig-basic-dpop-flow">
+<p id="section-2-1">The Generic DPoP Framework extends the DPoP mechanism to work across various
+application protocols beyond HTTP. The basic flow involves a client obtaining
+a DPoP-bound token from an authorization server, then using that token with
+an application protocol by providing proof of possession of the associated
+private key.<a href="#section-2-1" class="pilcrow">¶</a></p>
+<span id="name-generic-dpop-flow"></span><div id="fig-generic-dpop-flow">
 <figure id="figure-1">
-        <div class="alignLeft art-text artwork" id="section-3-4.1">
+        <div class="alignLeft art-text artwork" id="section-2-2.1">
 <pre>
 +--------+                                          +---------------+
 |        |--(A)-- Token Request -------------------&gt;|               |
@@ -1394,30 +1388,73 @@ within the request.<a href="#section-3-3.5.1" class="pilcrow">¶</a></p>
 |        |
 |        |
 |        |                                          +---------------+
-|        |--(C)-- DPoP-Bound Access Token ---------&gt;|               |
-| Client |        (Generic DPoP Proof)              |   Protocol    |
-|        |                                          |     Server    |
-|        |&lt;-(D)-- Protected Resource ---------------|               |
-|        |                                          +---------------+
-+--------+
+|        |--(C)-- Application Protocol Request ---&gt;|               |
+| Client |        (DPoP-Bound Access Token +       | Application   |
+|        |         Generic DPoP Proof with         |   Protocol    |
+|        |         Binding Fields)                 |    Server     |
+|        |&lt;-(D)-- Application Protocol Response ---|               |
++--------+                                          +---------------+
 </pre>
 </div>
 <figcaption><a href="#figure-1" class="selfRef">Figure 1</a>:
-<a href="#name-basic-generic-dpop-flow" class="selfRef">Basic Generic DPoP Flow</a>
+<a href="#name-generic-dpop-flow" class="selfRef">Generic DPoP Flow</a>
         </figcaption></figure>
 </div>
-<p id="section-3-5">The basic steps of a protocol flow with generic DPoP (without the optional
-nonce) are shown in <a href="#fig-basic-dpop-flow" class="auto internal xref">Figure 1</a>.<a href="#section-3-5" class="pilcrow">¶</a></p>
-<p id="section-3-6">A. In the token request, the client sends an authorization grant (e.g., an
+<p id="section-2-3">The main data structure introduced by this specification is a generic DPoP
+proof JWT that can be used across various application protocols and contexts,
+as described in detail below. A client uses a generic DPoP proof JWT to prove
+the possession of a private key corresponding to a certain public key.<a href="#section-2-3" class="pilcrow">¶</a></p>
+<p id="section-2-4">Roughly speaking, a generic DPoP proof is a signature over:<a href="#section-2-4" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-2-5.1">
+          <p id="section-2-5.1.1">protocol-specific authorization context data,<a href="#section-2-5.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-2-5.2">
+          <p id="section-2-5.2.1">a timestamp,<a href="#section-2-5.2.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-2-5.3">
+          <p id="section-2-5.3.1">a unique identifier,<a href="#section-2-5.3.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-2-5.4">
+          <p id="section-2-5.4.1">an optional server-provided nonce, and<a href="#section-2-5.4.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-2-5.5">
+          <p id="section-2-5.5.1">a hash of the associated access token when an access token is present
+within the request.<a href="#section-2-5.5.1" class="pilcrow">¶</a></p>
+</li>
+      </ul>
+<p id="section-2-6">The application protocol needs to define binding fields that make the proof JWT
+unique to a specific protocol interaction. These binding fields replace the
+HTTP method (<code>htm</code>) and HTTP URI (<code>htu</code>) fields used in RFC 9449, providing
+protocol-specific context that prevents replay attacks across different
+protocol operations.<a href="#section-2-6" class="pilcrow">¶</a></p>
+<p id="section-2-7">Key aspects of the protocol:<a href="#section-2-7" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-2-8">
+<li id="section-2-8.1">
+          <p id="section-2-8.1.1"><strong>Token Acquisition (Steps A-B)</strong>: Uses the same mechanism as RFC 9449
+sections 4, 5, 6, and 8<a href="#section-2-8.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li id="section-2-8.2">
+          <p id="section-2-8.2.1"><strong>Proof of Possession (Steps C-D)</strong>: Generalizes RFC 9449 sections 7 and 9
+with protocol-specific binding fields<a href="#section-2-8.2.1" class="pilcrow">¶</a></p>
+</li>
+        <li id="section-2-8.3">
+          <p id="section-2-8.3.1"><strong>Binding Fields</strong>: Each application protocol must define how to bind the
+proof to specific protocol operations to ensure uniqueness<a href="#section-2-8.3.1" class="pilcrow">¶</a></p>
+</li>
+      </ol>
+<p id="section-2-9">The basic steps of a protocol flow with generic DPoP (without the optional
+nonce) are shown in <a href="#fig-generic-dpop-flow" class="auto internal xref">Figure 1</a>.<a href="#section-2-9" class="pilcrow">¶</a></p>
+<p id="section-2-10">A. In the token request, the client sends an authorization grant (e.g., an
 authorization code, refresh token, etc.) to the authorization server in order
 to obtain an access token (and potentially a refresh token). The client
-attaches a generic DPoP proof to the request.<a href="#section-3-6" class="pilcrow">¶</a></p>
-<p id="section-3-7">B. The authorization server binds (sender-constrains) the access token to the
+attaches a generic DPoP proof to the request.<a href="#section-2-10" class="pilcrow">¶</a></p>
+<p id="section-2-11">B. The authorization server binds (sender-constrains) the access token to the
 public key claimed by the client in the DPoP proof; that is, the access token
 cannot be used without proving possession of the respective private key. If a
 refresh token is issued to a public client, it is also bound to the public key
-of the DPoP proof.<a href="#section-3-7" class="pilcrow">¶</a></p>
-<p id="section-3-8">C. To use the access token, the client has to prove possession of the private
+of the DPoP proof.<a href="#section-2-11" class="pilcrow">¶</a></p>
+<p id="section-2-12">C. To use the access token, the client has to prove possession of the private
 key by, again, providing a generic DPoP proof for that request to the protocol
 server. The protocol server needs to receive information about the public key
 to which the access token is bound. This information may be encoded directly
@@ -1425,26 +1462,128 @@ into the access token (for JWT-structured access tokens) or provided via token
 introspection endpoint (not shown). The protocol server verifies that the
 public key to which the access token is bound matches the public key of the
 DPoP proof. It also verifies that the access token hash in the DPoP proof
-matches the access token presented in the request.<a href="#section-3-8" class="pilcrow">¶</a></p>
-<p id="section-3-9">D. The protocol server refuses to serve the request if the signature check
+matches the access token presented in the request.<a href="#section-2-12" class="pilcrow">¶</a></p>
+<p id="section-2-13">D. The protocol server refuses to serve the request if the signature check
 fails or if the data in the DPoP proof is wrong, e.g., the authorization
 context does not match the expected context for the protocol operation. The
-access token itself, of course, must also be valid in all other respects.<a href="#section-3-9" class="pilcrow">¶</a></p>
-<p id="section-3-10">The generic DPoP mechanism presented herein is not a client authentication
+access token itself, of course, must also be valid in all other respects.<a href="#section-2-13" class="pilcrow">¶</a></p>
+<p id="section-2-14">The generic DPoP mechanism presented herein is not a client authentication
 method. In fact, a primary use case of DPoP is for public clients (e.g.,
 single-page applications and applications on a user's device) that do not use
 client authentication. Nonetheless, generic DPoP is designed to be compatible
-with private_key_jwt and all other client authentication methods.<a href="#section-3-10" class="pilcrow">¶</a></p>
-<p id="section-3-11">Generic DPoP does not directly ensure message integrity, but it relies on the
+with private_key_jwt and all other client authentication methods.<a href="#section-2-14" class="pilcrow">¶</a></p>
+<p id="section-2-15">Generic DPoP does not directly ensure message integrity, but it relies on the
 underlying transport security layer (such as TLS) for that purpose. See
-<a href="#security-considerations" class="auto internal xref">Section 8</a> for details.<a href="#section-3-11" class="pilcrow">¶</a></p>
+<a href="#security-considerations" class="auto internal xref">Section 8</a> for details.<a href="#section-2-15" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="generic-dpop-proof-structure">
-<section id="section-4">
-      <h2 id="name-generic-dpop-proof-structur">
-<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-generic-dpop-proof-structur" class="section-name selfRef">Generic DPoP Proof Structure</a>
+<div id="application-protocol-requirements">
+<section id="section-3">
+      <h2 id="name-application-protocol-requir">
+<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-application-protocol-requir" class="section-name selfRef">Application Protocol Requirements</a>
       </h2>
+<p id="section-3-1">Application protocols that wish to use this generic DPoP framework <span class="bcp14">MUST</span> define
+the following elements to ensure secure proof-of-possession token binding:<a href="#section-3-1" class="pilcrow">¶</a></p>
+<div id="binding-fields-definition">
+<section id="section-3.1">
+        <h3 id="name-binding-fields-definition">
+<a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-binding-fields-definition" class="section-name selfRef">Binding Fields Definition</a>
+        </h3>
+<p id="section-3.1-1">Each application protocol <span class="bcp14">MUST</span> specify:<a href="#section-3.1-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-3.1-2">
+<li id="section-3.1-2.1">
+            <p id="section-3.1-2.1.1"><strong>Required Binding Fields</strong>: The mandatory fields within the Authorization
+Context (<code>actx</code>) object that uniquely identify and bind the proof to a
+specific protocol operation<a href="#section-3.1-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-3.1-2.2">
+            <p id="section-3.1-2.2.1"><strong>Field Semantics</strong>: Clear definitions of what each binding field represents
+and how it relates to protocol messages and operations<a href="#section-3.1-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-3.1-2.3">
+            <p id="section-3.1-2.3.1"><strong>Uniqueness Requirements</strong>: How the combination of binding fields ensures
+that each proof is unique to a specific protocol interaction<a href="#section-3.1-2.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ol>
+</section>
+</div>
+<div id="nonce-support">
+<section id="section-3.2">
+        <h3 id="name-nonce-support">
+<a href="#section-3.2" class="section-number selfRef">3.2. </a><a href="#name-nonce-support" class="section-name selfRef">Nonce Support</a>
+        </h3>
+<p id="section-3.2-1">Application protocols <span class="bcp14">SHOULD</span> provide a mechanism for servers to supply nonces
+to clients for replay protection, similar to Section 9 of RFC 9449. When
+nonce support is provided, the protocol specification <span class="bcp14">MUST</span> define:<a href="#section-3.2-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-3.2-2">
+<li id="section-3.2-2.1">
+            <p id="section-3.2-2.1.1">How nonces are communicated from server to client<a href="#section-3.2-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-3.2-2.2">
+            <p id="section-3.2-2.2.1">The lifetime and scope of nonces<a href="#section-3.2-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-3.2-2.3">
+            <p id="section-3.2-2.3.1">How clients incorporate nonces into DPoP proofs<a href="#section-3.2-2.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ol>
+</section>
+</div>
+<div id="security-requirements">
+<section id="section-3.3">
+        <h3 id="name-security-requirements">
+<a href="#section-3.3" class="section-number selfRef">3.3. </a><a href="#name-security-requirements" class="section-name selfRef">Security Requirements</a>
+        </h3>
+<p id="section-3.3-1">Application protocol specifications <span class="bcp14">MUST</span> include:<a href="#section-3.3-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-3.3-2">
+<li id="section-3.3-2.1">
+            <p id="section-3.3-2.1.1"><strong>Replay Attack Prevention</strong>: How the binding fields prevent replay of
+proofs across different protocol operations<a href="#section-3.3-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-3.3-2.2">
+            <p id="section-3.3-2.2.1"><strong>Cross-Protocol Security</strong>: Measures to prevent proofs from being valid
+across different application protocols<a href="#section-3.3-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-3.3-2.3">
+            <p id="section-3.3-2.3.1"><strong>Protocol-Specific Threat Model</strong>: Analysis of security threats specific
+to the application protocol context<a href="#section-3.3-2.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ol>
+</section>
+</div>
+<div id="example-binding-implementation">
+<section id="section-3.4">
+        <h3 id="name-example-binding-implementat">
+<a href="#section-3.4" class="section-number selfRef">3.4. </a><a href="#name-example-binding-implementat" class="section-name selfRef">Example Binding Implementation</a>
+        </h3>
+<p id="section-3.4-1">For illustration, an application protocol might define binding fields such as:<a href="#section-3.4-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-3.4-2.1">
+            <p id="section-3.4-2.1.1"><code>operation</code>: The specific protocol operation being authorized<a href="#section-3.4-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.4-2.2">
+            <p id="section-3.4-2.2.1"><code>resource_identifier</code>: A unique identifier for the resource being accessed<a href="#section-3.4-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.4-2.3">
+            <p id="section-3.4-2.3.1"><code>timestamp_context</code>: Protocol-specific temporal context information<a href="#section-3.4-2.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-3.4-3">The combination of these fields would ensure that a DPoP proof is valid only
+for the specific operation, resource, and temporal context for which it was
+generated.<a href="#section-3.4-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="application-agnostic-dpop-proof-structure">
+<section id="section-4">
+      <h2 id="name-application-agnostic-dpop-p">
+<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-application-agnostic-dpop-p" class="section-name selfRef">Application-Agnostic DPoP Proof Structure</a>
+      </h2>
+<p id="section-4-1">This proof structure has the same general structure as a standard DPoP proof
+as defined in RFC 9449, with the key difference being that the HTTP-specific
+claims (<code>htm</code> for HTTP method and <code>htu</code> for HTTP URI) are replaced with the
+Authorization Context (<code>actx</code>) object to provide application protocol-specific
+binding information.<a href="#section-4-1" class="pilcrow">¶</a></p>
 <div id="authorization-context-object">
 <section id="section-4.1">
         <h3 id="name-authorization-context-objec">
@@ -1534,22 +1673,169 @@ specified in <span>[<a href="#RFC9449" class="cite xref">RFC9449</a>]</span>:<a 
 </div>
 </section>
 </div>
-<div id="generic-dpop-proof-jwt-examples">
+<div id="protocol-type-registry">
 <section id="section-5">
-      <h2 id="name-generic-dpop-proof-jwt-exam">
-<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-generic-dpop-proof-jwt-exam" class="section-name selfRef">Generic DPoP Proof JWT Examples</a>
+      <h2 id="name-protocol-type-registry">
+<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-protocol-type-registry" class="section-name selfRef">Protocol Type Registry</a>
       </h2>
-<p id="section-5-1">This section provides complete examples of generic DPoP proof JWTs,
-illustrating the use of the Authorization Context object in place of
-HTTP-specific claims.<a href="#section-5-1" class="pilcrow">¶</a></p>
-<div id="example-moq-context-dpop-proof">
+<p id="section-5-1">This framework establishes a registry for protocol type identifiers used in
+the <code>actx.type</code> field. Each registered type <span class="bcp14">MUST</span> specify:<a href="#section-5-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-5-2">
+<li id="section-5-2.1">
+          <p id="section-5-2.1.1">The additional required and optional fields for the Authorization
+Context<a href="#section-5-2.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li id="section-5-2.2">
+          <p id="section-5-2.2.1">The semantic meaning and validation rules for those fields<a href="#section-5-2.2.1" class="pilcrow">¶</a></p>
+</li>
+        <li id="section-5-2.3">
+          <p id="section-5-2.3.1">Security considerations specific to the protocol context<a href="#section-5-2.3.1" class="pilcrow">¶</a></p>
+</li>
+        <li id="section-5-2.4">
+          <p id="section-5-2.4.1">Examples of usage<a href="#section-5-2.4.1" class="pilcrow">¶</a></p>
+</li>
+      </ol>
+<div id="moq-context">
 <section id="section-5.1">
-        <h3 id="name-example-moq-context-dpop-pr">
-<a href="#section-5.1" class="section-number selfRef">5.1. </a><a href="#name-example-moq-context-dpop-pr" class="section-name selfRef">Example: MOQ Context DPoP Proof</a>
+        <h3 id="name-moq-context-type">
+<a href="#section-5.1" class="section-number selfRef">5.1. </a><a href="#name-moq-context-type" class="section-name selfRef">MOQ Context Type</a>
         </h3>
-<p id="section-5.1-1">The following example shows a complete DPoP proof JWT for a MOQ context:<a href="#section-5.1-1" class="pilcrow">¶</a></p>
-<p id="section-5.1-2">JWT Header:<a href="#section-5.1-2" class="pilcrow">¶</a></p>
-<div class="lang-json sourcecode" id="section-5.1-3">
+<p id="section-5.1-1">This section defines the normative authorization context for Media Over QUIC
+(MOQ) as specified in this framework.<a href="#section-5.1-1" class="pilcrow">¶</a></p>
+<p id="section-5.1-2">Type Identifier: "moq"<a href="#section-5.1-2" class="pilcrow">¶</a></p>
+<div id="required-fields">
+<section id="section-5.1.1">
+          <h4 id="name-required-fields">
+<a href="#section-5.1.1" class="section-number selfRef">5.1.1. </a><a href="#name-required-fields" class="section-name selfRef">Required Fields</a>
+          </h4>
+<p id="section-5.1.1-1">The MOQ authorization context <span class="bcp14">MUST</span> contain the following fields:<a href="#section-5.1.1-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.1-2">action:<a href="#section-5.1.1-2" class="pilcrow">¶</a></p>
+<p id="section-5.1.1-3">A string specifying the MOQ operation (Section 9 of <span>[<a href="#MOQTransport" class="cite xref">MOQTransport</a>]</span>
+being authorized.<a href="#section-5.1.1-3" class="pilcrow">¶</a></p>
+<p id="section-5.1.1-4">tns:<a href="#section-5.1.1-4" class="pilcrow">¶</a></p>
+<p id="section-5.1.1-5">Track Namespace as defined in Section 2.4.1 of <span>[<a href="#MOQTransport" class="cite xref">MOQTransport</a>]</span>.<a href="#section-5.1.1-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="optional-fields">
+<section id="section-5.1.2">
+          <h4 id="name-optional-fields">
+<a href="#section-5.1.2" class="section-number selfRef">5.1.2. </a><a href="#name-optional-fields" class="section-name selfRef">Optional Fields</a>
+          </h4>
+<p id="section-5.1.2-1">The MOQ authorization context <span class="bcp14">MAY</span> contain the following fields:<a href="#section-5.1.2-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.2-2">tn:<a href="#section-5.1.2-2" class="pilcrow">¶</a></p>
+<p id="section-5.1.2-3">Track Name as defined in Section 2.4.1 of <span>[<a href="#MOQTransport" class="cite xref">MOQTransport</a>]</span>.<a href="#section-5.1.2-3" class="pilcrow">¶</a></p>
+<p id="section-5.1.2-4">parameters:<a href="#section-5.1.2-4" class="pilcrow">¶</a></p>
+<p id="section-5.1.2-5">An object containing additional MOQ-specific parameters relevant to the
+operation. The structure and contents of this field are context-dependent.<a href="#section-5.1.2-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="string-encoding-for-binary-data">
+<section id="section-5.1.3">
+          <h4 id="name-string-encoding-for-binary-">
+<a href="#section-5.1.3" class="section-number selfRef">5.1.3. </a><a href="#name-string-encoding-for-binary-" class="section-name selfRef">String Encoding for Binary Data</a>
+          </h4>
+<p id="section-5.1.3-1">As defined in Section 2.4.1 of <span>[<a href="#MOQTransport" class="cite xref">MOQTransport</a>]</span>, Track Namespace is an ordered
+N-tuple of bytes (where N can be between 1 and 32), and Track Name is a
+sequence of bytes. Both are not constrained to specific encoding and carry
+arbitrary byte sequences that are compared by exact byte matching.<a href="#section-5.1.3-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.3-2">For representation in the JSON <code>tns</code> and <code>tn</code> fields of the Authorization
+Context, the following encoding approach <span class="bcp14">MUST</span> be used:<a href="#section-5.1.3-2" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-5.1.3-3">
+<li id="section-5.1.3-3.1">
+              <p id="section-5.1.3-3.1.1"><strong>Track Namespace Tuple Encoding</strong>: The Track Namespace tuple <span class="bcp14">MUST</span> be
+encoded as a URL-safe string where:<a href="#section-5.1.3-3.1.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-5.1.3-3.1.2.1">
+                  <p id="section-5.1.3-3.1.2.1.1">Each tuple field is base64url-encoded (without padding)<a href="#section-5.1.3-3.1.2.1.1" class="pilcrow">¶</a></p>
+</li>
+                <li class="normal" id="section-5.1.3-3.1.2.2">
+                  <p id="section-5.1.3-3.1.2.2.1">Tuple fields are separated by forward slashes ("/")<a href="#section-5.1.3-3.1.2.2.1" class="pilcrow">¶</a></p>
+</li>
+                <li class="normal" id="section-5.1.3-3.1.2.3">
+                  <p id="section-5.1.3-3.1.2.3.1">The entire namespace is prefixed with "moq://"<a href="#section-5.1.3-3.1.2.3.1" class="pilcrow">¶</a></p>
+</li>
+              </ul>
+</li>
+            <li id="section-5.1.3-3.2">
+              <p id="section-5.1.3-3.2.1"><strong>Track Name Encoding</strong>: The Track Name bytes <span class="bcp14">MUST</span> be base64url-encoded
+(without padding) when containing non-printable bytes or when exact byte
+preservation is required<a href="#section-5.1.3-3.2.1" class="pilcrow">¶</a></p>
+</li>
+            <li id="section-5.1.3-3.3">
+              <p id="section-5.1.3-3.3.1"><strong>ASCII Optimization</strong>: For Track Names that contain only printable ASCII
+characters (excluding control characters), the content <span class="bcp14">MAY</span> be used directly
+as UTF-8 strings for improved readability<a href="#section-5.1.3-3.3.1" class="pilcrow">¶</a></p>
+</li>
+          </ol>
+<p id="section-5.1.3-4">Example encodings:<a href="#section-5.1.3-4" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-5.1.3-5.1">
+              <p id="section-5.1.3-5.1.1">Namespace tuple [0x01, 0x02], [0x03, 0x04]: <code>"moq://AQ/Aw"</code><a href="#section-5.1.3-5.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-5.1.3-5.2">
+              <p id="section-5.1.3-5.2.1">ASCII track name: <code>"camera1"</code><a href="#section-5.1.3-5.2.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-5.1.3-5.3">
+              <p id="section-5.1.3-5.3.1">Binary track name [0xFF, 0xFE]: <code>"_v4"</code><a href="#section-5.1.3-5.3.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-5.1.3-5.4">
+              <p id="section-5.1.3-5.4.1">UTF-8 track name with special chars: <code>"música%20en%20vivo"</code> (URL percent-encoded)<a href="#section-5.1.3-5.4.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
+</section>
+</div>
+<div id="validation-requirements">
+<section id="section-5.1.4">
+          <h4 id="name-validation-requirements">
+<a href="#section-5.1.4" class="section-number selfRef">5.1.4. </a><a href="#name-validation-requirements" class="section-name selfRef">Validation Requirements</a>
+          </h4>
+<p id="section-5.1.4-1">Servers processing MOQ authorization contexts <span class="bcp14">MUST</span>:<a href="#section-5.1.4-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-5.1.4-2">
+<li id="section-5.1.4-2.1">
+              <p id="section-5.1.4-2.1.1">Verify that the <code>action</code> field contains a recognized MOQ operation<a href="#section-5.1.4-2.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li id="section-5.1.4-2.2">
+              <p id="section-5.1.4-2.2.1">Validate that the <code>tns</code> field represents a properly formatted track
+namespace tuple encoding as specified above<a href="#section-5.1.4-2.2.1" class="pilcrow">¶</a></p>
+</li>
+            <li id="section-5.1.4-2.3">
+              <p id="section-5.1.4-2.3.1">If present, validate that the <code>tn</code> field contains properly encoded track
+name bytes<a href="#section-5.1.4-2.3.1" class="pilcrow">¶</a></p>
+</li>
+            <li id="section-5.1.4-2.4">
+              <p id="section-5.1.4-2.4.1">Ensure the requested action is permitted for the specified track
+namespace tuple<a href="#section-5.1.4-2.4.1" class="pilcrow">¶</a></p>
+</li>
+            <li id="section-5.1.4-2.5">
+              <p id="section-5.1.4-2.5.1">If present, ensure the requested action is permitted for the specified
+track name<a href="#section-5.1.4-2.5.1" class="pilcrow">¶</a></p>
+</li>
+            <li id="section-5.1.4-2.6">
+              <p id="section-5.1.4-2.6.1">If present, validate any parameters according to usage context<a href="#section-5.1.4-2.6.1" class="pilcrow">¶</a></p>
+</li>
+          </ol>
+</section>
+</div>
+</section>
+</div>
+</section>
+</div>
+<div id="application-agnostic-dpop-proof-jwt-examples">
+<section id="section-6">
+      <h2 id="name-application-agnostic-dpop-pr">
+<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-application-agnostic-dpop-pr" class="section-name selfRef">Application-Agnostic DPoP Proof JWT Examples</a>
+      </h2>
+<p id="section-6-1">This section provides complete examples of application-agnostic DPoP proof JWTs,
+illustrating the use of the Authorization Context object in place of
+HTTP-specific claims.<a href="#section-6-1" class="pilcrow">¶</a></p>
+<div id="example-moq-context-dpop-proof">
+<section id="section-6.1">
+        <h3 id="name-example-moq-context-dpop-pr">
+<a href="#section-6.1" class="section-number selfRef">6.1. </a><a href="#name-example-moq-context-dpop-pr" class="section-name selfRef">Example: MOQ Context DPoP Proof</a>
+        </h3>
+<p id="section-6.1-1">The following example shows a complete DPoP proof JWT for a MOQ context:<a href="#section-6.1-1" class="pilcrow">¶</a></p>
+<p id="section-6.1-2">JWT Header:<a href="#section-6.1-2" class="pilcrow">¶</a></p>
+<div class="lang-json sourcecode" id="section-6.1-3">
 <pre>
 {
   "typ": "dpop-proof+jwt",
@@ -1561,10 +1847,10 @@ HTTP-specific claims.<a href="#section-5-1" class="pilcrow">¶</a></p>
     "crv": "P-256"
   }
 }
-</pre><a href="#section-5.1-3" class="pilcrow">¶</a>
+</pre><a href="#section-6.1-3" class="pilcrow">¶</a>
 </div>
-<p id="section-5.1-4">JWT Payload:<a href="#section-5.1-4" class="pilcrow">¶</a></p>
-<div class="lang-json sourcecode" id="section-5.1-5">
+<p id="section-6.1-4">JWT Payload:<a href="#section-6.1-4" class="pilcrow">¶</a></p>
+<div class="lang-json sourcecode" id="section-6.1-5">
 <pre>
 {
   "jti": "unique-request-id-789",
@@ -1577,18 +1863,18 @@ HTTP-specific claims.<a href="#section-5-1" class="pilcrow">¶</a></p>
   },
   "ath": "fUHyO2r2Z3DZ53EsNrWBb1xWXM4VbCqpW5G-o9GqC7Y"
 }
-</pre><a href="#section-5.1-5" class="pilcrow">¶</a>
+</pre><a href="#section-6.1-5" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
 <div id="comparing-with-http-dpop">
-<section id="section-5.2">
+<section id="section-6.2">
         <h3 id="name-comparing-with-http-dpop">
-<a href="#section-5.2" class="section-number selfRef">5.2. </a><a href="#name-comparing-with-http-dpop" class="section-name selfRef">Comparing with HTTP DPoP</a>
+<a href="#section-6.2" class="section-number selfRef">6.2. </a><a href="#name-comparing-with-http-dpop" class="section-name selfRef">Comparing with HTTP DPoP</a>
         </h3>
-<p id="section-5.2-1">For comparison, an equivalent HTTP DPoP proof would contain <code>htm</code> and <code>htu</code>
-claims instead of the <code>actx</code> object:<a href="#section-5.2-1" class="pilcrow">¶</a></p>
-<div class="lang-json sourcecode" id="section-5.2-2">
+<p id="section-6.2-1">For comparison, an equivalent HTTP DPoP proof would contain <code>htm</code> and <code>htu</code>
+claims instead of the <code>actx</code> object:<a href="#section-6.2-1" class="pilcrow">¶</a></p>
+<div class="lang-json sourcecode" id="section-6.2-2">
 <pre>
 {
   "jti": "unique-request-id-789",
@@ -1597,134 +1883,11 @@ claims instead of the <code>actx</code> object:<a href="#section-5.2-1" class="p
   "htu": "https://media.example.com/subscribe",
   "ath": "fUHyO2r2Z3DZ53EsNrWBb1xWXM4VbCqpW5G-o9GqC7Y"
 }
-</pre><a href="#section-5.2-2" class="pilcrow">¶</a>
+</pre><a href="#section-6.2-2" class="pilcrow">¶</a>
 </div>
-<p id="section-5.2-3">The key difference is that the generic framework uses the <code>actx</code> object to
+<p id="section-6.2-3">The key difference is that the application-agnostic framework uses the <code>actx</code> object to
 provide protocol-specific authorization context, while HTTP DPoP uses <code>htm</code> and
-<code>htu</code> for HTTP method and URI.<a href="#section-5.2-3" class="pilcrow">¶</a></p>
-</section>
-</div>
-</section>
-</div>
-<div id="protocol-type-registry">
-<section id="section-6">
-      <h2 id="name-protocol-type-registry">
-<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-protocol-type-registry" class="section-name selfRef">Protocol Type Registry</a>
-      </h2>
-<p id="section-6-1">This framework establishes a registry for protocol type identifiers used in
-the <code>actx.type</code> field. Each registered type <span class="bcp14">MUST</span> specify:<a href="#section-6-1" class="pilcrow">¶</a></p>
-<ol start="1" type="1" class="normal type-1" id="section-6-2">
-<li id="section-6-2.1">
-          <p id="section-6-2.1.1">The additional required and optional fields for the Authorization
-Context<a href="#section-6-2.1.1" class="pilcrow">¶</a></p>
-</li>
-        <li id="section-6-2.2">
-          <p id="section-6-2.2.1">The semantic meaning and validation rules for those fields<a href="#section-6-2.2.1" class="pilcrow">¶</a></p>
-</li>
-        <li id="section-6-2.3">
-          <p id="section-6-2.3.1">Security considerations specific to the protocol context<a href="#section-6-2.3.1" class="pilcrow">¶</a></p>
-</li>
-        <li id="section-6-2.4">
-          <p id="section-6-2.4.1">Examples of usage<a href="#section-6-2.4.1" class="pilcrow">¶</a></p>
-</li>
-      </ol>
-<div id="moq-context">
-<section id="section-6.1">
-        <h3 id="name-moq-context-type">
-<a href="#section-6.1" class="section-number selfRef">6.1. </a><a href="#name-moq-context-type" class="section-name selfRef">MOQ Context Type</a>
-        </h3>
-<p id="section-6.1-1">This section defines the normative authorization context for Media Over QUIC
-(MOQ) as specified in this framework.<a href="#section-6.1-1" class="pilcrow">¶</a></p>
-<p id="section-6.1-2">Type Identifier: "moq"<a href="#section-6.1-2" class="pilcrow">¶</a></p>
-<div id="required-fields">
-<section id="section-6.1.1">
-          <h4 id="name-required-fields">
-<a href="#section-6.1.1" class="section-number selfRef">6.1.1. </a><a href="#name-required-fields" class="section-name selfRef">Required Fields</a>
-          </h4>
-<p id="section-6.1.1-1">The MOQ authorization context <span class="bcp14">MUST</span> contain the following fields:<a href="#section-6.1.1-1" class="pilcrow">¶</a></p>
-<p id="section-6.1.1-2">action:<a href="#section-6.1.1-2" class="pilcrow">¶</a></p>
-<p id="section-6.1.1-3">A string specifying the MOQ operation being authorized.<a href="#section-6.1.1-3" class="pilcrow">¶</a></p>
-<p id="section-6.1.1-4">tns:<a href="#section-6.1.1-4" class="pilcrow">¶</a></p>
-<p id="section-6.1.1-5">Track Namespace as defined for MOQ operations.<a href="#section-6.1.1-5" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="optional-fields">
-<section id="section-6.1.2">
-          <h4 id="name-optional-fields">
-<a href="#section-6.1.2" class="section-number selfRef">6.1.2. </a><a href="#name-optional-fields" class="section-name selfRef">Optional Fields</a>
-          </h4>
-<p id="section-6.1.2-1">The MOQ authorization context <span class="bcp14">MAY</span> contain the following fields:<a href="#section-6.1.2-1" class="pilcrow">¶</a></p>
-<p id="section-6.1.2-2">tn:<a href="#section-6.1.2-2" class="pilcrow">¶</a></p>
-<p id="section-6.1.2-3">Track Name for MOQ operations.<a href="#section-6.1.2-3" class="pilcrow">¶</a></p>
-<p id="section-6.1.2-4">parameters:<a href="#section-6.1.2-4" class="pilcrow">¶</a></p>
-<p id="section-6.1.2-5">An object containing additional MOQ-specific parameters relevant to the
-operation. The structure and contents of this field are context-dependent.<a href="#section-6.1.2-5" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="validation-requirements">
-<section id="section-6.1.3">
-          <h4 id="name-validation-requirements">
-<a href="#section-6.1.3" class="section-number selfRef">6.1.3. </a><a href="#name-validation-requirements" class="section-name selfRef">Validation Requirements</a>
-          </h4>
-<p id="section-6.1.3-1">Servers processing MOQ authorization contexts <span class="bcp14">MUST</span>:<a href="#section-6.1.3-1" class="pilcrow">¶</a></p>
-<ol start="1" type="1" class="normal type-1" id="section-6.1.3-2">
-<li id="section-6.1.3-2.1">
-              <p id="section-6.1.3-2.1.1">Verify that the <code>action</code> field contains a recognized MOQ operation<a href="#section-6.1.3-2.1.1" class="pilcrow">¶</a></p>
-</li>
-            <li id="section-6.1.3-2.2">
-              <p id="section-6.1.3-2.2.1">Validate that the <code>tns</code> field represents a properly formatted track
-namespace URI<a href="#section-6.1.3-2.2.1" class="pilcrow">¶</a></p>
-</li>
-            <li id="section-6.1.3-2.3">
-              <p id="section-6.1.3-2.3.1">Ensure the requested action is permitted for the specified track
-namespace<a href="#section-6.1.3-2.3.1" class="pilcrow">¶</a></p>
-</li>
-            <li id="section-6.1.3-2.4">
-              <p id="section-6.1.3-2.4.1">If present, ensure the requested action is permitted for the specified
-track name<a href="#section-6.1.3-2.4.1" class="pilcrow">¶</a></p>
-</li>
-            <li id="section-6.1.3-2.5">
-              <p id="section-6.1.3-2.5.1">If present, validate any parameters according to usage context<a href="#section-6.1.3-2.5.1" class="pilcrow">¶</a></p>
-</li>
-          </ol>
-</section>
-</div>
-<div id="moq-examples">
-<section id="section-6.1.4">
-          <h4 id="name-moq-examples">
-<a href="#section-6.1.4" class="section-number selfRef">6.1.4. </a><a href="#name-moq-examples" class="section-name selfRef">MOQ Examples</a>
-          </h4>
-<p id="section-6.1.4-1">JWT Header:<a href="#section-6.1.4-1" class="pilcrow">¶</a></p>
-<div class="lang-json sourcecode" id="section-6.1.4-2">
-<pre>
-{
-  "typ": "dpop-proof+jwt",
-  "alg": "ES256",
-  "jwk": {
-    "kty": "EC",
-    "x": "l8tFrhx-34tV3hRICRDY9zCkDlpBhF42UQUfWVAWBFs",
-    "y": "9VE4jf_Ok_o64zbTTlcuNJajHmt6v9TDVrU0CdvGRDA",
-    "crv": "P-256"
-  }
-}
-</pre><a href="#section-6.1.4-2" class="pilcrow">¶</a>
-</div>
-<p id="section-6.1.4-3">JWT Payload:<a href="#section-6.1.4-3" class="pilcrow">¶</a></p>
-<div class="lang-json sourcecode" id="section-6.1.4-4">
-<pre>
-{
-  "jti": "unique-request-id",
-  "iat": 1705123456,
-  "actx": {
-    "type": "moq",
-    "action": "ANNOUNCE",
-    "tns": "moq://example.com/app/scope/audio"
-  }
-}
-</pre><a href="#section-6.1.4-4" class="pilcrow">¶</a>
-</div>
-</section>
-</div>
+<code>htu</code> for HTTP method and URI.<a href="#section-6.2-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1861,6 +2024,34 @@ intended context type. Servers <span class="bcp14">MUST NOT</span> accept a DPoP
 type as valid for a different context type.<a href="#section-8.3-1" class="pilcrow">¶</a></p>
 </section>
 </div>
+<div id="application-separation-requirements">
+<section id="section-8.4">
+        <h3 id="name-application-separation-requ">
+<a href="#section-8.4" class="section-number selfRef">8.4. </a><a href="#name-application-separation-requ" class="section-name selfRef">Application Separation Requirements</a>
+        </h3>
+<p id="section-8.4-1">Clients <span class="bcp14">MUST</span> use different DPoP proofs for different applications. This
+separation ensures that a DPoP proof generated for one application protocol
+cannot be reused or replayed in the context of another application protocol.
+Implementations <span class="bcp14">SHOULD</span> enforce this by:<a href="#section-8.4-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-8.4-2">
+<li id="section-8.4-2.1">
+            <p id="section-8.4-2.1.1"><strong>Distinct Key Pairs</strong>: Using separate key pairs for different application
+protocols where feasible<a href="#section-8.4-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-8.4-2.2">
+            <p id="section-8.4-2.2.1"><strong>Context-Specific Binding</strong>: Ensuring that Authorization Context (<code>actx</code>)
+objects contain fields that uniquely identify the application protocol<a href="#section-8.4-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-8.4-2.3">
+            <p id="section-8.4-2.3.1"><strong>Proof Validation</strong>: Rejecting proofs that contain context information
+from other application protocols<a href="#section-8.4-2.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ol>
+<p id="section-8.4-3">This requirement prevents cross-application attacks where an attacker might
+attempt to use a valid DPoP proof from one application context in a different
+application context.<a href="#section-8.4-3" class="pilcrow">¶</a></p>
+</section>
+</div>
 </section>
 </div>
 <div id="iana-considerations">
@@ -1875,29 +2066,29 @@ type as valid for a different context type.<a href="#section-8.3-1" class="pilcr
         </h3>
 <p id="section-9.1-1">This document establishes the "DPoP Authorization Context Types" registry
 within the "JSON Web Token (JWT)" registry group.<a href="#section-9.1-1" class="pilcrow">¶</a></p>
-<p id="section-9.1-2">Registry Name: DPoP Authorization Context Types
-Registration Policy: Specification Required
-Expert Review Guidelines:<a href="#section-9.1-2" class="pilcrow">¶</a></p>
-<p id="section-9.1-3">Specifications submitted for registration <span class="bcp14">MUST</span> include:<a href="#section-9.1-3" class="pilcrow">¶</a></p>
-<ol start="1" type="1" class="normal type-1" id="section-9.1-4">
-<li id="section-9.1-4.1">
-            <p id="section-9.1-4.1.1">A complete specification of required and optional fields<a href="#section-9.1-4.1.1" class="pilcrow">¶</a></p>
+<p id="section-9.1-2">Registry Name: DPoP Authorization Context Types<a href="#section-9.1-2" class="pilcrow">¶</a></p>
+<p id="section-9.1-3">Registration Policy: Specification Required<a href="#section-9.1-3" class="pilcrow">¶</a></p>
+<p id="section-9.1-4">Expert Review Guidelines:<a href="#section-9.1-4" class="pilcrow">¶</a></p>
+<p id="section-9.1-5">Specifications submitted for registration <span class="bcp14">MUST</span> include:<a href="#section-9.1-5" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-9.1-6">
+<li id="section-9.1-6.1">
+            <p id="section-9.1-6.1.1">A complete specification of required and optional fields<a href="#section-9.1-6.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li id="section-9.1-4.2">
-            <p id="section-9.1-4.2.1">Semantic definitions and validation rules for all fields<a href="#section-9.1-4.2.1" class="pilcrow">¶</a></p>
+          <li id="section-9.1-6.2">
+            <p id="section-9.1-6.2.1">Semantic definitions and validation rules for all fields<a href="#section-9.1-6.2.1" class="pilcrow">¶</a></p>
 </li>
-          <li id="section-9.1-4.3">
-            <p id="section-9.1-4.3.1">Security considerations specific to the context type<a href="#section-9.1-4.3.1" class="pilcrow">¶</a></p>
+          <li id="section-9.1-6.3">
+            <p id="section-9.1-6.3.1">Security considerations specific to the context type<a href="#section-9.1-6.3.1" class="pilcrow">¶</a></p>
 </li>
-          <li id="section-9.1-4.4">
-            <p id="section-9.1-4.4.1">At least one complete example of usage<a href="#section-9.1-4.4.1" class="pilcrow">¶</a></p>
+          <li id="section-9.1-6.4">
+            <p id="section-9.1-6.4.1">At least one complete example of usage<a href="#section-9.1-6.4.1" class="pilcrow">¶</a></p>
 </li>
-          <li id="section-9.1-4.5">
-            <p id="section-9.1-4.5.1">Considerations for interoperability with existing DPoP implementations<a href="#section-9.1-4.5.1" class="pilcrow">¶</a></p>
+          <li id="section-9.1-6.5">
+            <p id="section-9.1-6.5.1">Considerations for interoperability with existing DPoP implementations<a href="#section-9.1-6.5.1" class="pilcrow">¶</a></p>
 </li>
         </ol>
-<p id="section-9.1-5">Reference Format: The reference <span class="bcp14">MUST</span> be to a published RFC or an
-Internet-Draft that has been adopted by a working group.<a href="#section-9.1-5" class="pilcrow">¶</a></p>
+<p id="section-9.1-7">Reference Format: The reference <span class="bcp14">MUST</span> be to a published RFC or an
+Internet-Draft that has been adopted by a working group.<a href="#section-9.1-7" class="pilcrow">¶</a></p>
 <div id="registration-template">
 <section id="section-9.1.1">
           <h4 id="name-registration-template">
