@@ -1,5 +1,5 @@
 ---
-title: "Multi-Protocol  Proof of Possession (DPoP) Framework"
+title: "Application-Agnostic Demonstration Proof of Possession (DPoP) Framework"
 abbrev: "dpop-proof"
 category: std
 docname: draft-nandakumar-oauth-dpop-proof-latest
@@ -52,11 +52,19 @@ secure token binding across various application protocols and contexts.
 # Introduction
 
 RFC 9449 {{RFC9449}} defines a mechanism for sender-constraining OAuth 2.0
-tokens via a proof-of-possession mechanism on the application level. This
-document presents a generic framework that abstracts the core concepts of DPoP
-into a protocol-agnostic approach, enabling proof-of-possession token binding
-for various application contexts while maintaining the security properties
-established in RFC 9449.
+tokens via a proof-of-possession mechanism on the application level. DPoP as
+defined in RFC 9449 has two separable parts: the first part (covered in
+sections 4, 5, 6, and 8) describes how a client obtains a DPoP-bound token
+from an authorization server, while the second part (covered in sections 7 and
+9) describes how the client proves control of the private key associated with
+a DPoP token when accessing protected resources.
+
+This specification defines bindings for Media Over QUIC Transport (MOQT) and
+presents a generic framework that abstracts the core concepts of DPoP into a
+protocol-agnostic approach. While keeping the first part unchanged, this
+framework generalizes the second part to enable proof-of-possession token
+binding for various application contexts beyond HTTP while maintaining the
+security properties established in RFC 9449.
 
 ## Conventions and Terminology
 
@@ -69,20 +77,37 @@ Authorization Framework" {{RFC6749}}.
 The terms "JSON Web Token (JWT)", "JOSE Header", and "JWS" are defined in
 {{RFC7519}} and {{RFC7515}}.
 
-# Framework Overview
+Application protocol:
+: The protocol which uses DPoP tokens as proof of authorization. This may be
+  HTTP (as in RFC 9449) or any other application-layer protocol that requires
+  proof-of-possession token binding.
 
-The Generic DPoP Framework separates the DPoP mechanism into two distinct and
-separable parts:
+# Protocol Overview and Concept
 
-1. Token Acquisition: How a client obtains a DPoP-bound token
-2. Proof of Possession: How a client proves control of the private key
-   associated with a DPoP token
+The Generic DPoP Framework extends the DPoP mechanism to work across various
+application protocols beyond HTTP. The basic flow involves a client obtaining
+a DPoP-bound token from an authorization server, then using that token with
+an application protocol by providing proof of possession of the associated
+private key.
 
-The framework specified in this document provides a protocol-agnostic approach
-for both parts, enabling secure proof-of-possession across various application
-protocols and contexts.
-
-# Concept
+~~~
++--------+                                          +---------------+
+|        |--(A)-- Token Request ------------------->|               |
+| Client |        (Generic DPoP Proof)              | Authorization |
+|        |                                          |     Server    |
+|        |<-(B)-- DPoP-Bound Access Token ----------|               |
+|        |        (token_type=DPoP)                 +---------------+
+|        |
+|        |
+|        |                                          +---------------+
+|        |--(C)-- Application Protocol Request --->|               |
+| Client |        (DPoP-Bound Access Token +       | Application   |
+|        |         Generic DPoP Proof with         |   Protocol    |
+|        |         Binding Fields)                 |    Server     |
+|        |<-(D)-- Application Protocol Response ---|               |
++--------+                                          +---------------+
+~~~
+{: #fig-generic-dpop-flow title="Generic DPoP Flow"}
 
 The main data structure introduced by this specification is a generic DPoP
 proof JWT that can be used across various application protocols and contexts,
@@ -98,27 +123,23 @@ Roughly speaking, a generic DPoP proof is a signature over:
 * a hash of the associated access token when an access token is present
   within the request.
 
-~~~
-+--------+                                          +---------------+
-|        |--(A)-- Token Request ------------------->|               |
-| Client |        (Generic DPoP Proof)              | Authorization |
-|        |                                          |     Server    |
-|        |<-(B)-- DPoP-Bound Access Token ----------|               |
-|        |        (token_type=DPoP)                 +---------------+
-|        |
-|        |
-|        |                                          +---------------+
-|        |--(C)-- DPoP-Bound Access Token --------->|               |
-| Client |        (Generic DPoP Proof)              |   Protocol    |
-|        |                                          |     Server    |
-|        |<-(D)-- Protected Resource ---------------|               |
-|        |                                          +---------------+
-+--------+
-~~~
-{: #fig-basic-dpop-flow title="Basic Generic DPoP Flow"}
+The application protocol needs to define binding fields that make the proof JWT
+unique to a specific protocol interaction. These binding fields replace the
+HTTP method (`htm`) and HTTP URI (`htu`) fields used in RFC 9449, providing
+protocol-specific context that prevents replay attacks across different
+protocol operations.
+
+Key aspects of the protocol:
+
+1. **Token Acquisition (Steps A-B)**: Uses the same mechanism as RFC 9449
+   sections 4, 5, 6, and 8
+2. **Proof of Possession (Steps C-D)**: Generalizes RFC 9449 sections 7 and 9
+   with protocol-specific binding fields
+3. **Binding Fields**: Each application protocol must define how to bind the
+   proof to specific protocol operations to ensure uniqueness
 
 The basic steps of a protocol flow with generic DPoP (without the optional
-nonce) are shown in {{fig-basic-dpop-flow}}.
+nonce) are shown in {{fig-generic-dpop-flow}}.
 
 A. In the token request, the client sends an authorization grant (e.g., an
 authorization code, refresh token, etc.) to the authorization server in order
@@ -156,7 +177,63 @@ Generic DPoP does not directly ensure message integrity, but it relies on the
 underlying transport security layer (such as TLS) for that purpose. See
 {{security-considerations}} for details.
 
-# Generic DPoP Proof Structure
+# Application Protocol Requirements
+
+Application protocols that wish to use this generic DPoP framework MUST define
+the following elements to ensure secure proof-of-possession token binding:
+
+## Binding Fields Definition
+
+Each application protocol MUST specify:
+
+1. **Required Binding Fields**: The mandatory fields within the Authorization
+   Context (`actx`) object that uniquely identify and bind the proof to a
+   specific protocol operation
+2. **Field Semantics**: Clear definitions of what each binding field represents
+   and how it relates to protocol messages and operations
+3. **Uniqueness Requirements**: How the combination of binding fields ensures
+   that each proof is unique to a specific protocol interaction
+
+## Nonce Support
+
+Application protocols SHOULD provide a mechanism for servers to supply nonces
+to clients for replay protection, similar to Section 9 of RFC 9449. When
+nonce support is provided, the protocol specification MUST define:
+
+1. How nonces are communicated from server to client
+2. The lifetime and scope of nonces
+3. How clients incorporate nonces into DPoP proofs
+
+## Security Requirements
+
+Application protocol specifications MUST include:
+
+1. **Replay Attack Prevention**: How the binding fields prevent replay of
+   proofs across different protocol operations
+2. **Cross-Protocol Security**: Measures to prevent proofs from being valid
+   across different application protocols
+3. **Protocol-Specific Threat Model**: Analysis of security threats specific
+   to the application protocol context
+
+## Example Binding Implementation
+
+For illustration, an application protocol might define binding fields such as:
+
+- `operation`: The specific protocol operation being authorized
+- `resource_identifier`: A unique identifier for the resource being accessed
+- `timestamp_context`: Protocol-specific temporal context information
+
+The combination of these fields would ensure that a DPoP proof is valid only
+for the specific operation, resource, and temporal context for which it was
+generated.
+
+# Application-Agnostic DPoP Proof Structure
+
+This proof structure has the same general structure as a standard DPoP proof
+as defined in RFC 9449, with the key difference being that the HTTP-specific
+claims (`htm` for HTTP method and `htu` for HTTP URI) are replaced with the
+Authorization Context (`actx`) object to provide application protocol-specific
+binding information.
 
 ## Authorization Context Object
 
@@ -207,9 +284,101 @@ Additional claims MAY be included based on context requirements:
 - nonce: Server-provided nonce for replay protection
 - ath: Access token hash (when presenting access tokens)
 
-# Generic DPoP Proof JWT Examples
+# Protocol Type Registry
 
-This section provides complete examples of generic DPoP proof JWTs,
+This framework establishes a registry for protocol type identifiers used in
+the `actx.type` field. Each registered type MUST specify:
+
+1. The additional required and optional fields for the Authorization
+   Context
+2. The semantic meaning and validation rules for those fields
+3. Security considerations specific to the protocol context
+4. Examples of usage
+
+
+## MOQ Context Type {#moq-context}
+
+This section defines the normative authorization context for Media Over QUIC
+(MOQ) as specified in this framework.
+
+Type Identifier: "moq"
+
+### Required Fields
+
+The MOQ authorization context MUST contain the following fields:
+
+action:
+
+A string specifying the MOQ operation (Section 9 of {{MOQTransport}}
+being authorized.
+
+tns:
+
+Track Namespace as defined in Section 2.4.1 of {{MOQTransport}}.
+
+### Optional Fields
+
+The MOQ authorization context MAY contain the following fields:
+
+tn:
+
+Track Name as defined in Section 2.4.1 of {{MOQTransport}}.
+
+parameters:
+
+An object containing additional MOQ-specific parameters relevant to the
+operation. The structure and contents of this field are context-dependent.
+
+### String Encoding for Binary Data
+
+As defined in Section 2.4.1 of {{MOQTransport}}, Track Namespace is an ordered
+N-tuple of bytes (where N can be between 1 and 32), and Track Name is a
+sequence of bytes. Both are not constrained to specific encoding and carry
+arbitrary byte sequences that are compared by exact byte matching.
+
+For representation in the JSON `tns` and `tn` fields of the Authorization
+Context, the following encoding approach MUST be used:
+
+1. **Track Namespace Tuple Encoding**: The Track Namespace tuple MUST be
+   encoded as a URL-safe string where:
+   - Each tuple field is base64url-encoded (without padding)
+   - Tuple fields are separated by forward slashes ("/")
+   - The entire namespace is prefixed with "moq://"
+
+2. **Track Name Encoding**: The Track Name bytes MUST be base64url-encoded
+   (without padding) when containing non-printable bytes or when exact byte
+   preservation is required
+
+3. **ASCII Optimization**: For Track Names that contain only printable ASCII
+   characters (excluding control characters), the content MAY be used directly
+   as UTF-8 strings for improved readability
+
+Example encodings:
+
+- Namespace tuple [0x01, 0x02], [0x03, 0x04]: `"moq://AQ/Aw"`
+- ASCII track name: `"camera1"`
+- Binary track name [0xFF, 0xFE]: `"_v4"`
+- UTF-8 track name with special chars: `"música%20en%20vivo"` (URL percent-encoded)
+
+### Validation Requirements
+
+Servers processing MOQ authorization contexts MUST:
+
+1. Verify that the `action` field contains a recognized MOQ operation
+2. Validate that the `tns` field represents a properly formatted track
+   namespace tuple encoding as specified above
+3. If present, validate that the `tn` field contains properly encoded track
+   name bytes
+4. Ensure the requested action is permitted for the specified track
+   namespace tuple
+5. If present, ensure the requested action is permitted for the specified
+   track name
+6. If present, validate any parameters according to usage context
+
+
+# Application-Agnostic DPoP Proof JWT Examples
+
+This section provides complete examples of application-agnostic DPoP proof JWTs,
 illustrating the use of the Authorization Context object in place of
 HTTP-specific claims.
 
@@ -265,97 +434,9 @@ claims instead of the `actx` object:
 }
 ~~~
 
-The key difference is that the generic framework uses the `actx` object to
+The key difference is that the application-agnostic framework uses the `actx` object to
 provide protocol-specific authorization context, while HTTP DPoP uses `htm` and
 `htu` for HTTP method and URI.
-
-# Protocol Type Registry
-
-This framework establishes a registry for protocol type identifiers used in
-the `actx.type` field. Each registered type MUST specify:
-
-1. The additional required and optional fields for the Authorization
-   Context
-2. The semantic meaning and validation rules for those fields
-3. Security considerations specific to the protocol context
-4. Examples of usage
-
-
-## MOQ Context Type {#moq-context}
-
-This section defines the normative authorization context for Media Over QUIC
-(MOQ) as specified in this framework.
-
-Type Identifier: "moq"
-
-### Required Fields
-
-The MOQ authorization context MUST contain the following fields:
-
-action:
-
-A string specifying the MOQ operation being authorized.
-
-tns:
-
-Track Namespace as defined for MOQ operations.
-
-### Optional Fields
-
-The MOQ authorization context MAY contain the following fields:
-
-tn:
-
-Track Name for MOQ operations.
-
-parameters:
-
-An object containing additional MOQ-specific parameters relevant to the
-operation. The structure and contents of this field are context-dependent.
-
-### Validation Requirements
-
-Servers processing MOQ authorization contexts MUST:
-
-1. Verify that the `action` field contains a recognized MOQ operation
-2. Validate that the `tns` field represents a properly formatted track
-   namespace URI
-3. Ensure the requested action is permitted for the specified track
-   namespace
-4. If present, ensure the requested action is permitted for the specified
-   track name
-5. If present, validate any parameters according to usage context
-
-### MOQ Examples
-
-JWT Header:
-
-~~~json
-{
-  "typ": "dpop-proof+jwt",
-  "alg": "ES256",
-  "jwk": {
-    "kty": "EC",
-    "x": "l8tFrhx-34tV3hRICRDY9zCkDlpBhF42UQUfWVAWBFs",
-    "y": "9VE4jf_Ok_o64zbTTlcuNJajHmt6v9TDVrU0CdvGRDA",
-    "crv": "P-256"
-  }
-}
-~~~
-
-JWT Payload:
-
-~~~json
-{
-  "jti": "unique-request-id",
-  "iat": 1705123456,
-  "actx": {
-    "type": "moq",
-    "action": "ANNOUNCE",
-    "tns": "moq://example.com/app/scope/audio"
-  }
-}
-~~~
 
 
 # Relationship to RFC 9449
@@ -435,6 +516,24 @@ DPoP tokens bound using this framework SHOULD be validated only within their
 intended context type. Servers MUST NOT accept a DPoP proof with one context
 type as valid for a different context type.
 
+## Application Separation Requirements
+
+Clients MUST use different DPoP proofs for different applications. This
+separation ensures that a DPoP proof generated for one application protocol
+cannot be reused or replayed in the context of another application protocol.
+Implementations SHOULD enforce this by:
+
+1. **Distinct Key Pairs**: Using separate key pairs for different application
+   protocols where feasible
+2. **Context-Specific Binding**: Ensuring that Authorization Context (`actx`)
+   objects contain fields that uniquely identify the application protocol
+3. **Proof Validation**: Rejecting proofs that contain context information
+   from other application protocols
+
+This requirement prevents cross-application attacks where an attacker might
+attempt to use a valid DPoP proof from one application context in a different
+application context.
+
 # IANA Considerations
 
 ## DPoP Authorization Context Types Registry
@@ -443,7 +542,9 @@ This document establishes the "DPoP Authorization Context Types" registry
 within the "JSON Web Token (JWT)" registry group.
 
 Registry Name: DPoP Authorization Context Types
+
 Registration Policy: Specification Required
+
 Expert Review Guidelines:
 
 Specifications submitted for registration MUST include:
