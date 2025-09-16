@@ -1,8 +1,8 @@
 <!-- regenerate: on (set to off if you edit this file) -->
 
-# Multi-Protocol Proof of Possession (DPoP) Framework
+# Application-Agnostic Proof of Possession (DPoP) Framework
 
-This is the working area for the individual Internet-Draft, "Multi-Protocol Proof of Possession (DPoP) Framework".
+This is the working area for the individual Internet-Draft, "Application-Agnostic Proof of Possession (DPoP) Framework".
 
 * [Editor's Copy](https://suhasHere.github.io/dpop-generic-proof/#go.draft-nandakumar-oauth-dpop-proof.html)
 * [Datatracker Page](https://datatracker.ietf.org/doc/draft-nandakumar-oauth-dpop-proof)
