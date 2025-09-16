@@ -3,9 +3,9 @@
 
 
 OAuth Working Group                                        S. Nandakumar
-Internet-Draft                                             Cisco Systems
-Intended status: Standards Track                       16 September 2025
-Expires: 20 March 2026
+Internet-Draft                                               C. Jennings
+Intended status: Standards Track                           Cisco Systems
+Expires: 20 March 2026                                 16 September 2025
 
 
 Application-Agnostic Demonstration Proof of Possession (DPoP) Framework
@@ -113,7 +113,7 @@ Table of Contents
      10.1.  Normative References
      10.2.  Informative References
    Appendix A.  Acknowledgments
-   Author's Address
+   Authors' Addresses
 
 1.  Introduction
 
@@ -815,10 +815,16 @@ Table of Contents
 
 Appendix A.  Acknowledgments
 
-   TODO
+   Thanks for Richard Barnes for the reviews and suggestions on the
+   protocol context design.
 
-Author's Address
+Authors' Addresses
 
    Suhas Nandakumar
    Cisco Systems
    Email: snandaku@cisco.com
+
+
+   Cullen Jennings
+   Cisco Systems
+   Email: fluffy@cisco.com
