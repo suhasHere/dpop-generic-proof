@@ -29,7 +29,7 @@ author:
     organization: Cisco Systems
     email: snandaku@cisco.com
  -
-    fullname: Cullen Jennings 
+    fullname: Cullen Jennings
     organization: Cisco Systems
     email: fluffy@cisco.com
 
