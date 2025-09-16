@@ -1,0 +1,2316 @@
+<!DOCTYPE html>
+<html lang="en" class="Internet-Draft">
+<head>
+<meta charset="utf-8">
+<meta content="Common,Latin" name="scripts">
+<meta content="initial-scale=1.0" name="viewport">
+<title>Application-Agnostic Demonstration Proof of Possession (DPoP) Framework</title>
+<meta content="Suhas Nandakumar" name="author">
+<meta content="Cullen Jennings" name="author">
+<meta content="
+       This document describes a generic framework for Demonstrating Proof of
+Possession (DPoP) that extends beyond HTTP-specific implementations. Building
+upon RFC 9449, this framework provides a protocol-agnostic approach for
+sender-constraining tokens through cryptographic proof of possession, enabling
+secure token binding across various application protocols and contexts. 
+    " name="description">
+<meta content="xml2rfc 3.30.1" name="generator">
+<meta content="DPoP" name="keyword">
+<meta content="Proof of Possession" name="keyword">
+<meta content="Authentication" name="keyword">
+<meta content="Authorization" name="keyword">
+<meta content="draft-nandakumar-oauth-dpop-proof-latest" name="ietf.draft">
+<!-- Generator version information:
+  xml2rfc 3.30.1
+    Python 3.12.11
+    ConfigArgParse 1.7
+    google-i18n-address 3.1.1
+    intervaltree 3.1.0
+    Jinja2 3.1.6
+    lxml 5.3.1
+    platformdirs 4.4.0
+    pycountry 24.6.1
+    PyYAML 6.0.2
+    requests 2.32.5
+    setuptools 80.9.0
+    wcwidth 0.2.13
+-->
+<link href="draft-nandakumar-oauth-dpop-proof.xml" rel="alternate" type="application/rfc+xml">
+<link href="#copyright" rel="license">
+<style type="text/css">@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-cyrillic.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-cyrillic.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: local('Lora SemiBold'), local('Lora-SemiBold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-semibold-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Oxygen Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Oxygen Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-cyrillic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-greek.woff2') format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-cyrillic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-greek.woff2') format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  color-scheme: light dark;
+  --background-color: #fff;
+  --text-color: #222;
+  --title-color: #191919;
+  --link-color: #2a6496;
+  --highlight-color: #f9f9f9;
+  --line-color: #eee;
+  --pilcrow-weak: #ddd;
+  --pilcrow-strong: #bbb;
+  --small-font-size: 14.5px;
+  --font-mono: 'Oxygen Mono', monospace;
+  --font-title: "Sofia Sans Semi Condensed", sans-serif;
+  scrollbar-color: #bbb #eee;
+}
+body {
+  max-width: 600px;
+  margin: 75px auto;
+  padding: 0 5px;
+  color: var(--text-color);
+  background-color: var(--background-color);
+  font: 16px/22px "Lora", serif;
+  scroll-behavior: smooth;
+}
+
+.ears {
+  display: none;
+}
+
+/* headings */
+section {
+  clear: both;
+}
+.section-number {
+  padding-right: 0.5em;
+}
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-title);
+  font-weight: 680;
+  margin: 0.8em 0 0.3em;
+  font-size-adjust: 0.5;
+  color: var(--title-color);
+}
+h1#title {
+  font-size: 32px;
+  line-height: 40px;
+  clear: both;
+}
+h1#title, h1#rfcnum {
+  margin: 1.5em 0 0.2em;
+}
+h1#rfcnum + h1#title {
+  margin: 0.2em 0;
+}
+
+h1, h2, h3 {
+  font-size: 22px;
+  line-height: 27px;
+}
+h4, h5, h6 {
+  font-size: 20px;
+  line-height: 24px;
+}
+
+/* general structure */
+.author {
+  padding-bottom: 0.3em;
+  vertical-align: top;
+}
+#abstract+p {
+  font-size: 18px;
+  line-height: 24px;
+}
+#abstract+p code, #abstract+p samp, #abstract+p tt {
+  font-size: 16px;
+  line-height: 0;
+}
+
+p {
+  padding: 0;
+  margin: 0.5em 0;
+  text-align: left;
+}
+div {
+  margin: 0;
+}
+.alignRight.art-text {
+  background-color: var(--highlight-color);
+  border: 1px solid var(--line-color);
+  border-radius: 3px;
+  padding: 0.5em 1em 0;
+  margin-bottom: 0.5em;
+}
+.alignRight.art-text pre {
+  padding: 0;
+  width: auto;
+}
+.alignRight {
+  margin: 1em 0;
+}
+.alignRight > *:first-child {
+  border: none;
+  margin: 0;
+  float: right;
+  clear: both;
+}
+.alignRight > *:nth-child(2) {
+  clear: both;
+  display: block;
+  border: none;
+}
+svg {
+  display: block;
+}
+/* font-family isn't space-separated, but =~ will have to do */
+svg[font-family~="monospace" i], svg [font-family~="monospace" i] {
+  font-family: var(--font-mono);
+}
+.alignCenter.art-text {
+  background-color: var(--highlight-color);
+  border: 1px solid var(--line-color);
+  border-radius: 3px;
+  padding: 0.5em 1em 0;
+  margin-bottom: 0.5em;
+}
+.alignCenter.art-text pre {
+  padding: 0;
+  width: auto;
+}
+.alignCenter {
+  margin: 1em 0;
+}
+.alignCenter > *:first-child {
+  border: none;
+  /* this isn't optimal, but it's an existence proof.  PrinceXML doesn't
+     support flexbox yet.
+  */
+  display: table;
+  margin: 0 auto;
+}
+
+/* lists */
+ol, ul {
+  padding: 0;
+  margin: 0 0 0.5em 2em;
+  & :is(ol, ul) {
+    margin-left: 1em;
+  }
+}
+li {
+  margin: 0 0 0.25em 0;
+}
+ul.empty, .ulEmpty {
+  list-style-type: none;
+  & li {
+    margin-top: 0.5em;
+  }
+}
+:is(ul, ol).compact, .ulCompact, .olCompact {
+  margin: 0 0 0 2em;
+  & li {
+    margin: 0;
+    & :first-child { margin-top: 0; }
+    & :last-child { margin-bottom: 0; }
+  }
+}
+
+/* definition lists */
+dl {
+  clear: left;
+  --indent: 3ch;
+  /* --indent: attr(indent ch); not supported in any browser, but we can dream */
+  &.olPercent {
+    --indent: 5ch;
+    & > dt {
+      min-width: calc(var(--indent) - 2ch);
+    }
+  }
+  &.olPercent > dt {
+    float: none;
+  }
+
+  dl > dd > & {
+    margin-top: 0.5em;
+    margin-bottom: 0;
+  }
+}
+dl:not(.dlNewline) > dt {
+  float: left;
+  margin-right: 2ch;
+  min-width: 8ch;
+}
+dl > dd {
+  margin-bottom: .8em;
+  margin-left: var(--indent) !important; /* stupid element overrides */
+  min-height: 2ex;
+}
+:is(dl.compact, .dlCompact) > dd {
+  margin-bottom: 0;
+  & > :is(:first-child, .break:first-child + *) {
+    margin-top: 0;
+  }
+  & > :is(:last-child) {
+    margin-bottom: 0;
+  }
+}
+:is(dd, span).break {
+  display: none;
+}
+
+/* links */
+a, a[href].selfRef:hover {
+  text-decoration: none;
+}
+a[href] {
+  color: var(--link-color);
+}
+a[href].selfRef, .iref + a[href].internal {
+  color: var(--text-color);
+}
+a[href]:hover {
+  text-decoration: underline;
+}
+a[href].selfRef:hover {
+  background-color: var(--highlight-color);
+}
+a.xref:is(.cite, .auto), :is(#status-of-memo, #copyright) a {
+  white-space: nowrap;
+}
+
+/* Figures */
+tt, code, pre {
+  background-color: var(--highlight-color);
+  font: 14px/22px var(--font-mono);
+}
+tt, code {
+  /* changing the font for inline elements leads to different ascender
+     and descender heights; as we want to retain baseline alignment,
+     remove leading to avoid altering the final height of lines
+     note: this fails if these blocks take an entire line,
+     a different solution would be great */
+  line-height: 0;
+}
+:is(h1, h2, h3, h4, h5, h6) :is(tt, code) {
+  font-size: 84%;
+}
+pre {
+  border: 1px solid var(--line-color);
+  font-size: 13.5px;
+  line-height: 16px;
+  letter-spacing: -0.2px;
+  margin: 5px;
+  padding: 5px;
+}
+img {
+  max-width: 100%;
+}
+figure {
+  margin: 0.5em 0;
+  padding: 0;
+}
+figure blockquote {
+  margin: 0.8em 0.4em 0.4em;
+}
+figcaption, caption {
+  font-style: italic;
+  margin: 0.5em 1.5em;
+  text-align: left;
+  caption-side: bottom;
+}
+@media screen {
+  /* Auto-collapse boilerplate. */
+  :is(#status-of-memo, #copyright) p {
+    margin: -2px 0;
+    max-height: 0;
+    transition: max-height 2s ease, margin 0.5s ease 0.5s;
+    overflow: hidden;
+  }
+  :is(#status-of-memo, #copyright):hover p,
+  :is(#status-of-memo, #copyright) h2:target ~ p {
+    margin: 0.5em 0;
+    max-height: 500px;
+    overflow: auto;
+  }
+  pre, svg {
+    display: inline-block;
+    /* In the horizontal direction, sometimes people make over-sized figures.
+       Scrollbars for those is therefore necessary: auto adds them as necessary..
+       In the vertical direction, the line-height can combine with the font
+       asender/descender height to produce scrollbars: hidden avoids that. */
+    overflow: auto hidden;
+  }
+  pre {
+    max-width: 100%;
+    width: calc(100% - 22px - 1em);
+  }
+  svg {
+    max-width: calc(100% - 22px - 1em);
+  }
+  figure pre {
+    display: block;
+    width: calc(100% - 25px);
+  }
+  :is(pre, svg) + .pilcrow {
+    display: inline-block;
+    vertical-align: text-bottom;
+    padding-bottom: 8px;
+  }
+}
+
+/* aside, blockquote */
+aside, blockquote {
+  margin-left: 0;
+  padding: 0 2em;
+  font-style: italic;
+}
+blockquote {
+  margin: 1em 0;
+}
+cite {
+  display: block;
+  text-align: right;
+  font-style: italic;
+}
+
+/* tables */
+table {
+  width: auto;
+  max-width: 100%;
+  margin: 0 0 1em;
+  border-collapse: collapse;
+}
+table.right {
+  margin-left: auto;
+}
+table.center {
+  margin-left: auto;
+  margin-right: auto;
+}
+table.left {
+  margin-right: auto;
+}
+table .text-left {
+  text-align: left;
+}
+table .text-center {
+  text-align: center;
+}
+table .text-right {
+  text-align: right;
+}
+
+thead, tbody {
+  border: 1px solid var(--line-color);
+}
+th, td {
+  text-align: left;
+  vertical-align: top;
+  padding: 5px 10px;
+}
+th {
+  background-color: var(--line-color);
+}
+:is(tr:nth-child(2n), thead+tbody > tr:nth-child(2n+1)) > td {
+  background-color: var(--background-color);
+}
+:is(tr:nth-child(2n+1), thead+tbody > tr:nth-child(2n)) > td {
+  background-color: var(--highlight-color);
+}
+table caption {
+  margin: 0;
+  padding: 3px 0 3px 1em;
+}
+table p {
+  margin: 0;
+}
+
+/* pilcrow */
+a.pilcrow {
+  margin-left: 3px;
+  opacity: 0.2;
+  user-select: none;
+  &[href] {
+    color: var(--pilcrow-weak);
+    &:hover { text-decoration: none; }
+  }
+}
+@media not print {
+  :hover > a.pilcrow {
+    opacity: 1;
+  }
+  a.pilcrow[href]:hover {
+    color: var(--pilcrow-strong);
+    background-color: transparent;
+  }
+}
+@media print {
+  a.pilcrow {
+    display: none;
+  }
+}
+
+/* misc */
+hr {
+  border: 0;
+  border-top: 1px solid var(--line-color);
+}
+.bcp14 {
+  font-variant: small-caps;
+  font-weight: 600;
+  font-size: var(--small-font-size);
+}
+.role {
+  font-variant: all-small-caps;
+}
+sub, sup {
+  line-height: 1;
+  font-size: 80%;
+}
+
+/* info block */
+#identifiers {
+  margin: 0;
+  font-size: var(--small-font-size);
+  line-height: 18px;
+  --identifier-width: 15ch;
+  & dt {
+    width: var(--identifier-width);
+    min-width: var(--identifier-width);
+    clear: left;
+    float: left;
+    text-align: right;
+    margin-right: 1ch;
+  }
+  & dd {
+    margin: 0;
+    margin-left: calc(1em + var(--identifier-width)) !important;
+    min-width: 5em;
+  }
+  & .authors {
+    & .author {
+      display: inline-block;
+      margin-right: 1.5em;
+    }
+    & .org {
+      font-style: italic;
+    }
+  }
+}
+
+/* The prepared/rendered info at the very bottom of the page */
+.docInfo {
+  color: #999;
+  font-size: 0.9em;
+  font-style: italic;
+  margin-top: 2em;
+}
+.docInfo .prepared {
+  float: right;
+}
+
+/* table of contents */
+#toc {
+  padding: 0.75em 0 2em 0;
+  margin-bottom: 1em;
+
+  & nav {
+    & ul {
+      margin: 0 0.5em 0 0;
+      padding: 0;
+      list-style: none;
+    }
+    & li {
+      line-height: 1.3em;
+      margin: 2px 0;
+      padding-left: 1.2em;
+      text-indent: -1.2em;
+    }
+  }
+  & a.xref {
+    white-space: normal;
+  }
+}
+
+.references {
+  & > dt {
+    text-align: right;
+    font-weight: bold;
+    min-width: 10ch;
+    margin-right: 1.5ch;
+    &:target::before {
+      content: "⇒";
+      margin: 0 10px 0 -25px;
+    }
+  }
+  & > dd {
+    margin-left: 12ch !important;
+    overflow: visible;
+    & .refInstance {
+      margin-bottom: 0.8em;
+    }
+    & .ascii {
+      margin-bottom: 0.25em;
+    }
+  }
+}
+
+#rfc\.index\.index + ul {
+  margin-left: 0;
+}
+
+/* authors */
+address.vcard {
+  font-style: normal;
+  max-width: 20em;
+  margin: 1em auto 1em 0;
+
+  & .nameRole {
+    font-weight: 700;
+    margin-left: 0;
+  }
+  & .label {
+    margin: 0.5em 0;
+  }
+  & .type {
+    display: none;
+  }
+  & .alternative-contact {
+    margin: 0.5em 0 0.25em 0;
+  }
+  & .non-ascii {
+    margin: 0 0 0 2em;
+  }
+  & div.left {
+    text-align: left;
+  }
+  & div.right {
+    text-align: right;
+  }
+}
+
+hr.addr {
+  border-top: 1px dashed;
+  margin: 0;
+  color: #ddd;
+  max-width: calc(100% - 16px);
+}
+@media (min-width: 500px) {
+  #authors-addresses > section {
+    column-count: 2;
+    column-gap: 20px;
+  }
+  #authors-addresses > section > h2 {
+    column-span: all;
+  }
+  /* hack for break-inside: avoid-column */
+  #authors-addresses address {
+    display: inline-block;
+    break-inside: avoid-column;
+  }
+}
+
+/* Comments */
+.rfcEditorRemove p:first-of-type {
+  font-style: italic;
+}
+.cref {
+  background-color: rgba(249, 232, 105, 0.3);
+  padding: 2px 4px;
+}
+.crefSource {
+  font-style: italic;
+}
+
+@media screen {
+  #toc nav {
+    font-family: var(--font-title);
+    font-weight: 360;
+    & > ul { margin-bottom: 2em; }
+    & ul {
+      margin: 0 0 0 4px;
+      & :is(p, li) {
+        margin: 2px 0;
+      }
+    }
+  }
+  #toc a.toplink {
+    float: right;
+  }
+}
+@media not screen {
+  #toc a.toplink {
+    display: none;
+  }
+}
+
+
+/* TOC layout for smaller screens */
+@media screen and (max-width: 929px) {
+  #toc {
+    position: fixed;
+    z-index: 2;
+    top: 0;
+    right: 0;
+    padding: 1px 0 0 0;
+    margin: 0;
+    border-bottom: 1px solid #ccc;
+    opacity: 0.6;
+  }
+  #toc h2 {
+    margin: 0;
+    padding: 2px 0 2px 6px;
+    padding-right: 1em;
+    font-size: 18px;
+    line-height: 24px;
+    min-width: 190px;
+    text-align: right;
+    background-color: #444;
+    color: white;
+    cursor: pointer;
+    &::before { /* css hamburger */
+      float: right;
+      position: relative;
+      width: 1em;
+      height: 1px;
+      left: -164px;
+      margin: 8px 0 0 0;
+      background: white none repeat scroll 0 0;
+      box-shadow: 0 4px 0 0 white, 0 8px 0 0 white;
+      content: "";
+    }
+  }
+  #toc nav {
+    display: none;
+    background-color: var(--background-color);
+    padding: 0.5em 1em 1em;
+    overflow: auto;
+    overscroll-behavior: contain;
+    height: calc(100vh - 48px);
+    border-left: 1px solid #ddd;
+  }
+  #toc.active {
+    opacity: 1;
+    & nav { display: block; }
+  }
+  /* Make the collapsed ToC header render white on gray also when it's a link */
+  #toc h2 a,
+  #toc h2 a:is(:link, :focus, :hover),
+  #toc a.toplink,
+  #toc a.toplink:hover {
+    color: white;
+    background-color: #444;
+    text-decoration: none;
+  }
+  #toc a.toplink {
+    margin: 2px 0.5em 0;
+  }
+}
+
+/* TOC layout for wide screens */
+@media screen and (min-width: 930px) {
+  body {
+    padding-right: 360px;
+    padding-right: calc(min(180px + 20%, 500px));
+  }
+  #toc {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    right: calc(50vw - 480px);
+    width: 312px;
+    margin: 0;
+    padding: 0;
+    z-index: 1;
+  }
+  #toc h2 {
+    margin: 0;
+    padding: 0.25em 1em 1em 0;
+  }
+  #toc nav {
+    display: block;
+    height: calc(90vh - 84px);
+    bottom: 0;
+    padding: 0.5em 0 2em;
+    overflow: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+  }
+  img { /* future proofing */
+    max-width: 100%;
+    height: auto;
+  }
+  #toc a.toplink {
+    margin: 8px 0.5em 0;
+  }
+}
+
+/* pagination */
+@media print {
+  body {
+    width: 100%;
+  }
+  p {
+    orphans: 3;
+    widows: 3;
+  }
+  #n-copyright-notice {
+    border-bottom: none;
+  }
+  #toc, #n-introduction {
+    page-break-before: always;
+  }
+  #toc {
+    border-top: none;
+    padding-top: 0;
+  }
+  figure, pre, .vcard {
+    page-break-inside: avoid;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+  }
+  :is(h2, h3, h4, h5, h6)+*, dd {
+    page-break-before: avoid;
+  }
+  pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 10pt;
+  }
+  table {
+    border: 1px solid #ddd;
+  }
+  td {
+    border-top: 1px solid #ddd;
+  }
+}
+
+@page :first {
+  padding-top: 0;
+  @top-left {
+    content: normal;
+    border: none;
+  }
+  @top-center {
+    content: normal;
+    border: none;
+  }
+  @top-right {
+    content: normal;
+    border: none;
+  }
+}
+
+@page {
+  size: A4;
+  margin-bottom: 45mm;
+  padding-top: 20px;
+}
+
+/* Dark mode. */
+@media (prefers-color-scheme: dark) {
+:root {
+  --background-color: #121212;
+  --text-color: #f0f0f0;
+  --title-color: #fff;
+  --link-color: #4da4f0;
+  --highlight-color: #282828;
+  --line-color: #444;
+  --pilcrow-weak: #444;
+  --pilcrow-strong: #666;
+  scrollbar-color: #777 #333;
+}
+}
+
+/* SVG Trick: a prefix match works because only black and white are allowed */
+svg :is([stroke="black"], [stroke^="#000"]) {
+  stroke: var(--text-color);
+}
+svg :is([stroke="white"], [stroke^="#fff"]) {
+  stroke: var(--background-color);
+}
+svg :is([fill="black"], [fill^="#000"], :not([fill])) {
+  fill: var(--text-color);
+}
+svg :is([fill="white"], [fill^="#fff"]) {
+  fill: var(--background-color);
+}
+</style>
+
+</head>
+<body class="xml2rfc">
+<table class="ears">
+<thead><tr>
+<td class="left">Internet-Draft</td>
+<td class="center">dpop-proof</td>
+<td class="right">September 2025</td>
+</tr></thead>
+<tfoot><tr>
+<td class="left">Nandakumar &amp; Jennings</td>
+<td class="center">Expires 20 March 2026</td>
+<td class="right">[Page]</td>
+</tr></tfoot>
+</table>
+<div id="external-metadata" class="document-information"></div>
+<div id="internal-metadata" class="document-information">
+<dl id="identifiers">
+<dt class="label-workgroup">Workgroup:</dt>
+<dd class="workgroup">OAuth Working Group</dd>
+<dt class="label-internet-draft">Internet-Draft:</dt>
+<dd class="internet-draft">draft-nandakumar-oauth-dpop-proof-latest</dd>
+<dt class="label-published">Published:</dt>
+<dd class="published">
+<time datetime="2025-09-16" class="published">16 September 2025</time>
+    </dd>
+<dt class="label-intended-status">Intended Status:</dt>
+<dd class="intended-status">Standards Track</dd>
+<dt class="label-expires">Expires:</dt>
+<dd class="expires"><time datetime="2026-03-20">20 March 2026</time></dd>
+<dt class="label-authors">Authors:</dt>
+<dd class="authors">
+<div class="author">
+      <div class="author-name">S. Nandakumar</div>
+<div class="org">Cisco Systems</div>
+</div>
+<div class="author">
+      <div class="author-name">C. Jennings</div>
+<div class="org">Cisco Systems</div>
+</div>
+</dd>
+</dl>
+</div>
+<h1 id="title">Application-Agnostic Demonstration Proof of Possession (DPoP) Framework</h1>
+<section id="section-abstract">
+      <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
+<p id="section-abstract-1">This document describes a generic framework for Demonstrating Proof of
+Possession (DPoP) that extends beyond HTTP-specific implementations. Building
+upon RFC 9449, this framework provides a protocol-agnostic approach for
+sender-constraining tokens through cryptographic proof of possession, enabling
+secure token binding across various application protocols and contexts.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+</section>
+<section class="note rfcEditorRemove" id="section-note.1">
+      <h2 id="name-about-this-document">
+<a href="#name-about-this-document" class="section-name selfRef">About This Document</a>
+      </h2>
+<p id="section-note.1-1">This note is to be removed before publishing as an RFC.<a href="#section-note.1-1" class="pilcrow">¶</a></p>
+<p id="section-note.1-2">
+        The latest revision of this draft can be found at <span><a href="https://oauth-wg.github.io/oauth-dpop-generic/draft-generic-dpop-framework.html">https://oauth-wg.github.io/oauth-dpop-generic/draft-generic-dpop-framework.html</a></span>.
+        Status information for this document may be found at <span><a href="https://datatracker.ietf.org/doc/draft-nandakumar-oauth-dpop-proof/">https://datatracker.ietf.org/doc/draft-nandakumar-oauth-dpop-proof/</a></span>.<a href="#section-note.1-2" class="pilcrow">¶</a></p>
+<p id="section-note.1-3">
+        Discussion of this document takes place on the
+        OAuth Working Group Working Group mailing list (<span><a href="mailto:oauth@ietf.org">mailto:oauth@ietf.org</a></span>),
+        which is archived at <span><a href="https://mailarchive.ietf.org/arch/browse/oauth/">https://mailarchive.ietf.org/arch/browse/oauth/</a></span>.
+        Subscribe at <span><a href="https://www.ietf.org/mailman/listinfo/oauth/">https://www.ietf.org/mailman/listinfo/oauth/</a></span>.<a href="#section-note.1-3" class="pilcrow">¶</a></p>
+<p id="section-note.1-4">Source for this draft and an issue tracker can be found at
+        <span><a href="https://github.com/oauth-wg/oauth-dpop-generic">https://github.com/oauth-wg/oauth-dpop-generic</a></span>.<a href="#section-note.1-4" class="pilcrow">¶</a></p>
+</section>
+<div id="status-of-memo">
+<section id="section-boilerplate.1">
+        <h2 id="name-status-of-this-memo">
+<a href="#name-status-of-this-memo" class="section-name selfRef">Status of This Memo</a>
+        </h2>
+<p id="section-boilerplate.1-1">
+        This Internet-Draft is submitted in full conformance with the
+        provisions of BCP 78 and BCP 79.<a href="#section-boilerplate.1-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-2">
+        Internet-Drafts are working documents of the Internet Engineering Task
+        Force (IETF). Note that other groups may also distribute working
+        documents as Internet-Drafts. The list of current Internet-Drafts is
+        at <span><a href="https://datatracker.ietf.org/drafts/current/">https://datatracker.ietf.org/drafts/current/</a></span>.<a href="#section-boilerplate.1-2" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-3">
+        Internet-Drafts are draft documents valid for a maximum of six months
+        and may be updated, replaced, or obsoleted by other documents at any
+        time. It is inappropriate to use Internet-Drafts as reference
+        material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-4">
+        This Internet-Draft will expire on 20 March 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="copyright">
+<section id="section-boilerplate.2">
+        <h2 id="name-copyright-notice">
+<a href="#name-copyright-notice" class="section-name selfRef">Copyright Notice</a>
+        </h2>
+<p id="section-boilerplate.2-1">
+            Copyright (c) 2025 IETF Trust and the persons identified as the
+            document authors. All rights reserved.<a href="#section-boilerplate.2-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.2-2">
+            This document is subject to BCP 78 and the IETF Trust's Legal
+            Provisions Relating to IETF Documents
+            (<span><a href="https://trustee.ietf.org/license-info">https://trustee.ietf.org/license-info</a></span>) in effect on the date of
+            publication of this document. Please review these documents
+            carefully, as they describe your rights and restrictions with
+            respect to this document. Code Components extracted from this
+            document must include Revised BSD License text as described in
+            Section 4.e of the Trust Legal Provisions and are provided without
+            warranty as described in the Revised BSD License.<a href="#section-boilerplate.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="toc">
+<section id="section-toc.1">
+        <a href="#" onclick="scroll(0,0)" class="toplink">▲</a><h2 id="name-table-of-contents">
+<a href="#name-table-of-contents" class="section-name selfRef">Table of Contents</a>
+        </h2>
+<nav class="toc"><ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1">
+            <p id="section-toc.1-1.1.1" class="keepWithNext"><a href="#section-1" class="auto internal xref">1</a>.  <a href="#name-introduction" class="internal xref">Introduction</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.1">
+                <p id="section-toc.1-1.1.2.1.1" class="keepWithNext"><a href="#section-1.1" class="auto internal xref">1.1</a>.  <a href="#name-conventions-and-terminology" class="internal xref">Conventions and Terminology</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
+            <p id="section-toc.1-1.2.1" class="keepWithNext"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-protocol-overview-and-conce" class="internal xref">Protocol Overview and Concept</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
+            <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-application-protocol-requir" class="internal xref">Application Protocol Requirements</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1">
+                <p id="section-toc.1-1.3.2.1.1"><a href="#section-3.1" class="auto internal xref">3.1</a>.  <a href="#name-binding-fields-definition" class="internal xref">Binding Fields Definition</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.2">
+                <p id="section-toc.1-1.3.2.2.1"><a href="#section-3.2" class="auto internal xref">3.2</a>.  <a href="#name-nonce-support" class="internal xref">Nonce Support</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.3">
+                <p id="section-toc.1-1.3.2.3.1"><a href="#section-3.3" class="auto internal xref">3.3</a>.  <a href="#name-security-requirements" class="internal xref">Security Requirements</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.4">
+                <p id="section-toc.1-1.3.2.4.1"><a href="#section-3.4" class="auto internal xref">3.4</a>.  <a href="#name-example-binding-implementat" class="internal xref">Example Binding Implementation</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
+            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-application-agnostic-dpop-p" class="internal xref">Application-Agnostic DPoP Proof Structure</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1">
+                <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="auto internal xref">4.1</a>.  <a href="#name-authorization-context-objec" class="internal xref">Authorization Context Object</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1.2.1">
+                    <p id="section-toc.1-1.4.2.1.2.1.1"><a href="#section-4.1.1" class="auto internal xref">4.1.1</a>.  <a href="#name-authorization-context-object" class="internal xref">Authorization Context Object Structure</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2">
+                <p id="section-toc.1-1.4.2.2.1"><a href="#section-4.2" class="auto internal xref">4.2</a>.  <a href="#name-jwt-header-requirements" class="internal xref">JWT Header Requirements</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.3">
+                <p id="section-toc.1-1.4.2.3.1"><a href="#section-4.3" class="auto internal xref">4.3</a>.  <a href="#name-jwt-payload-requirements" class="internal xref">JWT Payload Requirements</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-protocol-type-registry" class="internal xref">Protocol Type Registry</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1">
+                <p id="section-toc.1-1.5.2.1.1"><a href="#section-5.1" class="auto internal xref">5.1</a>.  <a href="#name-moq-context-type" class="internal xref">MOQ Context Type</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1.2.1">
+                    <p id="section-toc.1-1.5.2.1.2.1.1"><a href="#section-5.1.1" class="auto internal xref">5.1.1</a>.  <a href="#name-required-fields" class="internal xref">Required Fields</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1.2.2">
+                    <p id="section-toc.1-1.5.2.1.2.2.1"><a href="#section-5.1.2" class="auto internal xref">5.1.2</a>.  <a href="#name-optional-fields" class="internal xref">Optional Fields</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1.2.3">
+                    <p id="section-toc.1-1.5.2.1.2.3.1"><a href="#section-5.1.3" class="auto internal xref">5.1.3</a>.  <a href="#name-string-encoding-for-binary-" class="internal xref">String Encoding for Binary Data</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1.2.4">
+                    <p id="section-toc.1-1.5.2.1.2.4.1"><a href="#section-5.1.4" class="auto internal xref">5.1.4</a>.  <a href="#name-validation-requirements" class="internal xref">Validation Requirements</a></p>
+</li>
+                </ul>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
+            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-application-agnostic-dpop-pr" class="internal xref">Application-Agnostic DPoP Proof JWT Examples</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1">
+                <p id="section-toc.1-1.6.2.1.1"><a href="#section-6.1" class="auto internal xref">6.1</a>.  <a href="#name-example-moq-context-dpop-pr" class="internal xref">Example: MOQ Context DPoP Proof</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.2">
+                <p id="section-toc.1-1.6.2.2.1"><a href="#section-6.2" class="auto internal xref">6.2</a>.  <a href="#name-comparing-with-http-dpop" class="internal xref">Comparing with HTTP DPoP</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
+            <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-relationship-to-rfc-9449" class="internal xref">Relationship to RFC 9449</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.1">
+                <p id="section-toc.1-1.7.2.1.1"><a href="#section-7.1" class="auto internal xref">7.1</a>.  <a href="#name-extensions-to-section-7-pro" class="internal xref">Extensions to Section 7 (Protected Resource Access)</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.1.2.1">
+                    <p id="section-toc.1-1.7.2.1.2.1.1"><a href="#section-7.1.1" class="auto internal xref">7.1.1</a>.  <a href="#name-key-differences-from-rfc-94" class="internal xref">Key Differences from RFC 9449 Section 7</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.1.2.2">
+                    <p id="section-toc.1-1.7.2.1.2.2.1"><a href="#section-7.1.2" class="auto internal xref">7.1.2</a>.  <a href="#name-compatibility-with-rfc-9449" class="internal xref">Compatibility with RFC 9449</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.1.2.3">
+                    <p id="section-toc.1-1.7.2.1.2.3.1"><a href="#section-7.1.3" class="auto internal xref">7.1.3</a>.  <a href="#name-migration-path" class="internal xref">Migration Path</a></p>
+</li>
+                </ul>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8">
+            <p id="section-toc.1-1.8.1"><a href="#section-8" class="auto internal xref">8</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.1">
+                <p id="section-toc.1-1.8.2.1.1"><a href="#section-8.1" class="auto internal xref">8.1</a>.  <a href="#name-context-type-validation" class="internal xref">Context Type Validation</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.2">
+                <p id="section-toc.1-1.8.2.2.1"><a href="#section-8.2" class="auto internal xref">8.2</a>.  <a href="#name-protocol-specific-security-" class="internal xref">Protocol-Specific Security Requirements</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.3">
+                <p id="section-toc.1-1.8.2.3.1"><a href="#section-8.3" class="auto internal xref">8.3</a>.  <a href="#name-cross-context-token-binding" class="internal xref">Cross-Context Token Binding</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.4">
+                <p id="section-toc.1-1.8.2.4.1"><a href="#section-8.4" class="auto internal xref">8.4</a>.  <a href="#name-application-separation-requ" class="internal xref">Application Separation Requirements</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
+            <p id="section-toc.1-1.9.1"><a href="#section-9" class="auto internal xref">9</a>.  <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.1">
+                <p id="section-toc.1-1.9.2.1.1"><a href="#section-9.1" class="auto internal xref">9.1</a>.  <a href="#name-dpop-authorization-context-" class="internal xref">DPoP Authorization Context Types Registry</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.1.2.1">
+                    <p id="section-toc.1-1.9.2.1.2.1.1"><a href="#section-9.1.1" class="auto internal xref">9.1.1</a>.  <a href="#name-registration-template" class="internal xref">Registration Template</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.1.2.2">
+                    <p id="section-toc.1-1.9.2.1.2.2.1"><a href="#section-9.1.2" class="auto internal xref">9.1.2</a>.  <a href="#name-initial-registry-contents" class="internal xref">Initial Registry Contents</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.2">
+                <p id="section-toc.1-1.9.2.2.1"><a href="#section-9.2" class="auto internal xref">9.2</a>.  <a href="#name-jwt-claims-registration" class="internal xref">JWT Claims Registration</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.3">
+                <p id="section-toc.1-1.9.2.3.1"><a href="#section-9.3" class="auto internal xref">9.3</a>.  <a href="#name-media-types-registration" class="internal xref">Media Types Registration</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.3.2.1">
+                    <p id="section-toc.1-1.9.2.3.2.1.1"><a href="#section-9.3.1" class="auto internal xref">9.3.1</a>.  <a href="#name-application-dpop-proofjwt" class="internal xref">application/dpop-proof+jwt</a></p>
+</li>
+                </ul>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
+            <p id="section-toc.1-1.10.1"><a href="#section-10" class="auto internal xref">10</a>. <a href="#name-references" class="internal xref">References</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.1">
+                <p id="section-toc.1-1.10.2.1.1"><a href="#section-10.1" class="auto internal xref">10.1</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.2">
+                <p id="section-toc.1-1.10.2.2.1"><a href="#section-10.2" class="auto internal xref">10.2</a>.  <a href="#name-informative-references" class="internal xref">Informative References</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11">
+            <p id="section-toc.1-1.11.1"><a href="#appendix-A" class="auto internal xref">Appendix A</a>.  <a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12">
+            <p id="section-toc.1-1.12.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
+</li>
+        </ul>
+</nav>
+</section>
+</div>
+<div id="introduction">
+<section id="section-1">
+      <h2 id="name-introduction">
+<a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
+      </h2>
+<p id="section-1-1">RFC 9449 <span>[<a href="#RFC9449" class="cite xref">RFC9449</a>]</span> defines a mechanism for sender-constraining OAuth 2.0
+tokens via a proof-of-possession mechanism on the application level. DPoP as
+defined in RFC 9449 has two separable parts: the first part (covered in
+sections 4, 5, 6, and 8) describes how a client obtains a DPoP-bound token
+from an authorization server, while the second part (covered in sections 7 and
+9) describes how the client proves control of the private key associated with
+a DPoP token when accessing protected resources.<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-2">This specification defines bindings for Media Over QUIC Transport (MOQT) and
+presents a generic framework that abstracts the core concepts of DPoP into a
+protocol-agnostic approach. While keeping the first part unchanged, this
+framework generalizes the second part to enable proof-of-possession token
+binding for various application contexts beyond HTTP while maintaining the
+security properties established in RFC 9449.<a href="#section-1-2" class="pilcrow">¶</a></p>
+<div id="conventions-and-terminology">
+<section id="section-1.1">
+        <h3 id="name-conventions-and-terminology">
+<a href="#section-1.1" class="section-number selfRef">1.1. </a><a href="#name-conventions-and-terminology" class="section-name selfRef">Conventions and Terminology</a>
+        </h3>
+<p id="section-1.1-1">The key words "<span class="bcp14">MUST</span>", "<span class="bcp14">MUST NOT</span>", "<span class="bcp14">REQUIRED</span>", "<span class="bcp14">SHALL</span>", "<span class="bcp14">SHALL NOT</span>", "<span class="bcp14">SHOULD</span>", "<span class="bcp14">SHOULD NOT</span>", "<span class="bcp14">RECOMMENDED</span>", "<span class="bcp14">NOT RECOMMENDED</span>",
+"<span class="bcp14">MAY</span>", and "<span class="bcp14">OPTIONAL</span>" in this document are to be interpreted as
+described in BCP 14 <span>[<a href="#RFC2119" class="cite xref">RFC2119</a>]</span> <span>[<a href="#RFC8174" class="cite xref">RFC8174</a>]</span> when, and only when, they
+appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">¶</a></p>
+<p id="section-1.1-2">The terms "access token", "refresh token", "authorization server", "resource
+server", "client", and "public client" are defined by "The OAuth 2.0
+Authorization Framework" <span>[<a href="#RFC6749" class="cite xref">RFC6749</a>]</span>.<a href="#section-1.1-2" class="pilcrow">¶</a></p>
+<p id="section-1.1-3">The terms "JSON Web Token (JWT)", "JOSE Header", and "JWS" are defined in
+<span>[<a href="#RFC7519" class="cite xref">RFC7519</a>]</span> and <span>[<a href="#RFC7515" class="cite xref">RFC7515</a>]</span>.<a href="#section-1.1-3" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-1.1-4">
+          <dt id="section-1.1-4.1">Application protocol:</dt>
+          <dd style="margin-left: 1.5em" id="section-1.1-4.2">
+            <p id="section-1.1-4.2.1">The protocol which uses DPoP tokens as proof of authorization. This may be
+HTTP (as in RFC 9449) or any other application-layer protocol that requires
+proof-of-possession token binding.<a href="#section-1.1-4.2.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+</section>
+</div>
+</section>
+</div>
+<div id="protocol-overview-and-concept">
+<section id="section-2">
+      <h2 id="name-protocol-overview-and-conce">
+<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-protocol-overview-and-conce" class="section-name selfRef">Protocol Overview and Concept</a>
+      </h2>
+<p id="section-2-1">The Generic DPoP Framework extends the DPoP mechanism to work across various
+application protocols beyond HTTP. The basic flow involves a client obtaining
+a DPoP-bound token from an authorization server, then using that token with
+an application protocol by providing proof of possession of the associated
+private key.<a href="#section-2-1" class="pilcrow">¶</a></p>
+<span id="name-generic-dpop-flow"></span><div id="fig-generic-dpop-flow">
+<figure id="figure-1">
+        <div class="alignLeft art-text artwork" id="section-2-2.1">
+<pre>
++--------+                                          +---------------+
+|        |--(A)-- Token Request -------------------&gt;|               |
+| Client |        (Generic DPoP Proof)              | Authorization |
+|        |                                          |     Server    |
+|        |&lt;-(B)-- DPoP-Bound Access Token ----------|               |
+|        |        (token_type=DPoP)                 +---------------+
+|        |
+|        |
+|        |                                          +---------------+
+|        |--(C)-- Application Protocol Request ---&gt;|               |
+| Client |        (DPoP-Bound Access Token +       | Application   |
+|        |         Generic DPoP Proof with         |   Protocol    |
+|        |         Binding Fields)                 |    Server     |
+|        |&lt;-(D)-- Application Protocol Response ---|               |
++--------+                                          +---------------+
+</pre>
+</div>
+<figcaption><a href="#figure-1" class="selfRef">Figure 1</a>:
+<a href="#name-generic-dpop-flow" class="selfRef">Generic DPoP Flow</a>
+        </figcaption></figure>
+</div>
+<p id="section-2-3">The main data structure introduced by this specification is a generic DPoP
+proof JWT that can be used across various application protocols and contexts,
+as described in detail below. A client uses a generic DPoP proof JWT to prove
+the possession of a private key corresponding to a certain public key.<a href="#section-2-3" class="pilcrow">¶</a></p>
+<p id="section-2-4">Roughly speaking, a generic DPoP proof is a signature over:<a href="#section-2-4" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-2-5.1">
+          <p id="section-2-5.1.1">protocol-specific authorization context data,<a href="#section-2-5.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-2-5.2">
+          <p id="section-2-5.2.1">a timestamp,<a href="#section-2-5.2.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-2-5.3">
+          <p id="section-2-5.3.1">a unique identifier,<a href="#section-2-5.3.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-2-5.4">
+          <p id="section-2-5.4.1">an optional server-provided nonce, and<a href="#section-2-5.4.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-2-5.5">
+          <p id="section-2-5.5.1">a hash of the associated access token when an access token is present
+within the request.<a href="#section-2-5.5.1" class="pilcrow">¶</a></p>
+</li>
+      </ul>
+<p id="section-2-6">The application protocol needs to define binding fields that make the proof JWT
+unique to a specific protocol interaction. These binding fields replace the
+HTTP method (<code>htm</code>) and HTTP URI (<code>htu</code>) fields used in RFC 9449, providing
+protocol-specific context that prevents replay attacks across different
+protocol operations.<a href="#section-2-6" class="pilcrow">¶</a></p>
+<p id="section-2-7">Key aspects of the protocol:<a href="#section-2-7" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-2-8">
+<li id="section-2-8.1">
+          <p id="section-2-8.1.1"><strong>Token Acquisition (Steps A-B)</strong>: Uses the same mechanism as RFC 9449
+sections 4, 5, 6, and 8<a href="#section-2-8.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li id="section-2-8.2">
+          <p id="section-2-8.2.1"><strong>Proof of Possession (Steps C-D)</strong>: Generalizes RFC 9449 sections 7 and 9
+with protocol-specific binding fields<a href="#section-2-8.2.1" class="pilcrow">¶</a></p>
+</li>
+        <li id="section-2-8.3">
+          <p id="section-2-8.3.1"><strong>Binding Fields</strong>: Each application protocol must define how to bind the
+proof to specific protocol operations to ensure uniqueness<a href="#section-2-8.3.1" class="pilcrow">¶</a></p>
+</li>
+      </ol>
+<p id="section-2-9">The basic steps of a protocol flow with generic DPoP (without the optional
+nonce) are shown in <a href="#fig-generic-dpop-flow" class="auto internal xref">Figure 1</a>.<a href="#section-2-9" class="pilcrow">¶</a></p>
+<p id="section-2-10">A. In the token request, the client sends an authorization grant (e.g., an
+authorization code, refresh token, etc.) to the authorization server in order
+to obtain an access token (and potentially a refresh token). The client
+attaches a generic DPoP proof to the request.<a href="#section-2-10" class="pilcrow">¶</a></p>
+<p id="section-2-11">B. The authorization server binds (sender-constrains) the access token to the
+public key claimed by the client in the DPoP proof; that is, the access token
+cannot be used without proving possession of the respective private key. If a
+refresh token is issued to a public client, it is also bound to the public key
+of the DPoP proof.<a href="#section-2-11" class="pilcrow">¶</a></p>
+<p id="section-2-12">C. To use the access token, the client has to prove possession of the private
+key by, again, providing a generic DPoP proof for that request to the protocol
+server. The protocol server needs to receive information about the public key
+to which the access token is bound. This information may be encoded directly
+into the access token (for JWT-structured access tokens) or provided via token
+introspection endpoint (not shown). The protocol server verifies that the
+public key to which the access token is bound matches the public key of the
+DPoP proof. It also verifies that the access token hash in the DPoP proof
+matches the access token presented in the request.<a href="#section-2-12" class="pilcrow">¶</a></p>
+<p id="section-2-13">D. The protocol server refuses to serve the request if the signature check
+fails or if the data in the DPoP proof is wrong, e.g., the authorization
+context does not match the expected context for the protocol operation. The
+access token itself, of course, must also be valid in all other respects.<a href="#section-2-13" class="pilcrow">¶</a></p>
+<p id="section-2-14">The generic DPoP mechanism presented herein is not a client authentication
+method. In fact, a primary use case of DPoP is for public clients (e.g.,
+single-page applications and applications on a user's device) that do not use
+client authentication. Nonetheless, generic DPoP is designed to be compatible
+with private_key_jwt and all other client authentication methods.<a href="#section-2-14" class="pilcrow">¶</a></p>
+<p id="section-2-15">Generic DPoP does not directly ensure message integrity, but it relies on the
+underlying transport security layer (such as TLS) for that purpose. See
+<a href="#security-considerations" class="auto internal xref">Section 8</a> for details.<a href="#section-2-15" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="application-protocol-requirements">
+<section id="section-3">
+      <h2 id="name-application-protocol-requir">
+<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-application-protocol-requir" class="section-name selfRef">Application Protocol Requirements</a>
+      </h2>
+<p id="section-3-1">Application protocols that wish to use this generic DPoP framework <span class="bcp14">MUST</span> define
+the following elements to ensure secure proof-of-possession token binding:<a href="#section-3-1" class="pilcrow">¶</a></p>
+<div id="binding-fields-definition">
+<section id="section-3.1">
+        <h3 id="name-binding-fields-definition">
+<a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-binding-fields-definition" class="section-name selfRef">Binding Fields Definition</a>
+        </h3>
+<p id="section-3.1-1">Each application protocol <span class="bcp14">MUST</span> specify:<a href="#section-3.1-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-3.1-2">
+<li id="section-3.1-2.1">
+            <p id="section-3.1-2.1.1"><strong>Required Binding Fields</strong>: The mandatory fields within the Authorization
+Context (<code>actx</code>) object that uniquely identify and bind the proof to a
+specific protocol operation<a href="#section-3.1-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-3.1-2.2">
+            <p id="section-3.1-2.2.1"><strong>Field Semantics</strong>: Clear definitions of what each binding field represents
+and how it relates to protocol messages and operations<a href="#section-3.1-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-3.1-2.3">
+            <p id="section-3.1-2.3.1"><strong>Uniqueness Requirements</strong>: How the combination of binding fields ensures
+that each proof is unique to a specific protocol interaction<a href="#section-3.1-2.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ol>
+</section>
+</div>
+<div id="nonce-support">
+<section id="section-3.2">
+        <h3 id="name-nonce-support">
+<a href="#section-3.2" class="section-number selfRef">3.2. </a><a href="#name-nonce-support" class="section-name selfRef">Nonce Support</a>
+        </h3>
+<p id="section-3.2-1">Application protocols <span class="bcp14">SHOULD</span> provide a mechanism for servers to supply nonces
+to clients for replay protection, similar to Section 9 of RFC 9449. When
+nonce support is provided, the protocol specification <span class="bcp14">MUST</span> define:<a href="#section-3.2-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-3.2-2">
+<li id="section-3.2-2.1">
+            <p id="section-3.2-2.1.1">How nonces are communicated from server to client<a href="#section-3.2-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-3.2-2.2">
+            <p id="section-3.2-2.2.1">The lifetime and scope of nonces<a href="#section-3.2-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-3.2-2.3">
+            <p id="section-3.2-2.3.1">How clients incorporate nonces into DPoP proofs<a href="#section-3.2-2.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ol>
+</section>
+</div>
+<div id="security-requirements">
+<section id="section-3.3">
+        <h3 id="name-security-requirements">
+<a href="#section-3.3" class="section-number selfRef">3.3. </a><a href="#name-security-requirements" class="section-name selfRef">Security Requirements</a>
+        </h3>
+<p id="section-3.3-1">Application protocol specifications <span class="bcp14">MUST</span> include:<a href="#section-3.3-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-3.3-2">
+<li id="section-3.3-2.1">
+            <p id="section-3.3-2.1.1"><strong>Replay Attack Prevention</strong>: How the binding fields prevent replay of
+proofs across different protocol operations<a href="#section-3.3-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-3.3-2.2">
+            <p id="section-3.3-2.2.1"><strong>Cross-Protocol Security</strong>: Measures to prevent proofs from being valid
+across different application protocols<a href="#section-3.3-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-3.3-2.3">
+            <p id="section-3.3-2.3.1"><strong>Protocol-Specific Threat Model</strong>: Analysis of security threats specific
+to the application protocol context<a href="#section-3.3-2.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ol>
+</section>
+</div>
+<div id="example-binding-implementation">
+<section id="section-3.4">
+        <h3 id="name-example-binding-implementat">
+<a href="#section-3.4" class="section-number selfRef">3.4. </a><a href="#name-example-binding-implementat" class="section-name selfRef">Example Binding Implementation</a>
+        </h3>
+<p id="section-3.4-1">For illustration, an application protocol might define binding fields such as:<a href="#section-3.4-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-3.4-2.1">
+            <p id="section-3.4-2.1.1"><code>operation</code>: The specific protocol operation being authorized<a href="#section-3.4-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.4-2.2">
+            <p id="section-3.4-2.2.1"><code>resource_identifier</code>: A unique identifier for the resource being accessed<a href="#section-3.4-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.4-2.3">
+            <p id="section-3.4-2.3.1"><code>timestamp_context</code>: Protocol-specific temporal context information<a href="#section-3.4-2.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-3.4-3">The combination of these fields would ensure that a DPoP proof is valid only
+for the specific operation, resource, and temporal context for which it was
+generated.<a href="#section-3.4-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="application-agnostic-dpop-proof-structure">
+<section id="section-4">
+      <h2 id="name-application-agnostic-dpop-p">
+<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-application-agnostic-dpop-p" class="section-name selfRef">Application-Agnostic DPoP Proof Structure</a>
+      </h2>
+<p id="section-4-1">This proof structure has the same general structure as a standard DPoP proof
+as defined in RFC 9449, with the key difference being that the HTTP-specific
+claims (<code>htm</code> for HTTP method and <code>htu</code> for HTTP URI) are replaced with the
+Authorization Context (<code>actx</code>) object to provide application protocol-specific
+binding information.<a href="#section-4-1" class="pilcrow">¶</a></p>
+<div id="authorization-context-object">
+<section id="section-4.1">
+        <h3 id="name-authorization-context-objec">
+<a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-authorization-context-objec" class="section-name selfRef">Authorization Context Object</a>
+        </h3>
+<p id="section-4.1-1">The core extension introduced by this framework is the Authorization Context
+(<code>actx</code>) object, which replaces protocol-specific fields in the DPoP proof JWT
+payload.<a href="#section-4.1-1" class="pilcrow">¶</a></p>
+<p id="section-4.1-2">A generic DPoP proof JWT <span class="bcp14">MUST</span> contain an Authorization Context object
+(<code>actx</code>) that specifies the protocol or context for which the proof is being
+generated.<a href="#section-4.1-2" class="pilcrow">¶</a></p>
+<div id="authorization-context-object-structure">
+<section id="section-4.1.1">
+          <h4 id="name-authorization-context-object">
+<a href="#section-4.1.1" class="section-number selfRef">4.1.1. </a><a href="#name-authorization-context-object" class="section-name selfRef">Authorization Context Object Structure</a>
+          </h4>
+<p id="section-4.1.1-1">The Authorization Context (<code>actx</code>) object <span class="bcp14">MUST</span> contain:<a href="#section-4.1.1-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.1.1-2.1">
+              <p id="section-4.1.1-2.1.1">type (string): A registered identifier specifying the protocol or context
+type<a href="#section-4.1.1-2.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-4.1.1-2.2">
+              <p id="section-4.1.1-2.2.1">Additional fields as defined by the specific context type specification<a href="#section-4.1.1-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
+<div class="lang-json sourcecode" id="section-4.1.1-3">
+<pre>
+{
+  "actx": {
+    "type": "protocol-identifier"
+  }
+}
+</pre><a href="#section-4.1.1-3" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+</section>
+</div>
+<div id="jwt-header-requirements">
+<section id="section-4.2">
+        <h3 id="name-jwt-header-requirements">
+<a href="#section-4.2" class="section-number selfRef">4.2. </a><a href="#name-jwt-header-requirements" class="section-name selfRef">JWT Header Requirements</a>
+        </h3>
+<p id="section-4.2-1">The JWT header for a generic DPoP proof <span class="bcp14">MUST</span> contain the same elements as
+specified in <span>[<a href="#RFC9449" class="cite xref">RFC9449</a>]</span>:<a href="#section-4.2-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.2-2.1">
+            <p id="section-4.2-2.1.1">typ: <span class="bcp14">MUST</span> be "dpop-proof+jwt"<a href="#section-4.2-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-4.2-2.2">
+            <p id="section-4.2-2.2.1">alg: An asymmetric signature algorithm identifier<a href="#section-4.2-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-4.2-2.3">
+            <p id="section-4.2-2.3.1">jwk: The public key used for verification<a href="#section-4.2-2.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+<div id="jwt-payload-requirements">
+<section id="section-4.3">
+        <h3 id="name-jwt-payload-requirements">
+<a href="#section-4.3" class="section-number selfRef">4.3. </a><a href="#name-jwt-payload-requirements" class="section-name selfRef">JWT Payload Requirements</a>
+        </h3>
+<p id="section-4.3-1">The JWT payload for a generic DPoP proof <span class="bcp14">MUST</span> contain:<a href="#section-4.3-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.3-2.1">
+            <p id="section-4.3-2.1.1">jti: A unique identifier for the JWT<a href="#section-4.3-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-4.3-2.2">
+            <p id="section-4.3-2.2.1">iat: Issued-at time<a href="#section-4.3-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-4.3-2.3">
+            <p id="section-4.3-2.3.1">actx: Authorization Context object (if not using HTTP binding)<a href="#section-4.3-2.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-4.3-3">Additional claims <span class="bcp14">MAY</span> be included based on context requirements:<a href="#section-4.3-3" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.3-4.1">
+            <p id="section-4.3-4.1.1">nonce: Server-provided nonce for replay protection<a href="#section-4.3-4.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-4.3-4.2">
+            <p id="section-4.3-4.2.1">ath: Access token hash (when presenting access tokens)<a href="#section-4.3-4.2.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+</section>
+</div>
+<div id="protocol-type-registry">
+<section id="section-5">
+      <h2 id="name-protocol-type-registry">
+<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-protocol-type-registry" class="section-name selfRef">Protocol Type Registry</a>
+      </h2>
+<p id="section-5-1">This framework establishes a registry for protocol type identifiers used in
+the <code>actx.type</code> field. Each registered type <span class="bcp14">MUST</span> specify:<a href="#section-5-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-5-2">
+<li id="section-5-2.1">
+          <p id="section-5-2.1.1">The additional required and optional fields for the Authorization
+Context<a href="#section-5-2.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li id="section-5-2.2">
+          <p id="section-5-2.2.1">The semantic meaning and validation rules for those fields<a href="#section-5-2.2.1" class="pilcrow">¶</a></p>
+</li>
+        <li id="section-5-2.3">
+          <p id="section-5-2.3.1">Security considerations specific to the protocol context<a href="#section-5-2.3.1" class="pilcrow">¶</a></p>
+</li>
+        <li id="section-5-2.4">
+          <p id="section-5-2.4.1">Examples of usage<a href="#section-5-2.4.1" class="pilcrow">¶</a></p>
+</li>
+      </ol>
+<div id="moq-context">
+<section id="section-5.1">
+        <h3 id="name-moq-context-type">
+<a href="#section-5.1" class="section-number selfRef">5.1. </a><a href="#name-moq-context-type" class="section-name selfRef">MOQ Context Type</a>
+        </h3>
+<p id="section-5.1-1">This section defines the normative authorization context for Media Over QUIC
+(MOQ) as specified in this framework.<a href="#section-5.1-1" class="pilcrow">¶</a></p>
+<p id="section-5.1-2">Type Identifier: "moq"<a href="#section-5.1-2" class="pilcrow">¶</a></p>
+<div id="required-fields">
+<section id="section-5.1.1">
+          <h4 id="name-required-fields">
+<a href="#section-5.1.1" class="section-number selfRef">5.1.1. </a><a href="#name-required-fields" class="section-name selfRef">Required Fields</a>
+          </h4>
+<p id="section-5.1.1-1">The MOQ authorization context <span class="bcp14">MUST</span> contain the following fields:<a href="#section-5.1.1-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.1-2">action:<a href="#section-5.1.1-2" class="pilcrow">¶</a></p>
+<p id="section-5.1.1-3">A string specifying the MOQ operation (Section 9 of <span>[<a href="#MOQTransport" class="cite xref">MOQTransport</a>]</span>
+being authorized.<a href="#section-5.1.1-3" class="pilcrow">¶</a></p>
+<p id="section-5.1.1-4">tns:<a href="#section-5.1.1-4" class="pilcrow">¶</a></p>
+<p id="section-5.1.1-5">Track Namespace as defined in Section 2.4.1 of <span>[<a href="#MOQTransport" class="cite xref">MOQTransport</a>]</span>.<a href="#section-5.1.1-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="optional-fields">
+<section id="section-5.1.2">
+          <h4 id="name-optional-fields">
+<a href="#section-5.1.2" class="section-number selfRef">5.1.2. </a><a href="#name-optional-fields" class="section-name selfRef">Optional Fields</a>
+          </h4>
+<p id="section-5.1.2-1">The MOQ authorization context <span class="bcp14">MAY</span> contain the following fields:<a href="#section-5.1.2-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.2-2">tn:<a href="#section-5.1.2-2" class="pilcrow">¶</a></p>
+<p id="section-5.1.2-3">Track Name as defined in Section 2.4.1 of <span>[<a href="#MOQTransport" class="cite xref">MOQTransport</a>]</span>.<a href="#section-5.1.2-3" class="pilcrow">¶</a></p>
+<p id="section-5.1.2-4">parameters:<a href="#section-5.1.2-4" class="pilcrow">¶</a></p>
+<p id="section-5.1.2-5">An object containing additional MOQ-specific parameters relevant to the
+operation. The structure and contents of this field are context-dependent.<a href="#section-5.1.2-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="string-encoding-for-binary-data">
+<section id="section-5.1.3">
+          <h4 id="name-string-encoding-for-binary-">
+<a href="#section-5.1.3" class="section-number selfRef">5.1.3. </a><a href="#name-string-encoding-for-binary-" class="section-name selfRef">String Encoding for Binary Data</a>
+          </h4>
+<p id="section-5.1.3-1">As defined in Section 2.4.1 of <span>[<a href="#MOQTransport" class="cite xref">MOQTransport</a>]</span>, Track Namespace is an ordered
+N-tuple of bytes (where N can be between 1 and 32), and Track Name is a
+sequence of bytes. Both are not constrained to specific encoding and carry
+arbitrary byte sequences that are compared by exact byte matching.<a href="#section-5.1.3-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.3-2">For representation in the JSON <code>tns</code> and <code>tn</code> fields of the Authorization
+Context, the following encoding approach <span class="bcp14">MUST</span> be used:<a href="#section-5.1.3-2" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-5.1.3-3">
+<li id="section-5.1.3-3.1">
+              <p id="section-5.1.3-3.1.1"><strong>Track Namespace Tuple Encoding</strong>: The Track Namespace tuple <span class="bcp14">MUST</span> be
+encoded as a URL-safe string where:<a href="#section-5.1.3-3.1.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-5.1.3-3.1.2.1">
+                  <p id="section-5.1.3-3.1.2.1.1">Each tuple field is base64url-encoded (without padding)<a href="#section-5.1.3-3.1.2.1.1" class="pilcrow">¶</a></p>
+</li>
+                <li class="normal" id="section-5.1.3-3.1.2.2">
+                  <p id="section-5.1.3-3.1.2.2.1">Tuple fields are separated by forward slashes ("/")<a href="#section-5.1.3-3.1.2.2.1" class="pilcrow">¶</a></p>
+</li>
+                <li class="normal" id="section-5.1.3-3.1.2.3">
+                  <p id="section-5.1.3-3.1.2.3.1">The entire namespace is prefixed with "moq://"<a href="#section-5.1.3-3.1.2.3.1" class="pilcrow">¶</a></p>
+</li>
+              </ul>
+</li>
+            <li id="section-5.1.3-3.2">
+              <p id="section-5.1.3-3.2.1"><strong>Track Name Encoding</strong>: The Track Name bytes <span class="bcp14">MUST</span> be base64url-encoded
+(without padding) when containing non-printable bytes or when exact byte
+preservation is required<a href="#section-5.1.3-3.2.1" class="pilcrow">¶</a></p>
+</li>
+          </ol>
+<p id="section-5.1.3-4"><strong>TODO:</strong> A better way to encode that promotes readability is
+being thought about<a href="#section-5.1.3-4" class="pilcrow">¶</a></p>
+<p id="section-5.1.3-5">Example encodings:<a href="#section-5.1.3-5" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-5.1.3-6.1">
+              <p id="section-5.1.3-6.1.1">Namespace tuple [0x01, 0x02], [0x03, 0x04]: <code>"moq://AQ/Aw"</code><a href="#section-5.1.3-6.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-5.1.3-6.2">
+              <p id="section-5.1.3-6.2.1">ASCII track name: <code>"camera1"</code><a href="#section-5.1.3-6.2.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-5.1.3-6.3">
+              <p id="section-5.1.3-6.3.1">Binary track name [0xFF, 0xFE]: <code>"_v4"</code><a href="#section-5.1.3-6.3.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-5.1.3-6.4">
+              <p id="section-5.1.3-6.4.1">UTF-8 track name with special chars: <code>"música%20en%20vivo"</code> (URL percent-encoded)<a href="#section-5.1.3-6.4.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
+</section>
+</div>
+<div id="validation-requirements">
+<section id="section-5.1.4">
+          <h4 id="name-validation-requirements">
+<a href="#section-5.1.4" class="section-number selfRef">5.1.4. </a><a href="#name-validation-requirements" class="section-name selfRef">Validation Requirements</a>
+          </h4>
+<p id="section-5.1.4-1">Servers processing MOQ authorization contexts <span class="bcp14">MUST</span>:<a href="#section-5.1.4-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-5.1.4-2">
+<li id="section-5.1.4-2.1">
+              <p id="section-5.1.4-2.1.1">Verify that the <code>action</code> field contains a recognized MOQ operation<a href="#section-5.1.4-2.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li id="section-5.1.4-2.2">
+              <p id="section-5.1.4-2.2.1">Validate that the <code>tns</code> field represents a properly formatted track
+namespace tuple encoding as specified above<a href="#section-5.1.4-2.2.1" class="pilcrow">¶</a></p>
+</li>
+            <li id="section-5.1.4-2.3">
+              <p id="section-5.1.4-2.3.1">If present, validate that the <code>tn</code> field contains properly encoded track
+name bytes<a href="#section-5.1.4-2.3.1" class="pilcrow">¶</a></p>
+</li>
+            <li id="section-5.1.4-2.4">
+              <p id="section-5.1.4-2.4.1">Ensure the requested action is permitted for the specified track
+namespace tuple<a href="#section-5.1.4-2.4.1" class="pilcrow">¶</a></p>
+</li>
+            <li id="section-5.1.4-2.5">
+              <p id="section-5.1.4-2.5.1">If present, ensure the requested action is permitted for the specified
+track name<a href="#section-5.1.4-2.5.1" class="pilcrow">¶</a></p>
+</li>
+            <li id="section-5.1.4-2.6">
+              <p id="section-5.1.4-2.6.1">If present, validate any parameters according to usage context<a href="#section-5.1.4-2.6.1" class="pilcrow">¶</a></p>
+</li>
+          </ol>
+</section>
+</div>
+</section>
+</div>
+</section>
+</div>
+<div id="application-agnostic-dpop-proof-jwt-examples">
+<section id="section-6">
+      <h2 id="name-application-agnostic-dpop-pr">
+<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-application-agnostic-dpop-pr" class="section-name selfRef">Application-Agnostic DPoP Proof JWT Examples</a>
+      </h2>
+<p id="section-6-1">This section provides complete examples of application-agnostic DPoP proof JWTs,
+illustrating the use of the Authorization Context object in place of
+HTTP-specific claims.<a href="#section-6-1" class="pilcrow">¶</a></p>
+<div id="example-moq-context-dpop-proof">
+<section id="section-6.1">
+        <h3 id="name-example-moq-context-dpop-pr">
+<a href="#section-6.1" class="section-number selfRef">6.1. </a><a href="#name-example-moq-context-dpop-pr" class="section-name selfRef">Example: MOQ Context DPoP Proof</a>
+        </h3>
+<p id="section-6.1-1">The following example shows a complete DPoP proof JWT for a MOQ context:<a href="#section-6.1-1" class="pilcrow">¶</a></p>
+<p id="section-6.1-2">JWT Header:<a href="#section-6.1-2" class="pilcrow">¶</a></p>
+<div class="lang-json sourcecode" id="section-6.1-3">
+<pre>
+{
+  "typ": "dpop-proof+jwt",
+  "alg": "ES256",
+  "jwk": {
+    "kty": "EC",
+    "x": "l8tFrhx-34tV3hRICRDY9zCkDlpBhF42UQUfWVAWBFs",
+    "y": "9VE4jf_Ok_o64zbTTlcuNJajHmt6v9TDVrU0CdvGRDA",
+    "crv": "P-256"
+  }
+}
+</pre><a href="#section-6.1-3" class="pilcrow">¶</a>
+</div>
+<p id="section-6.1-4">JWT Payload:<a href="#section-6.1-4" class="pilcrow">¶</a></p>
+<div class="lang-json sourcecode" id="section-6.1-5">
+<pre>
+{
+  "jti": "unique-request-id-789",
+  "iat": 1705123456,
+  "actx": {
+    "type": "moq",
+    "action": "SUBSCRIBE",
+    "tns": "moq://example.com/app/scope/video",
+    "tn": "camera1"
+  },
+  "ath": "fUHyO2r2Z3DZ53EsNrWBb1xWXM4VbCqpW5G-o9GqC7Y"
+}
+</pre><a href="#section-6.1-5" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="comparing-with-http-dpop">
+<section id="section-6.2">
+        <h3 id="name-comparing-with-http-dpop">
+<a href="#section-6.2" class="section-number selfRef">6.2. </a><a href="#name-comparing-with-http-dpop" class="section-name selfRef">Comparing with HTTP DPoP</a>
+        </h3>
+<p id="section-6.2-1">For comparison, an equivalent HTTP DPoP proof would contain <code>htm</code> and <code>htu</code>
+claims instead of the <code>actx</code> object:<a href="#section-6.2-1" class="pilcrow">¶</a></p>
+<div class="lang-json sourcecode" id="section-6.2-2">
+<pre>
+{
+  "jti": "unique-request-id-789",
+  "iat": 1705123456,
+  "htm": "POST",
+  "htu": "https://media.example.com/subscribe",
+  "ath": "fUHyO2r2Z3DZ53EsNrWBb1xWXM4VbCqpW5G-o9GqC7Y"
+}
+</pre><a href="#section-6.2-2" class="pilcrow">¶</a>
+</div>
+<p id="section-6.2-3">The key difference is that the application-agnostic framework uses the <code>actx</code> object to
+provide protocol-specific authorization context, while HTTP DPoP uses <code>htm</code> and
+<code>htu</code> for HTTP method and URI.<a href="#section-6.2-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="relationship-to-rfc-9449">
+<section id="section-7">
+      <h2 id="name-relationship-to-rfc-9449">
+<a href="#section-7" class="section-number selfRef">7. </a><a href="#name-relationship-to-rfc-9449" class="section-name selfRef">Relationship to RFC 9449</a>
+      </h2>
+<p id="section-7-1">This framework extends and generalizes the concepts defined in RFC 9449
+<span>[<a href="#RFC9449" class="cite xref">RFC9449</a>]</span> while maintaining full backward compatibility with HTTP-based DPoP
+implementations.<a href="#section-7-1" class="pilcrow">¶</a></p>
+<div id="extensions-to-section-7-protected-resource-access">
+<section id="section-7.1">
+        <h3 id="name-extensions-to-section-7-pro">
+<a href="#section-7.1" class="section-number selfRef">7.1. </a><a href="#name-extensions-to-section-7-pro" class="section-name selfRef">Extensions to Section 7 (Protected Resource Access)</a>
+        </h3>
+<p id="section-7.1-1">RFC 9449 Section 7 defines protected resource access specifically for HTTP
+contexts. This framework extends those concepts to support non-HTTP protocols
+while preserving the core security model.<a href="#section-7.1-1" class="pilcrow">¶</a></p>
+<div id="key-differences-from-rfc-9449-section-7">
+<section id="section-7.1.1">
+          <h4 id="name-key-differences-from-rfc-94">
+<a href="#section-7.1.1" class="section-number selfRef">7.1.1. </a><a href="#name-key-differences-from-rfc-94" class="section-name selfRef">Key Differences from RFC 9449 Section 7</a>
+          </h4>
+<ol start="1" type="1" class="normal type-1" id="section-7.1.1-1">
+<li id="section-7.1.1-1.1">
+              <p id="section-7.1.1-1.1.1"><strong>Authorization Context vs HTTP Parameters</strong>: Instead of requiring <code>htm</code>
+(HTTP method) and <code>htu</code> (HTTP URI) claims, this framework uses the
+Authorization Context (<code>actx</code>) object to specify protocol-specific request
+context.<a href="#section-7.1.1-1.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li id="section-7.1.1-1.2">
+              <p id="section-7.1.1-1.2.1"><strong>Protocol-Agnostic Token Binding</strong>: While RFC 9449 Section 7.1 defines
+the DPoP authentication scheme for HTTP Authorization headers, this framework
+enables token binding for protocols that may not use HTTP-style headers.<a href="#section-7.1.1-1.2.1" class="pilcrow">¶</a></p>
+</li>
+            <li id="section-7.1.1-1.3">
+              <p id="section-7.1.1-1.3.1"><strong>Flexible Proof Validation</strong>: The validation rules in RFC 9449 Section
+4.3 are adapted to work with the <code>actx</code> object rather than HTTP-specific
+claims, allowing servers to validate proofs according to their protocol
+requirements.<a href="#section-7.1.1-1.3.1" class="pilcrow">¶</a></p>
+</li>
+          </ol>
+</section>
+</div>
+<div id="compatibility-with-rfc-9449">
+<section id="section-7.1.2">
+          <h4 id="name-compatibility-with-rfc-9449">
+<a href="#section-7.1.2" class="section-number selfRef">7.1.2. </a><a href="#name-compatibility-with-rfc-9449" class="section-name selfRef">Compatibility with RFC 9449</a>
+          </h4>
+<p id="section-7.1.2-1">This framework is designed to coexist with RFC 9449 implementations:<a href="#section-7.1.2-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-7.1.2-2.1">
+              <p id="section-7.1.2-2.1.1">HTTP-based DPoP proofs continue to work unchanged using <code>htm</code> and <code>htu</code>
+claims<a href="#section-7.1.2-2.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-7.1.2-2.2">
+              <p id="section-7.1.2-2.2.1">Generic DPoP proofs use the <code>actx</code> object for non-HTTP contexts<a href="#section-7.1.2-2.2.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-7.1.2-2.3">
+              <p id="section-7.1.2-2.3.1">The same key pairs and token binding mechanisms apply to both approaches<a href="#section-7.1.2-2.3.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-7.1.2-2.4">
+              <p id="section-7.1.2-2.4.1">Authorization servers <span class="bcp14">MAY</span> support both HTTP and generic DPoP proof formats
+simultaneously<a href="#section-7.1.2-2.4.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
+</section>
+</div>
+<div id="migration-path">
+<section id="section-7.1.3">
+          <h4 id="name-migration-path">
+<a href="#section-7.1.3" class="section-number selfRef">7.1.3. </a><a href="#name-migration-path" class="section-name selfRef">Migration Path</a>
+          </h4>
+<p id="section-7.1.3-1">Existing RFC 9449 implementations can adopt this framework incrementally:<a href="#section-7.1.3-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-7.1.3-2">
+<li id="section-7.1.3-2.1">
+              <p id="section-7.1.3-2.1.1"><strong>HTTP-Only Phase</strong>: Continue using standard RFC 9449 DPoP for HTTP
+resources<a href="#section-7.1.3-2.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li id="section-7.1.3-2.2">
+              <p id="section-7.1.3-2.2.1"><strong>Hybrid Phase</strong>: Support both HTTP DPoP (with <code>htm</code>/<code>htu</code>) and generic
+DPoP (with <code>actx</code>)<a href="#section-7.1.3-2.2.1" class="pilcrow">¶</a></p>
+</li>
+            <li id="section-7.1.3-2.3">
+              <p id="section-7.1.3-2.3.1"><strong>Generic Phase</strong>: Migrate to using Authorization Context objects for all
+protocols, including HTTP<a href="#section-7.1.3-2.3.1" class="pilcrow">¶</a></p>
+</li>
+          </ol>
+<p id="section-7.1.3-3">The <code>typ</code> header value <code>dpop-proof+jwt</code> (instead of <code>dpop+jwt</code>) signals
+support for the generic framework while maintaining the same cryptographic
+properties and security model.<a href="#section-7.1.3-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+</section>
+</div>
+<div id="security-considerations">
+<section id="section-8">
+      <h2 id="name-security-considerations">
+<a href="#section-8" class="section-number selfRef">8. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+      </h2>
+<p id="section-8-1">This framework inherits all security considerations from <span>[<a href="#RFC9449" class="cite xref">RFC9449</a>]</span>.
+Additional considerations specific to the generic framework include:<a href="#section-8-1" class="pilcrow">¶</a></p>
+<div id="context-type-validation">
+<section id="section-8.1">
+        <h3 id="name-context-type-validation">
+<a href="#section-8.1" class="section-number selfRef">8.1. </a><a href="#name-context-type-validation" class="section-name selfRef">Context Type Validation</a>
+        </h3>
+<p id="section-8.1-1">Servers <span class="bcp14">MUST</span> validate that the <code>actx.type</code> field corresponds to a registered
+and supported context type. Unknown or unsupported context types <span class="bcp14">MUST</span> be
+rejected.<a href="#section-8.1-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="protocol-specific-security-requirements">
+<section id="section-8.2">
+        <h3 id="name-protocol-specific-security-">
+<a href="#section-8.2" class="section-number selfRef">8.2. </a><a href="#name-protocol-specific-security-" class="section-name selfRef">Protocol-Specific Security Requirements</a>
+        </h3>
+<p id="section-8.2-1">Each registered context type <span class="bcp14">MUST</span> specify its own security requirements and
+threat model. The generic framework does not impose additional security
+properties beyond those provided by the underlying JWT signature.<a href="#section-8.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="cross-context-token-binding">
+<section id="section-8.3">
+        <h3 id="name-cross-context-token-binding">
+<a href="#section-8.3" class="section-number selfRef">8.3. </a><a href="#name-cross-context-token-binding" class="section-name selfRef">Cross-Context Token Binding</a>
+        </h3>
+<p id="section-8.3-1">DPoP tokens bound using this framework <span class="bcp14">SHOULD</span> be validated only within their
+intended context type. Servers <span class="bcp14">MUST NOT</span> accept a DPoP proof with one context
+type as valid for a different context type.<a href="#section-8.3-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="application-separation-requirements">
+<section id="section-8.4">
+        <h3 id="name-application-separation-requ">
+<a href="#section-8.4" class="section-number selfRef">8.4. </a><a href="#name-application-separation-requ" class="section-name selfRef">Application Separation Requirements</a>
+        </h3>
+<p id="section-8.4-1">Clients <span class="bcp14">MUST</span> use different DPoP proofs for different applications. This
+separation ensures that a DPoP proof generated for one application protocol
+cannot be reused or replayed in the context of another application protocol.
+Implementations <span class="bcp14">SHOULD</span> enforce this by:<a href="#section-8.4-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-8.4-2">
+<li id="section-8.4-2.1">
+            <p id="section-8.4-2.1.1"><strong>Distinct Key Pairs</strong>: Using separate key pairs for different application
+protocols where feasible<a href="#section-8.4-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-8.4-2.2">
+            <p id="section-8.4-2.2.1"><strong>Context-Specific Binding</strong>: Ensuring that Authorization Context (<code>actx</code>)
+objects contain fields that uniquely identify the application protocol<a href="#section-8.4-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-8.4-2.3">
+            <p id="section-8.4-2.3.1"><strong>Proof Validation</strong>: Rejecting proofs that contain context information
+from other application protocols<a href="#section-8.4-2.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ol>
+<p id="section-8.4-3">This requirement prevents cross-application attacks where an attacker might
+attempt to use a valid DPoP proof from one application context in a different
+application context.<a href="#section-8.4-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="iana-considerations">
+<section id="section-9">
+      <h2 id="name-iana-considerations">
+<a href="#section-9" class="section-number selfRef">9. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
+      </h2>
+<div id="dpop-authorization-context-types-registry">
+<section id="section-9.1">
+        <h3 id="name-dpop-authorization-context-">
+<a href="#section-9.1" class="section-number selfRef">9.1. </a><a href="#name-dpop-authorization-context-" class="section-name selfRef">DPoP Authorization Context Types Registry</a>
+        </h3>
+<p id="section-9.1-1">This document establishes the "DPoP Authorization Context Types" registry
+within the "JSON Web Token (JWT)" registry group.<a href="#section-9.1-1" class="pilcrow">¶</a></p>
+<p id="section-9.1-2">Registry Name: DPoP Authorization Context Types<a href="#section-9.1-2" class="pilcrow">¶</a></p>
+<p id="section-9.1-3">Registration Policy: Specification Required<a href="#section-9.1-3" class="pilcrow">¶</a></p>
+<p id="section-9.1-4">Expert Review Guidelines:<a href="#section-9.1-4" class="pilcrow">¶</a></p>
+<p id="section-9.1-5">Specifications submitted for registration <span class="bcp14">MUST</span> include:<a href="#section-9.1-5" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-9.1-6">
+<li id="section-9.1-6.1">
+            <p id="section-9.1-6.1.1">A complete specification of required and optional fields<a href="#section-9.1-6.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-9.1-6.2">
+            <p id="section-9.1-6.2.1">Semantic definitions and validation rules for all fields<a href="#section-9.1-6.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-9.1-6.3">
+            <p id="section-9.1-6.3.1">Security considerations specific to the context type<a href="#section-9.1-6.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-9.1-6.4">
+            <p id="section-9.1-6.4.1">At least one complete example of usage<a href="#section-9.1-6.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-9.1-6.5">
+            <p id="section-9.1-6.5.1">Considerations for interoperability with existing DPoP implementations<a href="#section-9.1-6.5.1" class="pilcrow">¶</a></p>
+</li>
+        </ol>
+<p id="section-9.1-7">Reference Format: The reference <span class="bcp14">MUST</span> be to a published RFC or an
+Internet-Draft that has been adopted by a working group.<a href="#section-9.1-7" class="pilcrow">¶</a></p>
+<div id="registration-template">
+<section id="section-9.1.1">
+          <h4 id="name-registration-template">
+<a href="#section-9.1.1" class="section-number selfRef">9.1.1. </a><a href="#name-registration-template" class="section-name selfRef">Registration Template</a>
+          </h4>
+<p id="section-9.1.1-1">To register a new DPoP Authorization Context Type, the following template
+<span class="bcp14">MUST</span> be completed:<a href="#section-9.1.1-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-9.1.1-2">
+            <dt id="section-9.1.1-2.1">Type Identifier:</dt>
+            <dd style="margin-left: 1.5em" id="section-9.1.1-2.2">
+              <p id="section-9.1.1-2.2.1">The string identifier used in the <code>actx.type</code> field<a href="#section-9.1.1-2.2.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-9.1.1-2.3">Description:</dt>
+            <dd style="margin-left: 1.5em" id="section-9.1.1-2.4">
+              <p id="section-9.1.1-2.4.1">A brief description of the context type and its intended use<a href="#section-9.1.1-2.4.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-9.1.1-2.5">Required Fields:</dt>
+            <dd style="margin-left: 1.5em" id="section-9.1.1-2.6">
+              <p id="section-9.1.1-2.6.1">List of mandatory fields in the authorization context object<a href="#section-9.1.1-2.6.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-9.1.1-2.7">Optional Fields:</dt>
+            <dd style="margin-left: 1.5em" id="section-9.1.1-2.8">
+              <p id="section-9.1.1-2.8.1">List of optional fields in the authorization context object<a href="#section-9.1.1-2.8.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-9.1.1-2.9">Validation Rules:</dt>
+            <dd style="margin-left: 1.5em" id="section-9.1.1-2.10">
+              <p id="section-9.1.1-2.10.1">Specific validation requirements for the context type<a href="#section-9.1.1-2.10.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-9.1.1-2.11">Security Considerations:</dt>
+            <dd style="margin-left: 1.5em" id="section-9.1.1-2.12">
+              <p id="section-9.1.1-2.12.1">Context-specific security requirements and threat model<a href="#section-9.1.1-2.12.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="initial-registry-contents">
+<section id="section-9.1.2">
+          <h4 id="name-initial-registry-contents">
+<a href="#section-9.1.2" class="section-number selfRef">9.1.2. </a><a href="#name-initial-registry-contents" class="section-name selfRef">Initial Registry Contents</a>
+          </h4>
+<table class="center" id="table-1">
+            <caption><a href="#table-1" class="selfRef">Table 1</a></caption>
+<thead>
+              <tr>
+                <th class="text-left" rowspan="1" colspan="1">Type</th>
+                <th class="text-left" rowspan="1" colspan="1">Description</th>
+                <th class="text-left" rowspan="1" colspan="1">Required Fields</th>
+                <th class="text-left" rowspan="1" colspan="1">Optional Fields</th>
+                <th class="text-left" rowspan="1" colspan="1">Reference</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">moq</td>
+                <td class="text-left" rowspan="1" colspan="1">Media Over QUIC authorization context</td>
+                <td class="text-left" rowspan="1" colspan="1">action, tns</td>
+                <td class="text-left" rowspan="1" colspan="1">tn, parameters</td>
+                <td class="text-left" rowspan="1" colspan="1"> </td>
+              </tr>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">RFCXXXX</td>
+                <td class="text-left" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1"> </td>
+                <td class="text-left" rowspan="1" colspan="1"> </td>
+              </tr>
+            </tbody>
+          </table>
+</section>
+</div>
+</section>
+</div>
+<div id="jwt-claims-registration">
+<section id="section-9.2">
+        <h3 id="name-jwt-claims-registration">
+<a href="#section-9.2" class="section-number selfRef">9.2. </a><a href="#name-jwt-claims-registration" class="section-name selfRef">JWT Claims Registration</a>
+        </h3>
+<p id="section-9.2-1">This document registers the following JWT claim in the "JSON Web Token
+Claims" registry:<a href="#section-9.2-1" class="pilcrow">¶</a></p>
+<p id="section-9.2-2">Claim Name: actx<a href="#section-9.2-2" class="pilcrow">¶</a></p>
+<p id="section-9.2-3">Claim Description: Authorization Context Object<a href="#section-9.2-3" class="pilcrow">¶</a></p>
+<p id="section-9.2-4">Claim Value Type: Object<a href="#section-9.2-4" class="pilcrow">¶</a></p>
+<p id="section-9.2-5">Change Controller: IETF<a href="#section-9.2-5" class="pilcrow">¶</a></p>
+<p id="section-9.2-6">Specification Document: This document, Section 4.1<a href="#section-9.2-6" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="media-types-registration">
+<section id="section-9.3">
+        <h3 id="name-media-types-registration">
+<a href="#section-9.3" class="section-number selfRef">9.3. </a><a href="#name-media-types-registration" class="section-name selfRef">Media Types Registration</a>
+        </h3>
+<div id="applicationdpop-proofjwt">
+<section id="section-9.3.1">
+          <h4 id="name-application-dpop-proofjwt">
+<a href="#section-9.3.1" class="section-number selfRef">9.3.1. </a><a href="#name-application-dpop-proofjwt" class="section-name selfRef">application/dpop-proof+jwt</a>
+          </h4>
+<p id="section-9.3.1-1">This document registers the "application/dpop-proof+jwt" media type for
+generic DPoP proof JWTs in the "Media Types" registry.<a href="#section-9.3.1-1" class="pilcrow">¶</a></p>
+<p id="section-9.3.1-2">Type Name: application<a href="#section-9.3.1-2" class="pilcrow">¶</a></p>
+<p id="section-9.3.1-3">Subtype Name: dpop-proof+jwt<a href="#section-9.3.1-3" class="pilcrow">¶</a></p>
+<p id="section-9.3.1-4">Required Parameters: none<a href="#section-9.3.1-4" class="pilcrow">¶</a></p>
+<p id="section-9.3.1-5">Optional Parameters: none<a href="#section-9.3.1-5" class="pilcrow">¶</a></p>
+<p id="section-9.3.1-6">Encoding Considerations: Binary; base64url encoding of JWT<a href="#section-9.3.1-6" class="pilcrow">¶</a></p>
+<p id="section-9.3.1-7">Security Considerations: See Section 8 of this document<a href="#section-9.3.1-7" class="pilcrow">¶</a></p>
+<p id="section-9.3.1-8">Interoperability Considerations: Multi-Protocol DPoP proofs extend
+HTTP-specific DPoP while maintaining backward compatibility<a href="#section-9.3.1-8" class="pilcrow">¶</a></p>
+<p id="section-9.3.1-9">Published Specification: This document
+Applications that use this media type: Applications implementing generic DPoP
+authorization<a href="#section-9.3.1-9" class="pilcrow">¶</a></p>
+<p id="section-9.3.1-10">Fragment Identifier Considerations: none<a href="#section-9.3.1-10" class="pilcrow">¶</a></p>
+<p id="section-9.3.1-11">Additional Information: none<a href="#section-9.3.1-11" class="pilcrow">¶</a></p>
+<p id="section-9.3.1-12">Person and email address to contact: OAuth Working Group
+<a href="mailto:oauth@ietf.org">oauth@ietf.org</a><a href="#section-9.3.1-12" class="pilcrow">¶</a></p>
+<p id="section-9.3.1-13">Intended Usage: COMMON<a href="#section-9.3.1-13" class="pilcrow">¶</a></p>
+<p id="section-9.3.1-14">Restrictions on Usage: none<a href="#section-9.3.1-14" class="pilcrow">¶</a></p>
+<p id="section-9.3.1-15">Author: OAuth Working Group<a href="#section-9.3.1-15" class="pilcrow">¶</a></p>
+<p id="section-9.3.1-16">Change Controller: IETF<a href="#section-9.3.1-16" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+</section>
+</div>
+<div id="sec-combined-references">
+<section id="section-10">
+      <h2 id="name-references">
+<a href="#section-10" class="section-number selfRef">10. </a><a href="#name-references" class="section-name selfRef">References</a>
+      </h2>
+<div id="sec-normative-references">
+<section id="section-10.1">
+        <h3 id="name-normative-references">
+<a href="#section-10.1" class="section-number selfRef">10.1. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
+        </h3>
+<dl class="references">
+<dt id="MOQTransport">[MOQTransport]</dt>
+        <dd>
+<span class="refAuthor">Nandakumar, S.</span>, <span class="refAuthor">Vasiliev, V.</span>, <span class="refAuthor">Swett, I.</span>, and <span class="refAuthor">A. Frindell</span>, <span class="refTitle">"Media over QUIC Transport"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-moq-transport-13</span>, <time datetime="2025-07-07" class="refDate">7 July 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-moq-transport-13">https://datatracker.ietf.org/doc/html/draft-ietf-moq-transport-13</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC2119">[RFC2119]</dt>
+        <dd>
+<span class="refAuthor">Bradner, S.</span>, <span class="refTitle">"Key words for use in RFCs to Indicate Requirement Levels"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 2119</span>, <span class="seriesInfo">DOI 10.17487/RFC2119</span>, <time datetime="1997-03" class="refDate">March 1997</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc2119">https://www.rfc-editor.org/rfc/rfc2119</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC7515">[RFC7515]</dt>
+        <dd>
+<span class="refAuthor">Jones, M.</span>, <span class="refAuthor">Bradley, J.</span>, and <span class="refAuthor">N. Sakimura</span>, <span class="refTitle">"JSON Web Signature (JWS)"</span>, <span class="seriesInfo">RFC 7515</span>, <span class="seriesInfo">DOI 10.17487/RFC7515</span>, <time datetime="2015-05" class="refDate">May 2015</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7515">https://www.rfc-editor.org/rfc/rfc7515</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC7519">[RFC7519]</dt>
+        <dd>
+<span class="refAuthor">Jones, M.</span>, <span class="refAuthor">Bradley, J.</span>, and <span class="refAuthor">N. Sakimura</span>, <span class="refTitle">"JSON Web Token (JWT)"</span>, <span class="seriesInfo">RFC 7519</span>, <span class="seriesInfo">DOI 10.17487/RFC7519</span>, <time datetime="2015-05" class="refDate">May 2015</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7519">https://www.rfc-editor.org/rfc/rfc7519</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8174">[RFC8174]</dt>
+        <dd>
+<span class="refAuthor">Leiba, B.</span>, <span class="refTitle">"Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 8174</span>, <span class="seriesInfo">DOI 10.17487/RFC8174</span>, <time datetime="2017-05" class="refDate">May 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8174">https://www.rfc-editor.org/rfc/rfc8174</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9449">[RFC9449]</dt>
+      <dd>
+<span class="refAuthor">Fett, D.</span>, <span class="refAuthor">Campbell, B.</span>, <span class="refAuthor">Bradley, J.</span>, <span class="refAuthor">Lodderstedt, T.</span>, <span class="refAuthor">Jones, M.</span>, and <span class="refAuthor">D. Waite</span>, <span class="refTitle">"OAuth 2.0 Demonstrating Proof of Possession (DPoP)"</span>, <span class="seriesInfo">RFC 9449</span>, <span class="seriesInfo">DOI 10.17487/RFC9449</span>, <time datetime="2023-09" class="refDate">September 2023</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9449">https://www.rfc-editor.org/rfc/rfc9449</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="sec-informative-references">
+<section id="section-10.2">
+        <h3 id="name-informative-references">
+<a href="#section-10.2" class="section-number selfRef">10.2. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
+        </h3>
+<dl class="references">
+<dt id="RFC6749">[RFC6749]</dt>
+      <dd>
+<span class="refAuthor">Hardt, D., Ed.</span>, <span class="refTitle">"The OAuth 2.0 Authorization Framework"</span>, <span class="seriesInfo">RFC 6749</span>, <span class="seriesInfo">DOI 10.17487/RFC6749</span>, <time datetime="2012-10" class="refDate">October 2012</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc6749">https://www.rfc-editor.org/rfc/rfc6749</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+</div>
+</section>
+</div>
+<div id="acknowledgments">
+<section id="appendix-A">
+      <h2 id="name-acknowledgments">
+<a href="#appendix-A" class="section-number selfRef">Appendix A. </a><a href="#name-acknowledgments" class="section-name selfRef">Acknowledgments</a>
+      </h2>
+<p id="appendix-A-1">Thanks for Richard Barnes for the reviews and suggestions on the protocol context design.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="authors-addresses">
+<section id="appendix-B">
+      <h2 id="name-authors-addresses">
+<a href="#name-authors-addresses" class="section-name selfRef">Authors' Addresses</a>
+      </h2>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Suhas Nandakumar</span></div>
+<div dir="auto" class="left"><span class="org">Cisco Systems</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:snandaku@cisco.com" class="email">snandaku@cisco.com</a>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Cullen Jennings</span></div>
+<div dir="auto" class="left"><span class="org">Cisco Systems</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:fluffy@cisco.com" class="email">fluffy@cisco.com</a>
+</div>
+</address>
+</section>
+</div>
+<script>const toc = document.getElementById("toc");
+toc.querySelector("h2").addEventListener("click", e => {
+  toc.classList.toggle("active");
+});
+toc.querySelector("nav").addEventListener("click", e => {
+  toc.classList.remove("active");
+});
+</script>
+</body>
+</html>
