@@ -4,8 +4,8 @@
 
 OAuth Working Group                                        S. Nandakumar
 Internet-Draft                                             Cisco Systems
-Intended status: Standards Track                       11 September 2025
-Expires: 15 March 2026
+Intended status: Standards Track                       16 September 2025
+Expires: 20 March 2026
 
 
 Application-Agnostic Demonstration Proof of Possession (DPoP) Framework
@@ -52,7 +52,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 15 March 2026.
+   This Internet-Draft will expire on 20 March 2026.
 
 Copyright Notice
 
@@ -456,9 +456,8 @@ Table of Contents
        encoded (without padding) when containing non-printable bytes or
        when exact byte preservation is required
 
-   3.  *ASCII Optimization*: For Track Names that contain only printable
-       ASCII characters (excluding control characters), the content MAY
-       be used directly as UTF-8 strings for improved readability
+   *TODO:* A better way to encode that promotes readability is being
+   thought about
 
    Example encodings:
 

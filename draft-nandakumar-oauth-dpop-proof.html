@@ -1055,7 +1055,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Nandakumar</td>
-<td class="center">Expires 15 March 2026</td>
+<td class="center">Expires 20 March 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1068,12 +1068,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-nandakumar-oauth-dpop-proof-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-09-11" class="published">11 September 2025</time>
+<time datetime="2025-09-16" class="published">16 September 2025</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2026-03-15">15 March 2026</time></dd>
+<dd class="expires"><time datetime="2026-03-20">20 March 2026</time></dd>
 <dt class="label-authors">Author:</dt>
 <dd class="authors">
 <div class="author">
@@ -1127,7 +1127,7 @@ secure token binding across various application protocols and contexts.<a href="
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 15 March 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 20 March 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1761,25 +1761,22 @@ encoded as a URL-safe string where:<a href="#section-5.1.3-3.1.1" class="pilcrow
 (without padding) when containing non-printable bytes or when exact byte
 preservation is required<a href="#section-5.1.3-3.2.1" class="pilcrow">¶</a></p>
 </li>
-            <li id="section-5.1.3-3.3">
-              <p id="section-5.1.3-3.3.1"><strong>ASCII Optimization</strong>: For Track Names that contain only printable ASCII
-characters (excluding control characters), the content <span class="bcp14">MAY</span> be used directly
-as UTF-8 strings for improved readability<a href="#section-5.1.3-3.3.1" class="pilcrow">¶</a></p>
-</li>
           </ol>
-<p id="section-5.1.3-4">Example encodings:<a href="#section-5.1.3-4" class="pilcrow">¶</a></p>
+<p id="section-5.1.3-4"><strong>TODO:</strong> A better way to encode that promotes readability is
+being thought about<a href="#section-5.1.3-4" class="pilcrow">¶</a></p>
+<p id="section-5.1.3-5">Example encodings:<a href="#section-5.1.3-5" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-5.1.3-5.1">
-              <p id="section-5.1.3-5.1.1">Namespace tuple [0x01, 0x02], [0x03, 0x04]: <code>"moq://AQ/Aw"</code><a href="#section-5.1.3-5.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-5.1.3-6.1">
+              <p id="section-5.1.3-6.1.1">Namespace tuple [0x01, 0x02], [0x03, 0x04]: <code>"moq://AQ/Aw"</code><a href="#section-5.1.3-6.1.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-5.1.3-5.2">
-              <p id="section-5.1.3-5.2.1">ASCII track name: <code>"camera1"</code><a href="#section-5.1.3-5.2.1" class="pilcrow">¶</a></p>
+            <li class="normal" id="section-5.1.3-6.2">
+              <p id="section-5.1.3-6.2.1">ASCII track name: <code>"camera1"</code><a href="#section-5.1.3-6.2.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-5.1.3-5.3">
-              <p id="section-5.1.3-5.3.1">Binary track name [0xFF, 0xFE]: <code>"_v4"</code><a href="#section-5.1.3-5.3.1" class="pilcrow">¶</a></p>
+            <li class="normal" id="section-5.1.3-6.3">
+              <p id="section-5.1.3-6.3.1">Binary track name [0xFF, 0xFE]: <code>"_v4"</code><a href="#section-5.1.3-6.3.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-5.1.3-5.4">
-              <p id="section-5.1.3-5.4.1">UTF-8 track name with special chars: <code>"música%20en%20vivo"</code> (URL percent-encoded)<a href="#section-5.1.3-5.4.1" class="pilcrow">¶</a></p>
+            <li class="normal" id="section-5.1.3-6.4">
+              <p id="section-5.1.3-6.4.1">UTF-8 track name with special chars: <code>"música%20en%20vivo"</code> (URL percent-encoded)<a href="#section-5.1.3-6.4.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
 </section>
