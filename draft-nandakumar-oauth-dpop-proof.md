@@ -27,7 +27,7 @@ author:
  -
     fullname: Suhas Nandakumar
     organization: Cisco Systems
-    email:  snandaku@cisco.com
+    email: snandaku@cisco.com
 
 normative:
   RFC2119:
@@ -349,9 +349,8 @@ Context, the following encoding approach MUST be used:
    (without padding) when containing non-printable bytes or when exact byte
    preservation is required
 
-3. **ASCII Optimization**: For Track Names that contain only printable ASCII
-   characters (excluding control characters), the content MAY be used directly
-   as UTF-8 strings for improved readability
+**TODO:** A better way to encode that promotes readability is
+being thought about
 
 Example encodings:
 
