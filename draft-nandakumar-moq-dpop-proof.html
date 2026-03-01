@@ -12,7 +12,10 @@
 Possession (DPoP) that extends beyond HTTP-specific implementations. Building
 upon RFC 9449, this framework provides a protocol-agnostic approach for
 sender-constraining tokens through cryptographic proof of possession, enabling
-secure token binding across various application protocols and contexts. 
+secure token binding across various application protocols and contexts. The
+framework supports both JWT-based proofs (for compatibility with existing OAuth
+deployments) and CWT-based proofs (for compact binary encoding and
+interoperability with Common Access Token systems). 
     " name="description">
 <meta content="xml2rfc 3.31.0" name="generator">
 <meta content="DPoP" name="keyword">
@@ -1097,7 +1100,10 @@ svg :is([fill="white"], [fill^="#fff"]) {
 Possession (DPoP) that extends beyond HTTP-specific implementations. Building
 upon RFC 9449, this framework provides a protocol-agnostic approach for
 sender-constraining tokens through cryptographic proof of possession, enabling
-secure token binding across various application protocols and contexts.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+secure token binding across various application protocols and contexts. The
+framework supports both JWT-based proofs (for compatibility with existing OAuth
+deployments) and CWT-based proofs (for compact binary encoding and
+interoperability with Common Access Token systems).<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 </section>
 <section class="note rfcEditorRemove" id="section-note.1">
       <h2 id="name-about-this-document">
@@ -1195,18 +1201,46 @@ secure token binding across various application protocols and contexts.<a href="
             <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-application-agnostic-dpop-p" class="internal xref">Application-Agnostic DPoP Proof Structure</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1">
-                <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="auto internal xref">4.1</a>.  <a href="#name-authorization-context-objec" class="internal xref">Authorization Context Object</a></p>
+                <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="auto internal xref">4.1</a>.  <a href="#name-choosing-between-jwt-and-cw" class="internal xref">Choosing Between JWT and CWT Formats</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2">
+                <p id="section-toc.1-1.4.2.2.1"><a href="#section-4.2" class="auto internal xref">4.2</a>.  <a href="#name-authorization-context-objec" class="internal xref">Authorization Context Object</a></p>
 <ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1.2.1">
-                    <p id="section-toc.1-1.4.2.1.2.1.1"><a href="#section-4.1.1" class="auto internal xref">4.1.1</a>.  <a href="#name-authorization-context-object" class="internal xref">Authorization Context Object Structure</a></p>
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2.2.1">
+                    <p id="section-toc.1-1.4.2.2.2.1.1"><a href="#section-4.2.1" class="auto internal xref">4.2.1</a>.  <a href="#name-authorization-context-object" class="internal xref">Authorization Context Object Structure</a></p>
 </li>
                 </ul>
 </li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2">
-                <p id="section-toc.1-1.4.2.2.1"><a href="#section-4.2" class="auto internal xref">4.2</a>.  <a href="#name-jwt-header-requirements" class="internal xref">JWT Header Requirements</a></p>
-</li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.3">
-                <p id="section-toc.1-1.4.2.3.1"><a href="#section-4.3" class="auto internal xref">4.3</a>.  <a href="#name-jwt-payload-requirements" class="internal xref">JWT Payload Requirements</a></p>
+                <p id="section-toc.1-1.4.2.3.1"><a href="#section-4.3" class="auto internal xref">4.3</a>.  <a href="#name-jwt-based-dpop-proof-struct" class="internal xref">JWT-based DPoP Proof Structure</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.3.2.1">
+                    <p id="section-toc.1-1.4.2.3.2.1.1"><a href="#section-4.3.1" class="auto internal xref">4.3.1</a>.  <a href="#name-jwt-header-requirements" class="internal xref">JWT Header Requirements</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.3.2.2">
+                    <p id="section-toc.1-1.4.2.3.2.2.1"><a href="#section-4.3.2" class="auto internal xref">4.3.2</a>.  <a href="#name-jwt-payload-requirements" class="internal xref">JWT Payload Requirements</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.4">
+                <p id="section-toc.1-1.4.2.4.1"><a href="#section-4.4" class="auto internal xref">4.4</a>.  <a href="#name-cwt-based-dpop-proof-struct" class="internal xref">CWT-based DPoP Proof Structure</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.4.2.1">
+                    <p id="section-toc.1-1.4.2.4.2.1.1"><a href="#section-4.4.1" class="auto internal xref">4.4.1</a>.  <a href="#name-cwt-protected-header-requir" class="internal xref">CWT Protected Header Requirements</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.4.2.2">
+                    <p id="section-toc.1-1.4.2.4.2.2.1"><a href="#section-4.4.2" class="auto internal xref">4.4.2</a>.  <a href="#name-cwt-claims-requirements" class="internal xref">CWT Claims Requirements</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.4.2.3">
+                    <p id="section-toc.1-1.4.2.4.2.3.1"><a href="#section-4.4.3" class="auto internal xref">4.4.3</a>.  <a href="#name-cwt-authorization-context-s" class="internal xref">CWT Authorization Context Structure</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.4.2.4">
+                    <p id="section-toc.1-1.4.2.4.2.4.1"><a href="#section-4.4.4" class="auto internal xref">4.4.4</a>.  <a href="#name-cddl-definition-for-cwt-dpo" class="internal xref">CDDL Definition for CWT DPoP Proof</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.4.2.5">
+                    <p id="section-toc.1-1.4.2.4.2.5.1"><a href="#section-4.4.5" class="auto internal xref">4.4.5</a>.  <a href="#name-token-binding-with-cwt-acce" class="internal xref">Token Binding with CWT Access Tokens</a></p>
+</li>
+                </ul>
 </li>
             </ul>
 </li>
@@ -1233,13 +1267,32 @@ secure token binding across various application protocols and contexts.<a href="
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
-            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-application-agnostic-dpop-pr" class="internal xref">Application-Agnostic DPoP Proof JWT Examples</a></p>
+            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-application-agnostic-dpop-pr" class="internal xref">Application-Agnostic DPoP Proof Examples</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1">
-                <p id="section-toc.1-1.6.2.1.1"><a href="#section-6.1" class="auto internal xref">6.1</a>.  <a href="#name-example-moqt-context-dpop-p" class="internal xref">Example: MOQT Context DPoP Proof</a></p>
+                <p id="section-toc.1-1.6.2.1.1"><a href="#section-6.1" class="auto internal xref">6.1</a>.  <a href="#name-jwt-format-examples" class="internal xref">JWT Format Examples</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1.2.1">
+                    <p id="section-toc.1-1.6.2.1.2.1.1"><a href="#section-6.1.1" class="auto internal xref">6.1.1</a>.  <a href="#name-example-moqt-context-dpop-p" class="internal xref">Example: MOQT Context DPoP Proof (JWT)</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1.2.2">
+                    <p id="section-toc.1-1.6.2.1.2.2.1"><a href="#section-6.1.2" class="auto internal xref">6.1.2</a>.  <a href="#name-comparing-with-http-dpop" class="internal xref">Comparing with HTTP DPoP</a></p>
+</li>
+                </ul>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.2">
-                <p id="section-toc.1-1.6.2.2.1"><a href="#section-6.2" class="auto internal xref">6.2</a>.  <a href="#name-comparing-with-http-dpop" class="internal xref">Comparing with HTTP DPoP</a></p>
+                <p id="section-toc.1-1.6.2.2.1"><a href="#section-6.2" class="auto internal xref">6.2</a>.  <a href="#name-cwt-format-examples" class="internal xref">CWT Format Examples</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.2.2.1">
+                    <p id="section-toc.1-1.6.2.2.2.1.1"><a href="#section-6.2.1" class="auto internal xref">6.2.1</a>.  <a href="#name-example-moqt-context-dpop-pr" class="internal xref">Example: MOQT Context DPoP Proof (CWT)</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.2.2.2">
+                    <p id="section-toc.1-1.6.2.2.2.2.1"><a href="#section-6.2.2" class="auto internal xref">6.2.2</a>.  <a href="#name-example-cwt-dpop-proof-with" class="internal xref">Example: CWT DPoP Proof with Common Access Token</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.2.2.3">
+                    <p id="section-toc.1-1.6.2.2.2.3.1"><a href="#section-6.2.3" class="auto internal xref">6.2.3</a>.  <a href="#name-comparing-jwt-and-cwt-forma" class="internal xref">Comparing JWT and CWT Formats</a></p>
+</li>
+                </ul>
 </li>
             </ul>
 </li>
@@ -1277,6 +1330,9 @@ secure token binding across various application protocols and contexts.<a href="
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.4">
                 <p id="section-toc.1-1.8.2.4.1"><a href="#section-8.4" class="auto internal xref">8.4</a>.  <a href="#name-application-separation-requ" class="internal xref">Application Separation Requirements</a></p>
 </li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.5">
+                <p id="section-toc.1-1.8.2.5.1"><a href="#section-8.5" class="auto internal xref">8.5</a>.  <a href="#name-cwt-specific-security-consi" class="internal xref">CWT-Specific Security Considerations</a></p>
+</li>
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
@@ -1297,10 +1353,27 @@ secure token binding across various application protocols and contexts.<a href="
                 <p id="section-toc.1-1.9.2.2.1"><a href="#section-9.2" class="auto internal xref">9.2</a>.  <a href="#name-jwt-claims-registration" class="internal xref">JWT Claims Registration</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.3">
-                <p id="section-toc.1-1.9.2.3.1"><a href="#section-9.3" class="auto internal xref">9.3</a>.  <a href="#name-media-types-registration" class="internal xref">Media Types Registration</a></p>
+                <p id="section-toc.1-1.9.2.3.1"><a href="#section-9.3" class="auto internal xref">9.3</a>.  <a href="#name-cwt-claims-registration" class="internal xref">CWT Claims Registration</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.3.2.1">
-                    <p id="section-toc.1-1.9.2.3.2.1.1"><a href="#section-9.3.1" class="auto internal xref">9.3.1</a>.  <a href="#name-application-dpop-proofjwt" class="internal xref">application/dpop-proof+jwt</a></p>
+                    <p id="section-toc.1-1.9.2.3.2.1.1"><a href="#section-9.3.1" class="auto internal xref">9.3.1</a>.  <a href="#name-actx-claim" class="internal xref">actx Claim</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.3.2.2">
+                    <p id="section-toc.1-1.9.2.3.2.2.1"><a href="#section-9.3.2" class="auto internal xref">9.3.2</a>.  <a href="#name-nonce-claim-dpop" class="internal xref">nonce Claim (DPoP)</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.3.2.3">
+                    <p id="section-toc.1-1.9.2.3.2.3.1"><a href="#section-9.3.3" class="auto internal xref">9.3.3</a>.  <a href="#name-ath-claim" class="internal xref">ath Claim</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.4">
+                <p id="section-toc.1-1.9.2.4.1"><a href="#section-9.4" class="auto internal xref">9.4</a>.  <a href="#name-media-types-registration" class="internal xref">Media Types Registration</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.4.2.1">
+                    <p id="section-toc.1-1.9.2.4.2.1.1"><a href="#section-9.4.1" class="auto internal xref">9.4.1</a>.  <a href="#name-application-dpop-proofjwt" class="internal xref">application/dpop-proof+jwt</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.4.2.2">
+                    <p id="section-toc.1-1.9.2.4.2.2.1"><a href="#section-9.4.2" class="auto internal xref">9.4.2</a>.  <a href="#name-application-dpop-proofcwt" class="internal xref">application/dpop-proof+cwt</a></p>
 </li>
                 </ul>
 </li>
@@ -1359,12 +1432,15 @@ server", "client", and "public client" are defined by "The OAuth 2.0
 Authorization Framework" <span>[<a href="#RFC6749" class="cite xref">RFC6749</a>]</span>.<a href="#section-1.1-2" class="pilcrow">¶</a></p>
 <p id="section-1.1-3">The terms "JSON Web Token (JWT)", "JOSE Header", and "JWS" are defined in
 <span>[<a href="#RFC7519" class="cite xref">RFC7519</a>]</span> and <span>[<a href="#RFC7515" class="cite xref">RFC7515</a>]</span>.<a href="#section-1.1-3" class="pilcrow">¶</a></p>
-<span class="break"></span><dl class="dlParallel" id="section-1.1-4">
-          <dt id="section-1.1-4.1">Application protocol:</dt>
-          <dd style="margin-left: 1.5em" id="section-1.1-4.2">
-            <p id="section-1.1-4.2.1">The protocol which uses DPoP tokens as proof of authorization. This may be
+<p id="section-1.1-4">The terms "CBOR Web Token (CWT)", "COSE", and "COSE Key" are defined in
+<span>[<a href="#RFC8392" class="cite xref">RFC8392</a>]</span>, <span>[<a href="#RFC9052" class="cite xref">RFC9052</a>]</span>, and <span>[<a href="#RFC9053" class="cite xref">RFC9053</a>]</span>.<a href="#section-1.1-4" class="pilcrow">¶</a></p>
+<p id="section-1.1-5">The term "CWT Confirmation" is defined in <span>[<a href="#RFC8747" class="cite xref">RFC8747</a>]</span>.<a href="#section-1.1-5" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-1.1-6">
+          <dt id="section-1.1-6.1">Application protocol:</dt>
+          <dd style="margin-left: 1.5em" id="section-1.1-6.2">
+            <p id="section-1.1-6.2.1">The protocol which uses DPoP tokens as proof of authorization. This may be
 HTTP (as in RFC 9449) or any other application-layer protocol that requires
-proof-of-possession token binding.<a href="#section-1.1-4.2.1" class="pilcrow">¶</a></p>
+proof-of-possession token binding.<a href="#section-1.1-6.2.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
 </dl>
@@ -1408,9 +1484,11 @@ private key.<a href="#section-2-1" class="pilcrow">¶</a></p>
         </figcaption></figure>
 </div>
 <p id="section-2-3">The main data structure introduced by this specification is a generic DPoP
-proof JWT that can be used across various application protocols and contexts,
-as described in detail below. A client uses a generic DPoP proof JWT to prove
-the possession of a private key corresponding to a certain public key.<a href="#section-2-3" class="pilcrow">¶</a></p>
+proof that can be used across various application protocols and contexts,
+as described in detail below. This proof can be encoded as either a JWT
+(JSON Web Token) or CWT (CBOR Web Token), depending on deployment requirements.
+A client uses a generic DPoP proof to prove the possession of a private key
+corresponding to a certain public key.<a href="#section-2-3" class="pilcrow">¶</a></p>
 <p id="section-2-4">Roughly speaking, a generic DPoP proof is a signature over:<a href="#section-2-4" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-2-5.1">
@@ -1430,7 +1508,7 @@ the possession of a private key corresponding to a certain public key.<a href="#
 within the request.<a href="#section-2-5.5.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
-<p id="section-2-6">The application protocol needs to define binding fields that make the proof JWT
+<p id="section-2-6">The application protocol needs to define binding fields that make the proof
 unique to a specific protocol interaction. These binding fields replace the
 HTTP method (<code>htm</code>) and HTTP URI (<code>htu</code>) fields used in RFC 9449, providing
 protocol-specific context that prevents replay attacks across different
@@ -1586,96 +1664,319 @@ generated.<a href="#section-3.4-3" class="pilcrow">¶</a></p>
       <h2 id="name-application-agnostic-dpop-p">
 <a href="#section-4" class="section-number selfRef">4. </a><a href="#name-application-agnostic-dpop-p" class="section-name selfRef">Application-Agnostic DPoP Proof Structure</a>
       </h2>
-<p id="section-4-1">This proof structure has the same general structure as a standard DPoP proof
-as defined in RFC 9449, with the key difference being that the HTTP-specific
-claims (<code>htm</code> for HTTP method and <code>htu</code> for HTTP URI) are replaced with the
-Authorization Context (<code>actx</code>) object to provide application protocol-specific
-binding information.<a href="#section-4-1" class="pilcrow">¶</a></p>
-<div id="authorization-context-object">
-<section id="section-4.1">
-        <h3 id="name-authorization-context-objec">
-<a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-authorization-context-objec" class="section-name selfRef">Authorization Context Object</a>
-        </h3>
-<p id="section-4.1-1">The core extension introduced by this framework is the Authorization Context
-(<code>actx</code>) object, which replaces protocol-specific fields in the DPoP proof JWT
-payload.<a href="#section-4.1-1" class="pilcrow">¶</a></p>
-<p id="section-4.1-2">A generic DPoP proof JWT <span class="bcp14">MUST</span> contain an Authorization Context object
-(<code>actx</code>) that specifies the protocol or context for which the proof is being
-generated.<a href="#section-4.1-2" class="pilcrow">¶</a></p>
-<div id="authorization-context-object-structure">
-<section id="section-4.1.1">
-          <h4 id="name-authorization-context-object">
-<a href="#section-4.1.1" class="section-number selfRef">4.1.1. </a><a href="#name-authorization-context-object" class="section-name selfRef">Authorization Context Object Structure</a>
-          </h4>
-<p id="section-4.1.1-1">The Authorization Context (<code>actx</code>) object <span class="bcp14">MUST</span> contain:<a href="#section-4.1.1-1" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-4.1.1-2.1">
-              <p id="section-4.1.1-2.1.1">type (string): A registered identifier specifying the protocol or context
-type<a href="#section-4.1.1-2.1.1" class="pilcrow">¶</a></p>
+<p id="section-4-1">This framework supports DPoP proofs in two formats:<a href="#section-4-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-4-2">
+<li id="section-4-2.1">
+          <p id="section-4-2.1.1"><strong>JWT-based DPoP Proofs</strong>: Using JSON Web Token structure as defined in
+<span>[<a href="#RFC7519" class="cite xref">RFC7519</a>]</span>, consistent with RFC 9449<a href="#section-4-2.1.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-4.1.1-2.2">
-              <p id="section-4.1.1-2.2.1">Additional fields as defined by the specific context type specification<a href="#section-4.1.1-2.2.1" class="pilcrow">¶</a></p>
+        <li id="section-4-2.2">
+          <p id="section-4-2.2.1"><strong>CWT-based DPoP Proofs</strong>: Using CBOR Web Token structure as defined in
+<span>[<a href="#RFC8392" class="cite xref">RFC8392</a>]</span>, enabling compact binary encoding suitable for constrained
+environments and interoperability with Common Access Token (CAT)
+<span>[<a href="#CTA-5007-B" class="cite xref">CTA-5007-B</a>]</span><a href="#section-4-2.2.1" class="pilcrow">¶</a></p>
+</li>
+      </ol>
+<p id="section-4-3">Both formats share the same core structure as a standard DPoP proof as defined
+in RFC 9449, with the key difference being that the HTTP-specific claims (<code>htm</code>
+for HTTP method and <code>htu</code> for HTTP URI) are replaced with the Authorization
+Context (<code>actx</code>) object to provide application protocol-specific binding
+information.<a href="#section-4-3" class="pilcrow">¶</a></p>
+<div id="choosing-between-jwt-and-cwt-formats">
+<section id="section-4.1">
+        <h3 id="name-choosing-between-jwt-and-cw">
+<a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-choosing-between-jwt-and-cw" class="section-name selfRef">Choosing Between JWT and CWT Formats</a>
+        </h3>
+<p id="section-4.1-1">Implementations should choose between JWT and CWT formats based on their
+deployment requirements:<a href="#section-4.1-1" class="pilcrow">¶</a></p>
+<p id="section-4.1-2"><strong>Use JWT-based DPoP proofs when:</strong><a href="#section-4.1-2" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.1-3.1">
+            <p id="section-4.1-3.1.1">Integrating with existing OAuth 2.0 infrastructure that uses JWT<a href="#section-4.1-3.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-4.1-3.2">
+            <p id="section-4.1-3.2.1">Interoperating with systems that expect JSON-based tokens<a href="#section-4.1-3.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-4.1-3.3">
+            <p id="section-4.1-3.3.1">Human readability of tokens is beneficial for debugging<a href="#section-4.1-3.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-4.1-3.4">
+            <p id="section-4.1-3.4.1">The deployment does not have strict size constraints<a href="#section-4.1-3.4.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-4.1-4"><strong>Use CWT-based DPoP proofs when:</strong><a href="#section-4.1-4" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.1-5.1">
+            <p id="section-4.1-5.1.1">Integrating with Common Access Token (CAT) <span>[<a href="#CTA-5007-B" class="cite xref">CTA-5007-B</a>]</span> systems<a href="#section-4.1-5.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-4.1-5.2">
+            <p id="section-4.1-5.2.1">Operating in bandwidth-constrained environments where compact encoding
+matters<a href="#section-4.1-5.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-4.1-5.3">
+            <p id="section-4.1-5.3.1">The protocol already uses CBOR encoding for other data structures<a href="#section-4.1-5.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-4.1-5.4">
+            <p id="section-4.1-5.4.1">Interoperating with IoT or constrained device deployments<a href="#section-4.1-5.4.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-4.1-6">Servers <span class="bcp14">MAY</span> support both formats simultaneously. When doing so, they <span class="bcp14">MUST</span>
+validate the format indicator in the proof header (<code>dpop-proof+jwt</code> or
+<code>dpop-proof+cwt</code>) and process the proof according to the indicated format.<a href="#section-4.1-6" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="authorization-context-object">
+<section id="section-4.2">
+        <h3 id="name-authorization-context-objec">
+<a href="#section-4.2" class="section-number selfRef">4.2. </a><a href="#name-authorization-context-objec" class="section-name selfRef">Authorization Context Object</a>
+        </h3>
+<p id="section-4.2-1">The core extension introduced by this framework is the Authorization Context
+(<code>actx</code>) object, which replaces protocol-specific fields in the DPoP proof JWT
+payload.<a href="#section-4.2-1" class="pilcrow">¶</a></p>
+<p id="section-4.2-2">A generic DPoP proof JWT <span class="bcp14">MUST</span> contain an Authorization Context object
+(<code>actx</code>) that specifies the protocol or context for which the proof is being
+generated.<a href="#section-4.2-2" class="pilcrow">¶</a></p>
+<div id="authorization-context-object-structure">
+<section id="section-4.2.1">
+          <h4 id="name-authorization-context-object">
+<a href="#section-4.2.1" class="section-number selfRef">4.2.1. </a><a href="#name-authorization-context-object" class="section-name selfRef">Authorization Context Object Structure</a>
+          </h4>
+<p id="section-4.2.1-1">The Authorization Context (<code>actx</code>) object <span class="bcp14">MUST</span> contain:<a href="#section-4.2.1-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.2.1-2.1">
+              <p id="section-4.2.1-2.1.1">type (string): A registered identifier specifying the protocol or context
+type<a href="#section-4.2.1-2.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-4.2.1-2.2">
+              <p id="section-4.2.1-2.2.1">Additional fields as defined by the specific context type specification<a href="#section-4.2.1-2.2.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
-<div class="lang-json sourcecode" id="section-4.1.1-3">
+<div class="lang-json sourcecode" id="section-4.2.1-3">
 <pre>
 {
   "actx": {
     "type": "protocol-identifier"
   }
 }
-</pre><a href="#section-4.1.1-3" class="pilcrow">¶</a>
+</pre><a href="#section-4.2.1-3" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
 </section>
 </div>
-<div id="jwt-header-requirements">
-<section id="section-4.2">
-        <h3 id="name-jwt-header-requirements">
-<a href="#section-4.2" class="section-number selfRef">4.2. </a><a href="#name-jwt-header-requirements" class="section-name selfRef">JWT Header Requirements</a>
+<div id="jwt-dpop">
+<section id="section-4.3">
+        <h3 id="name-jwt-based-dpop-proof-struct">
+<a href="#section-4.3" class="section-number selfRef">4.3. </a><a href="#name-jwt-based-dpop-proof-struct" class="section-name selfRef">JWT-based DPoP Proof Structure</a>
         </h3>
-<p id="section-4.2-1">The JWT header for a generic DPoP proof <span class="bcp14">MUST</span> contain the same elements as
-specified in <span>[<a href="#RFC9449" class="cite xref">RFC9449</a>]</span>:<a href="#section-4.2-1" class="pilcrow">¶</a></p>
+<p id="section-4.3-1">This section defines the JWT-based DPoP proof format for use with JSON-based
+systems and standard OAuth deployments.<a href="#section-4.3-1" class="pilcrow">¶</a></p>
+<div id="jwt-header-requirements">
+<section id="section-4.3.1">
+          <h4 id="name-jwt-header-requirements">
+<a href="#section-4.3.1" class="section-number selfRef">4.3.1. </a><a href="#name-jwt-header-requirements" class="section-name selfRef">JWT Header Requirements</a>
+          </h4>
+<p id="section-4.3.1-1">The JWT header for a generic DPoP proof <span class="bcp14">MUST</span> contain the same elements as
+specified in <span>[<a href="#RFC9449" class="cite xref">RFC9449</a>]</span>:<a href="#section-4.3.1-1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-4.2-2.1">
-            <p id="section-4.2-2.1.1">typ: <span class="bcp14">MUST</span> be "dpop-proof+jwt"<a href="#section-4.2-2.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-4.3.1-2.1">
+              <p id="section-4.3.1-2.1.1">typ: <span class="bcp14">MUST</span> be "dpop-proof+jwt"<a href="#section-4.3.1-2.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-4.2-2.2">
-            <p id="section-4.2-2.2.1">alg: An asymmetric signature algorithm identifier<a href="#section-4.2-2.2.1" class="pilcrow">¶</a></p>
+            <li class="normal" id="section-4.3.1-2.2">
+              <p id="section-4.3.1-2.2.1">alg: An asymmetric signature algorithm identifier<a href="#section-4.3.1-2.2.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-4.2-2.3">
-            <p id="section-4.2-2.3.1">jwk: The public key used for verification<a href="#section-4.2-2.3.1" class="pilcrow">¶</a></p>
+            <li class="normal" id="section-4.3.1-2.3">
+              <p id="section-4.3.1-2.3.1">jwk: The public key used for verification<a href="#section-4.3.1-2.3.1" class="pilcrow">¶</a></p>
 </li>
-        </ul>
+          </ul>
 </section>
 </div>
 <div id="jwt-payload-requirements">
-<section id="section-4.3">
-        <h3 id="name-jwt-payload-requirements">
-<a href="#section-4.3" class="section-number selfRef">4.3. </a><a href="#name-jwt-payload-requirements" class="section-name selfRef">JWT Payload Requirements</a>
+<section id="section-4.3.2">
+          <h4 id="name-jwt-payload-requirements">
+<a href="#section-4.3.2" class="section-number selfRef">4.3.2. </a><a href="#name-jwt-payload-requirements" class="section-name selfRef">JWT Payload Requirements</a>
+          </h4>
+<p id="section-4.3.2-1">The JWT payload for a generic DPoP proof <span class="bcp14">MUST</span> contain:<a href="#section-4.3.2-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.3.2-2.1">
+              <p id="section-4.3.2-2.1.1">jti: A unique identifier for the JWT<a href="#section-4.3.2-2.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-4.3.2-2.2">
+              <p id="section-4.3.2-2.2.1">iat: Issued-at time<a href="#section-4.3.2-2.2.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-4.3.2-2.3">
+              <p id="section-4.3.2-2.3.1">actx: Authorization Context object (if not using HTTP binding)<a href="#section-4.3.2-2.3.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
+<p id="section-4.3.2-3">Additional claims <span class="bcp14">MAY</span> be included based on context requirements:<a href="#section-4.3.2-3" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.3.2-4.1">
+              <p id="section-4.3.2-4.1.1">nonce: Server-provided nonce for replay protection<a href="#section-4.3.2-4.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-4.3.2-4.2">
+              <p id="section-4.3.2-4.2.1">ath: Access token hash (when presenting access tokens)<a href="#section-4.3.2-4.2.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
+</section>
+</div>
+</section>
+</div>
+<div id="cwt-dpop">
+<section id="section-4.4">
+        <h3 id="name-cwt-based-dpop-proof-struct">
+<a href="#section-4.4" class="section-number selfRef">4.4. </a><a href="#name-cwt-based-dpop-proof-struct" class="section-name selfRef">CWT-based DPoP Proof Structure</a>
         </h3>
-<p id="section-4.3-1">The JWT payload for a generic DPoP proof <span class="bcp14">MUST</span> contain:<a href="#section-4.3-1" class="pilcrow">¶</a></p>
+<p id="section-4.4-1">This section defines the CWT-based DPoP proof format for use with CBOR-based
+systems, constrained environments, and systems using Common Access Token (CAT)
+<span>[<a href="#CTA-5007-B" class="cite xref">CTA-5007-B</a>]</span>.<a href="#section-4.4-1" class="pilcrow">¶</a></p>
+<div id="cwt-protected-header-requirements">
+<section id="section-4.4.1">
+          <h4 id="name-cwt-protected-header-requir">
+<a href="#section-4.4.1" class="section-number selfRef">4.4.1. </a><a href="#name-cwt-protected-header-requir" class="section-name selfRef">CWT Protected Header Requirements</a>
+          </h4>
+<p id="section-4.4.1-1">The CWT protected header for a generic DPoP proof <span class="bcp14">MUST</span> contain the following
+parameters defined in <span>[<a href="#RFC9052" class="cite xref">RFC9052</a>]</span>:<a href="#section-4.4.1-1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-4.3-2.1">
-            <p id="section-4.3-2.1.1">jti: A unique identifier for the JWT<a href="#section-4.3-2.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-4.4.1-2.1">
+              <p id="section-4.4.1-2.1.1">alg (label 1): A COSE algorithm identifier for an asymmetric signature
+algorithm (e.g., -7 for ES256, -35 for ES384, -36 for ES512)<a href="#section-4.4.1-2.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-4.3-2.2">
-            <p id="section-4.3-2.2.1">iat: Issued-at time<a href="#section-4.3-2.2.1" class="pilcrow">¶</a></p>
+            <li class="normal" id="section-4.4.1-2.2">
+              <p id="section-4.4.1-2.2.1">typ (label 16): <span class="bcp14">MUST</span> be "dpop-proof+cwt"<a href="#section-4.4.1-2.2.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-4.3-2.3">
-            <p id="section-4.3-2.3.1">actx: Authorization Context object (if not using HTTP binding)<a href="#section-4.3-2.3.1" class="pilcrow">¶</a></p>
+            <li class="normal" id="section-4.4.1-2.3">
+              <p id="section-4.4.1-2.3.1">COSE_Key (label 4): The public key used for verification, encoded as a
+COSE_Key structure per <span>[<a href="#RFC9052" class="cite xref">RFC9052</a>]</span><a href="#section-4.4.1-2.3.1" class="pilcrow">¶</a></p>
 </li>
-        </ul>
-<p id="section-4.3-3">Additional claims <span class="bcp14">MAY</span> be included based on context requirements:<a href="#section-4.3-3" class="pilcrow">¶</a></p>
+          </ul>
+</section>
+</div>
+<div id="cwt-claims-requirements">
+<section id="section-4.4.2">
+          <h4 id="name-cwt-claims-requirements">
+<a href="#section-4.4.2" class="section-number selfRef">4.4.2. </a><a href="#name-cwt-claims-requirements" class="section-name selfRef">CWT Claims Requirements</a>
+          </h4>
+<p id="section-4.4.2-1">The CWT claims set for a generic DPoP proof <span class="bcp14">MUST</span> contain:<a href="#section-4.4.2-1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-4.3-4.1">
-            <p id="section-4.3-4.1.1">nonce: Server-provided nonce for replay protection<a href="#section-4.3-4.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-4.4.2-2.1">
+              <p id="section-4.4.2-2.1.1">cti (label 7): A unique identifier for the CWT, encoded as a byte string<a href="#section-4.4.2-2.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-4.3-4.2">
-            <p id="section-4.3-4.2.1">ath: Access token hash (when presenting access tokens)<a href="#section-4.3-4.2.1" class="pilcrow">¶</a></p>
+            <li class="normal" id="section-4.4.2-2.2">
+              <p id="section-4.4.2-2.2.1">iat (label 6): Issued-at time as a NumericDate<a href="#section-4.4.2-2.2.1" class="pilcrow">¶</a></p>
 </li>
-        </ul>
+            <li class="normal" id="section-4.4.2-2.3">
+              <p id="section-4.4.2-2.3.1">actx (label TBD): Authorization Context object<a href="#section-4.4.2-2.3.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
+<p id="section-4.4.2-3">Additional claims <span class="bcp14">MAY</span> be included based on context requirements:<a href="#section-4.4.2-3" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.4.2-4.1">
+              <p id="section-4.4.2-4.1.1">nonce (label TBD): Server-provided nonce for replay protection, encoded as
+a text string<a href="#section-4.4.2-4.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-4.4.2-4.2">
+              <p id="section-4.4.2-4.2.1">ath (label TBD): Access token hash, encoded as a byte string containing the
+SHA-256 hash of the access token<a href="#section-4.4.2-4.2.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
+</section>
+</div>
+<div id="cwt-authorization-context-structure">
+<section id="section-4.4.3">
+          <h4 id="name-cwt-authorization-context-s">
+<a href="#section-4.4.3" class="section-number selfRef">4.4.3. </a><a href="#name-cwt-authorization-context-s" class="section-name selfRef">CWT Authorization Context Structure</a>
+          </h4>
+<p id="section-4.4.3-1">The Authorization Context in CWT format uses CBOR encoding with integer keys
+for compact representation:<a href="#section-4.4.3-1" class="pilcrow">¶</a></p>
+<div class="lang-cddl sourcecode" id="section-4.4.3-2">
+<pre>
+actx = {
+  type: tstr,           ; Protocol type identifier (key 0)
+  * int =&gt; any          ; Protocol-specific fields
+}
+</pre><a href="#section-4.4.3-2" class="pilcrow">¶</a>
+</div>
+<p id="section-4.4.3-3">For MOQT contexts, the CWT Authorization Context uses:<a href="#section-4.4.3-3" class="pilcrow">¶</a></p>
+<div class="lang-cddl sourcecode" id="section-4.4.3-4">
+<pre>
+moqt-actx = {
+  0: "moqt",            ; type
+  1: tstr,              ; action
+  2: tstr,              ; tns (track namespace)
+  ? 3: tstr,            ; tn (track name)
+  ? 4: any              ; parameters
+}
+</pre><a href="#section-4.4.3-4" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="cddl-definition-for-cwt-dpop-proof">
+<section id="section-4.4.4">
+          <h4 id="name-cddl-definition-for-cwt-dpo">
+<a href="#section-4.4.4" class="section-number selfRef">4.4.4. </a><a href="#name-cddl-definition-for-cwt-dpo" class="section-name selfRef">CDDL Definition for CWT DPoP Proof</a>
+          </h4>
+<p id="section-4.4.4-1">The complete CDDL definition for a CWT-based DPoP proof is:<a href="#section-4.4.4-1" class="pilcrow">¶</a></p>
+<div class="lang-cddl sourcecode" id="section-4.4.4-2">
+<pre>
+dpop-proof-cwt = COSE_Sign1
+
+dpop-protected-header = {
+  1 =&gt; int,                    ; alg
+  16 =&gt; "dpop-proof+cwt",      ; typ
+  4 =&gt; COSE_Key                ; COSE_Key
+}
+
+dpop-cwt-claims = {
+  7 =&gt; bstr,                   ; cti (unique identifier)
+  6 =&gt; numericdate,            ; iat (issued at)
+  actx-label =&gt; actx,          ; actx (authorization context)
+  ? nonce-label =&gt; tstr,       ; nonce (optional)
+  ? ath-label =&gt; bstr,         ; ath (optional, SHA-256 hash)
+}
+
+actx-label = TBD              ; To be assigned by IANA
+nonce-label = TBD             ; To be assigned by IANA
+ath-label = TBD               ; To be assigned by IANA
+
+numericdate = int / float
+</pre><a href="#section-4.4.4-2" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="token-binding-with-cwt-access-tokens">
+<section id="section-4.4.5">
+          <h4 id="name-token-binding-with-cwt-acce">
+<a href="#section-4.4.5" class="section-number selfRef">4.4.5. </a><a href="#name-token-binding-with-cwt-acce" class="section-name selfRef">Token Binding with CWT Access Tokens</a>
+          </h4>
+<p id="section-4.4.5-1">When using CWT-based access tokens (such as Common Access Token), the DPoP
+binding is established using the confirmation claim (<code>cnf</code>, label 8) as
+defined in <span>[<a href="#RFC8747" class="cite xref">RFC8747</a>]</span>. The <code>cnf</code> claim contains the key confirmation:<a href="#section-4.4.5-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.4.5-2.1">
+              <p id="section-4.4.5-2.1.1">For JWT DPoP proofs: Use the <code>jkt</code> confirmation method containing the
+JWK SHA-256 Thumbprint as defined in <span>[<a href="#RFC7638" class="cite xref">RFC7638</a>]</span><a href="#section-4.4.5-2.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-4.4.5-2.2">
+              <p id="section-4.4.5-2.2.1">For CWT DPoP proofs: Use the <code>ckt</code> confirmation method containing the
+COSE Key Thumbprint as defined in <span>[<a href="#RFC9679" class="cite xref">RFC9679</a>]</span><a href="#section-4.4.5-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
+<p id="section-4.4.5-3">Example CWT access token with DPoP binding:<a href="#section-4.4.5-3" class="pilcrow">¶</a></p>
+<div class="lang-cbor-diag sourcecode" id="section-4.4.5-4">
+<pre>
+{
+  / iss / 1: "auth.example.com",
+  / aud / 3: "resource.example.com",
+  / exp / 4: 1705209856,
+  / iat / 6: 1705123456,
+  / cnf / 8: {
+    / jkt / 323: h'fUHyO2r2Z3DZ53EsNrWBb1xWXM4VbCqpW5G-o9GqC7Y'
+  }
+}
+</pre><a href="#section-4.4.5-4" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
 </section>
 </div>
 </section>
@@ -1816,22 +2117,27 @@ track name<a href="#section-5.1.4-2.5.1" class="pilcrow">¶</a></p>
 </div>
 </section>
 </div>
-<div id="application-agnostic-dpop-proof-jwt-examples">
+<div id="application-agnostic-dpop-proof-examples">
 <section id="section-6">
       <h2 id="name-application-agnostic-dpop-pr">
-<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-application-agnostic-dpop-pr" class="section-name selfRef">Application-Agnostic DPoP Proof JWT Examples</a>
+<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-application-agnostic-dpop-pr" class="section-name selfRef">Application-Agnostic DPoP Proof Examples</a>
       </h2>
-<p id="section-6-1">This section provides complete examples of application-agnostic DPoP proof JWTs,
-illustrating the use of the Authorization Context object in place of
-HTTP-specific claims.<a href="#section-6-1" class="pilcrow">¶</a></p>
-<div id="example-moqt-context-dpop-proof">
+<p id="section-6-1">This section provides complete examples of application-agnostic DPoP proofs in
+both JWT and CWT formats, illustrating the use of the Authorization Context
+object in place of HTTP-specific claims.<a href="#section-6-1" class="pilcrow">¶</a></p>
+<div id="jwt-format-examples">
 <section id="section-6.1">
-        <h3 id="name-example-moqt-context-dpop-p">
-<a href="#section-6.1" class="section-number selfRef">6.1. </a><a href="#name-example-moqt-context-dpop-p" class="section-name selfRef">Example: MOQT Context DPoP Proof</a>
+        <h3 id="name-jwt-format-examples">
+<a href="#section-6.1" class="section-number selfRef">6.1. </a><a href="#name-jwt-format-examples" class="section-name selfRef">JWT Format Examples</a>
         </h3>
-<p id="section-6.1-1">The following example shows a complete DPoP proof JWT for a MOQT context:<a href="#section-6.1-1" class="pilcrow">¶</a></p>
-<p id="section-6.1-2">JWT Header:<a href="#section-6.1-2" class="pilcrow">¶</a></p>
-<div class="lang-json sourcecode" id="section-6.1-3">
+<div id="example-moqt-context-dpop-proof-jwt">
+<section id="section-6.1.1">
+          <h4 id="name-example-moqt-context-dpop-p">
+<a href="#section-6.1.1" class="section-number selfRef">6.1.1. </a><a href="#name-example-moqt-context-dpop-p" class="section-name selfRef">Example: MOQT Context DPoP Proof (JWT)</a>
+          </h4>
+<p id="section-6.1.1-1">The following example shows a complete DPoP proof JWT for a MOQT context:<a href="#section-6.1.1-1" class="pilcrow">¶</a></p>
+<p id="section-6.1.1-2">JWT Header:<a href="#section-6.1.1-2" class="pilcrow">¶</a></p>
+<div class="lang-json sourcecode" id="section-6.1.1-3">
 <pre>
 {
   "typ": "dpop-proof+jwt",
@@ -1843,10 +2149,10 @@ HTTP-specific claims.<a href="#section-6-1" class="pilcrow">¶</a></p>
     "crv": "P-256"
   }
 }
-</pre><a href="#section-6.1-3" class="pilcrow">¶</a>
+</pre><a href="#section-6.1.1-3" class="pilcrow">¶</a>
 </div>
-<p id="section-6.1-4">JWT Payload:<a href="#section-6.1-4" class="pilcrow">¶</a></p>
-<div class="lang-json sourcecode" id="section-6.1-5">
+<p id="section-6.1.1-4">JWT Payload:<a href="#section-6.1.1-4" class="pilcrow">¶</a></p>
+<div class="lang-json sourcecode" id="section-6.1.1-5">
 <pre>
 {
   "jti": "unique-request-id-789",
@@ -1859,18 +2165,18 @@ HTTP-specific claims.<a href="#section-6-1" class="pilcrow">¶</a></p>
   },
   "ath": "fUHyO2r2Z3DZ53EsNrWBb1xWXM4VbCqpW5G-o9GqC7Y"
 }
-</pre><a href="#section-6.1-5" class="pilcrow">¶</a>
+</pre><a href="#section-6.1.1-5" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
 <div id="comparing-with-http-dpop">
-<section id="section-6.2">
-        <h3 id="name-comparing-with-http-dpop">
-<a href="#section-6.2" class="section-number selfRef">6.2. </a><a href="#name-comparing-with-http-dpop" class="section-name selfRef">Comparing with HTTP DPoP</a>
-        </h3>
-<p id="section-6.2-1">For comparison, an equivalent HTTP DPoP proof would contain <code>htm</code> and <code>htu</code>
-claims instead of the <code>actx</code> object:<a href="#section-6.2-1" class="pilcrow">¶</a></p>
-<div class="lang-json sourcecode" id="section-6.2-2">
+<section id="section-6.1.2">
+          <h4 id="name-comparing-with-http-dpop">
+<a href="#section-6.1.2" class="section-number selfRef">6.1.2. </a><a href="#name-comparing-with-http-dpop" class="section-name selfRef">Comparing with HTTP DPoP</a>
+          </h4>
+<p id="section-6.1.2-1">For comparison, an equivalent HTTP DPoP proof would contain <code>htm</code> and <code>htu</code>
+claims instead of the <code>actx</code> object:<a href="#section-6.1.2-1" class="pilcrow">¶</a></p>
+<div class="lang-json sourcecode" id="section-6.1.2-2">
 <pre>
 {
   "jti": "unique-request-id-789",
@@ -1879,11 +2185,166 @@ claims instead of the <code>actx</code> object:<a href="#section-6.2-1" class="p
   "htu": "https://media.example.com/subscribe",
   "ath": "fUHyO2r2Z3DZ53EsNrWBb1xWXM4VbCqpW5G-o9GqC7Y"
 }
-</pre><a href="#section-6.2-2" class="pilcrow">¶</a>
+</pre><a href="#section-6.1.2-2" class="pilcrow">¶</a>
 </div>
-<p id="section-6.2-3">The key difference is that the application-agnostic framework uses the <code>actx</code> object to
+<p id="section-6.1.2-3">The key difference is that the application-agnostic framework uses the <code>actx</code> object to
 provide protocol-specific authorization context, while HTTP DPoP uses <code>htm</code> and
-<code>htu</code> for HTTP method and URI.<a href="#section-6.2-3" class="pilcrow">¶</a></p>
+<code>htu</code> for HTTP method and URI.<a href="#section-6.1.2-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="cwt-format-examples">
+<section id="section-6.2">
+        <h3 id="name-cwt-format-examples">
+<a href="#section-6.2" class="section-number selfRef">6.2. </a><a href="#name-cwt-format-examples" class="section-name selfRef">CWT Format Examples</a>
+        </h3>
+<div id="example-moqt-context-dpop-proof-cwt">
+<section id="section-6.2.1">
+          <h4 id="name-example-moqt-context-dpop-pr">
+<a href="#section-6.2.1" class="section-number selfRef">6.2.1. </a><a href="#name-example-moqt-context-dpop-pr" class="section-name selfRef">Example: MOQT Context DPoP Proof (CWT)</a>
+          </h4>
+<p id="section-6.2.1-1">The following example shows a complete DPoP proof CWT for a MOQT context using
+CBOR diagnostic notation:<a href="#section-6.2.1-1" class="pilcrow">¶</a></p>
+<p id="section-6.2.1-2">CWT Protected Header:<a href="#section-6.2.1-2" class="pilcrow">¶</a></p>
+<div class="lang-cbor-diag sourcecode" id="section-6.2.1-3">
+<pre>
+{
+  / alg: ES256 / 1: -7,
+  / typ / 16: "dpop-proof+cwt",
+  / COSE_Key / 4: {
+    / kty: EC2 / 1: 2,
+    / crv: P-256 / -1: 1,
+    / x / -2: h'97cb45ae1c7f37855d788810883698f730a40e5a4194
+                 0e24502bbf915a56606b',
+    / y / -3: h'f55138a5ff13ca4f7e06b4d2cbcd0c1697f3de37c6d4
+                 a6eb5735ebd5fc01483f'
+  }
+}
+</pre><a href="#section-6.2.1-3" class="pilcrow">¶</a>
+</div>
+<p id="section-6.2.1-4">CWT Claims Set:<a href="#section-6.2.1-4" class="pilcrow">¶</a></p>
+<div class="lang-cbor-diag sourcecode" id="section-6.2.1-5">
+<pre>
+{
+  / cti / 7: h'756e697175652d72657175657374',
+  / iat / 6: 1705123456,
+  / actx / TBD: {
+    / type / 0: "moqt",
+    / action / 1: "SUBSCRIBE",
+    / tns / 2: "example.2ecom-app-scope-video",
+    / tn / 3: "camera1"
+  },
+  / ath / TBD: h'7d41f23b6af667701de7712c36b5816f5c5619
+                 cc555cca63ab099fa8f46a8ca6'
+}
+</pre><a href="#section-6.2.1-5" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="example-cwt-dpop-proof-with-common-access-token">
+<section id="section-6.2.2">
+          <h4 id="name-example-cwt-dpop-proof-with">
+<a href="#section-6.2.2" class="section-number selfRef">6.2.2. </a><a href="#name-example-cwt-dpop-proof-with" class="section-name selfRef">Example: CWT DPoP Proof with Common Access Token</a>
+          </h4>
+<p id="section-6.2.2-1">When using CWT DPoP proofs with Common Access Token (CAT) <span>[<a href="#CTA-5007-B" class="cite xref">CTA-5007-B</a>]</span>, the
+access token is a CWT with a <code>cnf</code> claim binding to the DPoP proof key.<a href="#section-6.2.2-1" class="pilcrow">¶</a></p>
+<p id="section-6.2.2-2">Access Token (CWT):<a href="#section-6.2.2-2" class="pilcrow">¶</a></p>
+<div class="lang-cbor-diag sourcecode" id="section-6.2.2-3">
+<pre>
+{
+  / iss / 1: "auth.example.com",
+  / aud / 3: "resource.example.com",
+  / exp / 4: 1705209856,
+  / iat / 6: 1705123456,
+  / cti / 7: h'746f6b656e2d6964',
+  / cnf / 8: {
+    / jkt / 323: h'7d41f23b6af667701de7712c36b5816f5c5619
+                   cc555cca63ab099fa8f46a8ca6'
+  },
+  / catdpop / 321: {
+    / window / 0: 300,
+    / jti / 1: 1
+  }
+}
+</pre><a href="#section-6.2.2-3" class="pilcrow">¶</a>
+</div>
+<p id="section-6.2.2-4">The <code>catdpop</code> claim (label 321) provides DPoP-specific settings as defined in
+<span>[<a href="#CTA-5007-B" class="cite xref">CTA-5007-B</a>]</span>:<a href="#section-6.2.2-4" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-6.2.2-5.1">
+              <p id="section-6.2.2-5.1.1"><code>window</code> (key 0): Acceptable time window for DPoP proofs in seconds<a href="#section-6.2.2-5.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-6.2.2-5.2">
+              <p id="section-6.2.2-5.2.1"><code>jti</code> (key 1): JTI processing semantics (0=ignore, 1=may honor for replay
+detection)<a href="#section-6.2.2-5.2.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
+<p id="section-6.2.2-6">The corresponding DPoP proof binds to this access token through the <code>ath</code>
+claim containing the SHA-256 hash of the access token.<a href="#section-6.2.2-6" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="comparing-jwt-and-cwt-formats">
+<section id="section-6.2.3">
+          <h4 id="name-comparing-jwt-and-cwt-forma">
+<a href="#section-6.2.3" class="section-number selfRef">6.2.3. </a><a href="#name-comparing-jwt-and-cwt-forma" class="section-name selfRef">Comparing JWT and CWT Formats</a>
+          </h4>
+<p id="section-6.2.3-1">The following table summarizes the mapping between JWT and CWT DPoP proof
+elements:<a href="#section-6.2.3-1" class="pilcrow">¶</a></p>
+<table class="center" id="table-1">
+            <caption><a href="#table-1" class="selfRef">Table 1</a></caption>
+<thead>
+              <tr>
+                <th class="text-left" rowspan="1" colspan="1">JWT Element</th>
+                <th class="text-left" rowspan="1" colspan="1">CWT Element</th>
+                <th class="text-left" rowspan="1" colspan="1">Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">Header.typ</td>
+                <td class="text-left" rowspan="1" colspan="1">Protected.typ (16)</td>
+                <td class="text-left" rowspan="1" colspan="1">"dpop-proof+jwt" or "dpop-proof+cwt"</td>
+              </tr>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">Header.alg</td>
+                <td class="text-left" rowspan="1" colspan="1">Protected.alg (1)</td>
+                <td class="text-left" rowspan="1" colspan="1">Signature algorithm</td>
+              </tr>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">Header.jwk</td>
+                <td class="text-left" rowspan="1" colspan="1">Protected.COSE_Key (4)</td>
+                <td class="text-left" rowspan="1" colspan="1">Public key for verification</td>
+              </tr>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">Payload.jti</td>
+                <td class="text-left" rowspan="1" colspan="1">Claims.cti (7)</td>
+                <td class="text-left" rowspan="1" colspan="1">Unique identifier</td>
+              </tr>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">Payload.iat</td>
+                <td class="text-left" rowspan="1" colspan="1">Claims.iat (6)</td>
+                <td class="text-left" rowspan="1" colspan="1">Issued-at timestamp</td>
+              </tr>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">Payload.actx</td>
+                <td class="text-left" rowspan="1" colspan="1">Claims.actx (TBD)</td>
+                <td class="text-left" rowspan="1" colspan="1">Authorization context</td>
+              </tr>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">Payload.nonce</td>
+                <td class="text-left" rowspan="1" colspan="1">Claims.nonce (TBD)</td>
+                <td class="text-left" rowspan="1" colspan="1">Server-provided nonce</td>
+              </tr>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">Payload.ath</td>
+                <td class="text-left" rowspan="1" colspan="1">Claims.ath (TBD)</td>
+                <td class="text-left" rowspan="1" colspan="1">Access token hash</td>
+              </tr>
+            </tbody>
+          </table>
+</section>
+</div>
 </section>
 </div>
 </section>
@@ -2048,6 +2509,39 @@ attempt to use a valid DPoP proof from one application context in a different
 application context.<a href="#section-8.4-3" class="pilcrow">¶</a></p>
 </section>
 </div>
+<div id="cwt-specific-security-considerations">
+<section id="section-8.5">
+        <h3 id="name-cwt-specific-security-consi">
+<a href="#section-8.5" class="section-number selfRef">8.5. </a><a href="#name-cwt-specific-security-consi" class="section-name selfRef">CWT-Specific Security Considerations</a>
+        </h3>
+<p id="section-8.5-1">When using CWT-based DPoP proofs, the following additional considerations
+apply:<a href="#section-8.5-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-8.5-2">
+<li id="section-8.5-2.1">
+            <p id="section-8.5-2.1.1"><strong>Algorithm Selection</strong>: CWT DPoP proofs <span class="bcp14">MUST</span> use COSE algorithms
+registered for use with COSE_Sign1 as defined in <span>[<a href="#RFC9053" class="cite xref">RFC9053</a>]</span>. The same
+algorithm restrictions from <span>[<a href="#RFC9449" class="cite xref">RFC9449</a>]</span> apply: symmetric algorithms <span class="bcp14">MUST NOT</span> be used.<a href="#section-8.5-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-8.5-2.2">
+            <p id="section-8.5-2.2.1"><strong>Key Confirmation Methods</strong>: When binding CWT access tokens to DPoP
+proofs, implementations <span class="bcp14">SHOULD</span> prefer the <code>jkt</code> confirmation method for
+interoperability with JWT-based DPoP proofs, or <code>ckt</code> (COSE Key Thumbprint)
+when both token and proof are CWT-based.<a href="#section-8.5-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-8.5-2.3">
+            <p id="section-8.5-2.3.1"><strong>Binary Encoding</strong>: While CWT provides compact encoding, implementations
+<span class="bcp14">MUST</span> ensure that the encoded proof does not exceed transport-specific size
+limits.<a href="#section-8.5-2.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-8.5-2.4">
+            <p id="section-8.5-2.4.1"><strong>Cross-Format Attacks</strong>: Servers that accept both JWT and CWT DPoP proofs
+<span class="bcp14">MUST</span> validate the format indicator (<code>dpop-proof+jwt</code> vs <code>dpop-proof+cwt</code>)
+and reject proofs where the format indicator does not match the actual
+encoding.<a href="#section-8.5-2.4.1" class="pilcrow">¶</a></p>
+</li>
+        </ol>
+</section>
+</div>
 </section>
 </div>
 <div id="iana-considerations">
@@ -2131,8 +2625,8 @@ Internet-Draft that has been adopted by a working group.<a href="#section-9.1-7"
           <h4 id="name-initial-registry-contents">
 <a href="#section-9.1.2" class="section-number selfRef">9.1.2. </a><a href="#name-initial-registry-contents" class="section-name selfRef">Initial Registry Contents</a>
           </h4>
-<table class="center" id="table-1">
-            <caption><a href="#table-1" class="selfRef">Table 1</a></caption>
+<table class="center" id="table-2">
+            <caption><a href="#table-2" class="selfRef">Table 2</a></caption>
 <thead>
               <tr>
                 <th class="text-left" rowspan="1" colspan="1">Type</th>
@@ -2174,40 +2668,120 @@ Claims" registry:<a href="#section-9.2-1" class="pilcrow">¶</a></p>
 <p id="section-9.2-3">Claim Description: Authorization Context Object<a href="#section-9.2-3" class="pilcrow">¶</a></p>
 <p id="section-9.2-4">Claim Value Type: Object<a href="#section-9.2-4" class="pilcrow">¶</a></p>
 <p id="section-9.2-5">Change Controller: IETF<a href="#section-9.2-5" class="pilcrow">¶</a></p>
-<p id="section-9.2-6">Specification Document: This document, Section 4.1<a href="#section-9.2-6" class="pilcrow">¶</a></p>
+<p id="section-9.2-6">Specification Document: This document, <a href="#jwt-dpop" class="auto internal xref">Section 4.3</a><a href="#section-9.2-6" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="cwt-claims-registration">
+<section id="section-9.3">
+        <h3 id="name-cwt-claims-registration">
+<a href="#section-9.3" class="section-number selfRef">9.3. </a><a href="#name-cwt-claims-registration" class="section-name selfRef">CWT Claims Registration</a>
+        </h3>
+<p id="section-9.3-1">This document registers the following claims in the "CBOR Web Token (CWT)
+Claims" registry defined in <span>[<a href="#RFC8392" class="cite xref">RFC8392</a>]</span>:<a href="#section-9.3-1" class="pilcrow">¶</a></p>
+<div id="actx-claim">
+<section id="section-9.3.1">
+          <h4 id="name-actx-claim">
+<a href="#section-9.3.1" class="section-number selfRef">9.3.1. </a><a href="#name-actx-claim" class="section-name selfRef">actx Claim</a>
+          </h4>
+<p id="section-9.3.1-1">Claim Name: actx<a href="#section-9.3.1-1" class="pilcrow">¶</a></p>
+<p id="section-9.3.1-2">Claim Description: Authorization Context Object for DPoP proofs<a href="#section-9.3.1-2" class="pilcrow">¶</a></p>
+<p id="section-9.3.1-3">JWT Claim Name: actx<a href="#section-9.3.1-3" class="pilcrow">¶</a></p>
+<p id="section-9.3.1-4">Claim Key: TBD (requested: 400)<a href="#section-9.3.1-4" class="pilcrow">¶</a></p>
+<p id="section-9.3.1-5">Claim Value Type: map<a href="#section-9.3.1-5" class="pilcrow">¶</a></p>
+<p id="section-9.3.1-6">Change Controller: IETF<a href="#section-9.3.1-6" class="pilcrow">¶</a></p>
+<p id="section-9.3.1-7">Specification Document: This document, <a href="#cwt-dpop" class="auto internal xref">Section 4.4</a><a href="#section-9.3.1-7" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="nonce-claim-dpop">
+<section id="section-9.3.2">
+          <h4 id="name-nonce-claim-dpop">
+<a href="#section-9.3.2" class="section-number selfRef">9.3.2. </a><a href="#name-nonce-claim-dpop" class="section-name selfRef">nonce Claim (DPoP)</a>
+          </h4>
+<p id="section-9.3.2-1">Claim Name: dpop_nonce<a href="#section-9.3.2-1" class="pilcrow">¶</a></p>
+<p id="section-9.3.2-2">Claim Description: Server-provided nonce for DPoP replay protection<a href="#section-9.3.2-2" class="pilcrow">¶</a></p>
+<p id="section-9.3.2-3">JWT Claim Name: nonce<a href="#section-9.3.2-3" class="pilcrow">¶</a></p>
+<p id="section-9.3.2-4">Claim Key: TBD (requested: 401)<a href="#section-9.3.2-4" class="pilcrow">¶</a></p>
+<p id="section-9.3.2-5">Claim Value Type: text string<a href="#section-9.3.2-5" class="pilcrow">¶</a></p>
+<p id="section-9.3.2-6">Change Controller: IETF<a href="#section-9.3.2-6" class="pilcrow">¶</a></p>
+<p id="section-9.3.2-7">Specification Document: This document, <a href="#cwt-dpop" class="auto internal xref">Section 4.4</a><a href="#section-9.3.2-7" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="ath-claim">
+<section id="section-9.3.3">
+          <h4 id="name-ath-claim">
+<a href="#section-9.3.3" class="section-number selfRef">9.3.3. </a><a href="#name-ath-claim" class="section-name selfRef">ath Claim</a>
+          </h4>
+<p id="section-9.3.3-1">Claim Name: ath<a href="#section-9.3.3-1" class="pilcrow">¶</a></p>
+<p id="section-9.3.3-2">Claim Description: Access Token Hash for DPoP proof binding<a href="#section-9.3.3-2" class="pilcrow">¶</a></p>
+<p id="section-9.3.3-3">JWT Claim Name: ath<a href="#section-9.3.3-3" class="pilcrow">¶</a></p>
+<p id="section-9.3.3-4">Claim Key: TBD (requested: 402)<a href="#section-9.3.3-4" class="pilcrow">¶</a></p>
+<p id="section-9.3.3-5">Claim Value Type: byte string<a href="#section-9.3.3-5" class="pilcrow">¶</a></p>
+<p id="section-9.3.3-6">Change Controller: IETF<a href="#section-9.3.3-6" class="pilcrow">¶</a></p>
+<p id="section-9.3.3-7">Specification Document: This document, <a href="#cwt-dpop" class="auto internal xref">Section 4.4</a><a href="#section-9.3.3-7" class="pilcrow">¶</a></p>
+</section>
+</div>
 </section>
 </div>
 <div id="media-types-registration">
-<section id="section-9.3">
+<section id="section-9.4">
         <h3 id="name-media-types-registration">
-<a href="#section-9.3" class="section-number selfRef">9.3. </a><a href="#name-media-types-registration" class="section-name selfRef">Media Types Registration</a>
+<a href="#section-9.4" class="section-number selfRef">9.4. </a><a href="#name-media-types-registration" class="section-name selfRef">Media Types Registration</a>
         </h3>
 <div id="applicationdpop-proofjwt">
-<section id="section-9.3.1">
+<section id="section-9.4.1">
           <h4 id="name-application-dpop-proofjwt">
-<a href="#section-9.3.1" class="section-number selfRef">9.3.1. </a><a href="#name-application-dpop-proofjwt" class="section-name selfRef">application/dpop-proof+jwt</a>
+<a href="#section-9.4.1" class="section-number selfRef">9.4.1. </a><a href="#name-application-dpop-proofjwt" class="section-name selfRef">application/dpop-proof+jwt</a>
           </h4>
-<p id="section-9.3.1-1">This document registers the "application/dpop-proof+jwt" media type for
-generic DPoP proof JWTs in the "Media Types" registry.<a href="#section-9.3.1-1" class="pilcrow">¶</a></p>
-<p id="section-9.3.1-2">Type Name: application<a href="#section-9.3.1-2" class="pilcrow">¶</a></p>
-<p id="section-9.3.1-3">Subtype Name: dpop-proof+jwt<a href="#section-9.3.1-3" class="pilcrow">¶</a></p>
-<p id="section-9.3.1-4">Required Parameters: none<a href="#section-9.3.1-4" class="pilcrow">¶</a></p>
-<p id="section-9.3.1-5">Optional Parameters: none<a href="#section-9.3.1-5" class="pilcrow">¶</a></p>
-<p id="section-9.3.1-6">Encoding Considerations: Binary; base64url encoding of JWT<a href="#section-9.3.1-6" class="pilcrow">¶</a></p>
-<p id="section-9.3.1-7">Security Considerations: See Section 8 of this document<a href="#section-9.3.1-7" class="pilcrow">¶</a></p>
-<p id="section-9.3.1-8">Interoperability Considerations: Multi-Protocol DPoP proofs extend
-HTTP-specific DPoP while maintaining backward compatibility<a href="#section-9.3.1-8" class="pilcrow">¶</a></p>
-<p id="section-9.3.1-9">Published Specification: This document
-Applications that use this media type: Applications implementing generic DPoP
-authorization<a href="#section-9.3.1-9" class="pilcrow">¶</a></p>
-<p id="section-9.3.1-10">Fragment Identifier Considerations: none<a href="#section-9.3.1-10" class="pilcrow">¶</a></p>
-<p id="section-9.3.1-11">Additional Information: none<a href="#section-9.3.1-11" class="pilcrow">¶</a></p>
-<p id="section-9.3.1-12">Person and email address to contact: Media Over QUIC Working Group
-<a href="mailto:moq@ietf.org">moq@ietf.org</a><a href="#section-9.3.1-12" class="pilcrow">¶</a></p>
-<p id="section-9.3.1-13">Intended Usage: COMMON<a href="#section-9.3.1-13" class="pilcrow">¶</a></p>
-<p id="section-9.3.1-14">Restrictions on Usage: none<a href="#section-9.3.1-14" class="pilcrow">¶</a></p>
-<p id="section-9.3.1-15">Author: Media Over QUIC Working Group<a href="#section-9.3.1-15" class="pilcrow">¶</a></p>
-<p id="section-9.3.1-16">Change Controller: IETF<a href="#section-9.3.1-16" class="pilcrow">¶</a></p>
+<p id="section-9.4.1-1">This document registers the "application/dpop-proof+jwt" media type for
+generic DPoP proof JWTs in the "Media Types" registry.<a href="#section-9.4.1-1" class="pilcrow">¶</a></p>
+<p id="section-9.4.1-2">Type Name: application<a href="#section-9.4.1-2" class="pilcrow">¶</a></p>
+<p id="section-9.4.1-3">Subtype Name: dpop-proof+jwt<a href="#section-9.4.1-3" class="pilcrow">¶</a></p>
+<p id="section-9.4.1-4">Required Parameters: none<a href="#section-9.4.1-4" class="pilcrow">¶</a></p>
+<p id="section-9.4.1-5">Optional Parameters: none<a href="#section-9.4.1-5" class="pilcrow">¶</a></p>
+<p id="section-9.4.1-6">Encoding Considerations: Binary; base64url encoding of JWT<a href="#section-9.4.1-6" class="pilcrow">¶</a></p>
+<p id="section-9.4.1-7">Security Considerations: See <a href="#security-considerations" class="auto internal xref">Section 8</a> of this document<a href="#section-9.4.1-7" class="pilcrow">¶</a></p>
+<p id="section-9.4.1-8">Interoperability Considerations: Multi-Protocol DPoP proofs extend
+HTTP-specific DPoP while maintaining backward compatibility<a href="#section-9.4.1-8" class="pilcrow">¶</a></p>
+<p id="section-9.4.1-9">Published Specification: This document<a href="#section-9.4.1-9" class="pilcrow">¶</a></p>
+<p id="section-9.4.1-10">Applications that use this media type: Applications implementing generic DPoP
+authorization<a href="#section-9.4.1-10" class="pilcrow">¶</a></p>
+<p id="section-9.4.1-11">Fragment Identifier Considerations: none<a href="#section-9.4.1-11" class="pilcrow">¶</a></p>
+<p id="section-9.4.1-12">Additional Information: none<a href="#section-9.4.1-12" class="pilcrow">¶</a></p>
+<p id="section-9.4.1-13">Person and email address to contact: Media Over QUIC Working Group
+<a href="mailto:moq@ietf.org">moq@ietf.org</a><a href="#section-9.4.1-13" class="pilcrow">¶</a></p>
+<p id="section-9.4.1-14">Intended Usage: COMMON<a href="#section-9.4.1-14" class="pilcrow">¶</a></p>
+<p id="section-9.4.1-15">Restrictions on Usage: none<a href="#section-9.4.1-15" class="pilcrow">¶</a></p>
+<p id="section-9.4.1-16">Author: Media Over QUIC Working Group<a href="#section-9.4.1-16" class="pilcrow">¶</a></p>
+<p id="section-9.4.1-17">Change Controller: IETF<a href="#section-9.4.1-17" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="applicationdpop-proofcwt">
+<section id="section-9.4.2">
+          <h4 id="name-application-dpop-proofcwt">
+<a href="#section-9.4.2" class="section-number selfRef">9.4.2. </a><a href="#name-application-dpop-proofcwt" class="section-name selfRef">application/dpop-proof+cwt</a>
+          </h4>
+<p id="section-9.4.2-1">This document registers the "application/dpop-proof+cwt" media type for
+generic DPoP proof CWTs in the "Media Types" registry.<a href="#section-9.4.2-1" class="pilcrow">¶</a></p>
+<p id="section-9.4.2-2">Type Name: application<a href="#section-9.4.2-2" class="pilcrow">¶</a></p>
+<p id="section-9.4.2-3">Subtype Name: dpop-proof+cwt<a href="#section-9.4.2-3" class="pilcrow">¶</a></p>
+<p id="section-9.4.2-4">Required Parameters: none<a href="#section-9.4.2-4" class="pilcrow">¶</a></p>
+<p id="section-9.4.2-5">Optional Parameters: none<a href="#section-9.4.2-5" class="pilcrow">¶</a></p>
+<p id="section-9.4.2-6">Encoding Considerations: Binary; CBOR encoding as defined in <span>[<a href="#RFC8949" class="cite xref">RFC8949</a>]</span><a href="#section-9.4.2-6" class="pilcrow">¶</a></p>
+<p id="section-9.4.2-7">Security Considerations: See <a href="#security-considerations" class="auto internal xref">Section 8</a> of this document<a href="#section-9.4.2-7" class="pilcrow">¶</a></p>
+<p id="section-9.4.2-8">Interoperability Considerations: CWT-based DPoP proofs provide compact binary
+encoding suitable for constrained environments and interoperability with
+Common Access Token (CAT) systems<a href="#section-9.4.2-8" class="pilcrow">¶</a></p>
+<p id="section-9.4.2-9">Published Specification: This document<a href="#section-9.4.2-9" class="pilcrow">¶</a></p>
+<p id="section-9.4.2-10">Applications that use this media type: Applications implementing generic DPoP
+authorization with CBOR/CWT-based tokens<a href="#section-9.4.2-10" class="pilcrow">¶</a></p>
+<p id="section-9.4.2-11">Fragment Identifier Considerations: none<a href="#section-9.4.2-11" class="pilcrow">¶</a></p>
+<p id="section-9.4.2-12">Additional Information: none<a href="#section-9.4.2-12" class="pilcrow">¶</a></p>
+<p id="section-9.4.2-13">Person and email address to contact: Media Over QUIC Working Group
+<a href="mailto:moq@ietf.org">moq@ietf.org</a><a href="#section-9.4.2-13" class="pilcrow">¶</a></p>
+<p id="section-9.4.2-14">Intended Usage: COMMON<a href="#section-9.4.2-14" class="pilcrow">¶</a></p>
+<p id="section-9.4.2-15">Restrictions on Usage: none<a href="#section-9.4.2-15" class="pilcrow">¶</a></p>
+<p id="section-9.4.2-16">Author: Media Over QUIC Working Group<a href="#section-9.4.2-16" class="pilcrow">¶</a></p>
+<p id="section-9.4.2-17">Change Controller: IETF<a href="#section-9.4.2-17" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -2241,13 +2815,41 @@ authorization<a href="#section-9.3.1-9" class="pilcrow">¶</a></p>
         <dd>
 <span class="refAuthor">Jones, M.</span>, <span class="refAuthor">Bradley, J.</span>, and <span class="refAuthor">N. Sakimura</span>, <span class="refTitle">"JSON Web Token (JWT)"</span>, <span class="seriesInfo">RFC 7519</span>, <span class="seriesInfo">DOI 10.17487/RFC7519</span>, <time datetime="2015-05" class="refDate">May 2015</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7519">https://www.rfc-editor.org/rfc/rfc7519</a>&gt;</span>. </dd>
 <dd class="break"></dd>
+<dt id="RFC7638">[RFC7638]</dt>
+        <dd>
+<span class="refAuthor">Jones, M.</span> and <span class="refAuthor">N. Sakimura</span>, <span class="refTitle">"JSON Web Key (JWK) Thumbprint"</span>, <span class="seriesInfo">RFC 7638</span>, <span class="seriesInfo">DOI 10.17487/RFC7638</span>, <time datetime="2015-09" class="refDate">September 2015</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7638">https://www.rfc-editor.org/rfc/rfc7638</a>&gt;</span>. </dd>
+<dd class="break"></dd>
 <dt id="RFC8174">[RFC8174]</dt>
         <dd>
 <span class="refAuthor">Leiba, B.</span>, <span class="refTitle">"Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 8174</span>, <span class="seriesInfo">DOI 10.17487/RFC8174</span>, <time datetime="2017-05" class="refDate">May 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8174">https://www.rfc-editor.org/rfc/rfc8174</a>&gt;</span>. </dd>
 <dd class="break"></dd>
+<dt id="RFC8392">[RFC8392]</dt>
+        <dd>
+<span class="refAuthor">Jones, M.</span>, <span class="refAuthor">Wahlstroem, E.</span>, <span class="refAuthor">Erdtman, S.</span>, and <span class="refAuthor">H. Tschofenig</span>, <span class="refTitle">"CBOR Web Token (CWT)"</span>, <span class="seriesInfo">RFC 8392</span>, <span class="seriesInfo">DOI 10.17487/RFC8392</span>, <time datetime="2018-05" class="refDate">May 2018</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8392">https://www.rfc-editor.org/rfc/rfc8392</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8747">[RFC8747]</dt>
+        <dd>
+<span class="refAuthor">Jones, M.</span>, <span class="refAuthor">Seitz, L.</span>, <span class="refAuthor">Selander, G.</span>, <span class="refAuthor">Erdtman, S.</span>, and <span class="refAuthor">H. Tschofenig</span>, <span class="refTitle">"Proof-of-Possession Key Semantics for CBOR Web Tokens (CWTs)"</span>, <span class="seriesInfo">RFC 8747</span>, <span class="seriesInfo">DOI 10.17487/RFC8747</span>, <time datetime="2020-03" class="refDate">March 2020</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8747">https://www.rfc-editor.org/rfc/rfc8747</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8949">[RFC8949]</dt>
+        <dd>
+<span class="refAuthor">Bormann, C.</span> and <span class="refAuthor">P. Hoffman</span>, <span class="refTitle">"Concise Binary Object Representation (CBOR)"</span>, <span class="seriesInfo">STD 94</span>, <span class="seriesInfo">RFC 8949</span>, <span class="seriesInfo">DOI 10.17487/RFC8949</span>, <time datetime="2020-12" class="refDate">December 2020</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8949">https://www.rfc-editor.org/rfc/rfc8949</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9052">[RFC9052]</dt>
+        <dd>
+<span class="refAuthor">Schaad, J.</span>, <span class="refTitle">"CBOR Object Signing and Encryption (COSE): Structures and Process"</span>, <span class="seriesInfo">STD 96</span>, <span class="seriesInfo">RFC 9052</span>, <span class="seriesInfo">DOI 10.17487/RFC9052</span>, <time datetime="2022-08" class="refDate">August 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9052">https://www.rfc-editor.org/rfc/rfc9052</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9053">[RFC9053]</dt>
+        <dd>
+<span class="refAuthor">Schaad, J.</span>, <span class="refTitle">"CBOR Object Signing and Encryption (COSE): Initial Algorithms"</span>, <span class="seriesInfo">RFC 9053</span>, <span class="seriesInfo">DOI 10.17487/RFC9053</span>, <time datetime="2022-08" class="refDate">August 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9053">https://www.rfc-editor.org/rfc/rfc9053</a>&gt;</span>. </dd>
+<dd class="break"></dd>
 <dt id="RFC9449">[RFC9449]</dt>
-      <dd>
+        <dd>
 <span class="refAuthor">Fett, D.</span>, <span class="refAuthor">Campbell, B.</span>, <span class="refAuthor">Bradley, J.</span>, <span class="refAuthor">Lodderstedt, T.</span>, <span class="refAuthor">Jones, M.</span>, and <span class="refAuthor">D. Waite</span>, <span class="refTitle">"OAuth 2.0 Demonstrating Proof of Possession (DPoP)"</span>, <span class="seriesInfo">RFC 9449</span>, <span class="seriesInfo">DOI 10.17487/RFC9449</span>, <time datetime="2023-09" class="refDate">September 2023</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9449">https://www.rfc-editor.org/rfc/rfc9449</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9679">[RFC9679]</dt>
+      <dd>
+<span class="refAuthor">Isobe, K.</span>, <span class="refAuthor">Tschofenig, H.</span>, and <span class="refAuthor">O. Steele</span>, <span class="refTitle">"CBOR Object Signing and Encryption (COSE) Key Thumbprint"</span>, <span class="seriesInfo">RFC 9679</span>, <span class="seriesInfo">DOI 10.17487/RFC9679</span>, <time datetime="2024-12" class="refDate">December 2024</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9679">https://www.rfc-editor.org/rfc/rfc9679</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 </dl>
 </section>
@@ -2258,6 +2860,10 @@ authorization<a href="#section-9.3.1-9" class="pilcrow">¶</a></p>
 <a href="#section-10.2" class="section-number selfRef">10.2. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
         </h3>
 <dl class="references">
+<dt id="CTA-5007-B">[CTA-5007-B]</dt>
+        <dd>
+<span class="refAuthor">Consumer Technology Association</span>, <span class="refTitle">"Common Access Token"</span>, <time datetime="2025-04" class="refDate">April 2025</time>, <span>&lt;<a href="https://shop.cta.tech/products/common-access-token">https://shop.cta.tech/products/common-access-token</a>&gt;</span>. </dd>
+<dd class="break"></dd>
 <dt id="RFC6749">[RFC6749]</dt>
       <dd>
 <span class="refAuthor">Hardt, D., Ed.</span>, <span class="refTitle">"The OAuth 2.0 Authorization Framework"</span>, <span class="seriesInfo">RFC 6749</span>, <span class="seriesInfo">DOI 10.17487/RFC6749</span>, <time datetime="2012-10" class="refDate">October 2012</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc6749">https://www.rfc-editor.org/rfc/rfc6749</a>&gt;</span>. </dd>
