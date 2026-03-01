@@ -301,16 +301,16 @@ the `actx.type` field. Each registered type MUST specify:
 4. Examples of usage
 
 
-## MOQ Context Type {#moq-context}
+## MOQT Context Type {#moq-context}
 
 This section defines the normative authorization context for Media Over QUIC
-(MOQ) as specified in this framework.
+Transport (MOQT) as specified in this framework.
 
-Type Identifier: "moq"
+Type Identifier: "moqt"
 
 ### Required Fields
 
-The MOQ authorization context MUST contain the following fields:
+The MOQT authorization context MUST contain the following fields:
 
 action:
 
@@ -324,7 +324,7 @@ in {{moq-context}}.
 
 ### Optional Fields
 
-The MOQ authorization context MAY contain the following fields:
+The MOQT authorization context MAY contain the following fields:
 
 tn:
 
@@ -333,7 +333,7 @@ Track Name serialized using the canonical encoding format defined in
 
 parameters:
 
-An object containing additional MOQ-specific parameters relevant to the
+An object containing additional MOQT-specific parameters relevant to the
 operation. The structure and contents of this field are context-dependent.
 
 ### String Encoding for Binary Data
@@ -362,7 +362,7 @@ serialization format defined in Section 1.5.1 of {{MOQTransport}}:
 
 Servers processing MOQ authorization contexts MUST:
 
-1. Verify that the `action` field contains a recognized MOQ operation
+1. Verify that the `action` field contains a recognized MOQT operation
 2. Validate that the `tns` field represents a properly formatted track
    namespace tuple encoding as specified above
 3. If present, validate that the `tn` field contains properly encoded track
@@ -380,9 +380,9 @@ This section provides complete examples of application-agnostic DPoP proof JWTs,
 illustrating the use of the Authorization Context object in place of
 HTTP-specific claims.
 
-## Example: MOQ Context DPoP Proof
+## Example: MOQT Context DPoP Proof
 
-The following example shows a complete DPoP proof JWT for a MOQ context:
+The following example shows a complete DPoP proof JWT for a MOQT context:
 
 JWT Header:
 
@@ -408,7 +408,7 @@ JWT Payload:
   "jti": "unique-request-id-789",
   "iat": 1705123456,
   "actx": {
-    "type": "moq",
+    "type": "moqt",
     "action": "SUBSCRIBE",
     "tns": "example.2ecom-app-scope-video",
     "tn": "camera1"
@@ -590,7 +590,7 @@ Security Considerations:
 
 | Type | Description | Required Fields | Optional Fields | Reference |
 |------|-------------|----------------|-----------------|-----------|
-| moq | Media Over QUIC authorization context | action, tns | tn, parameters |
+| moqt | Media Over QUIC Transport authorization context | action, tns | tn, parameters |
 RFCXXXX |
 
 ## JWT Claims Registration
