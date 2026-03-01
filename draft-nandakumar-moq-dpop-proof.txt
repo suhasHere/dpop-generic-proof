@@ -727,7 +727,9 @@ Table of Contents
 6.2.1.  Example: MOQT Context DPoP Proof (CWT)
 
    The following example shows a complete DPoP proof CWT for a MOQT
-   context using CBOR diagnostic notation:
+   context using CBOR diagnostic notation.  This is the proof that the
+   client creates and sends to demonstrate possession of the private key
+   corresponding to the public key bound to the access token:
 
    CWT Protected Header:
 
@@ -761,9 +763,10 @@ Table of Contents
 
 6.2.2.  Example: CWT DPoP Proof with Common Access Token
 
-   When using CWT DPoP proofs with Common Access Token (CAT)
-   [CTA-5007-B], the access token is a CWT with a cnf claim binding to
-   the DPoP proof key.
+   This example shows the structure of the access token issued by the
+   authorization server, not the DPoP proof itself.  When using CWT DPoP
+   proofs with Common Access Token (CAT) [CTA-5007-B], the access token
+   is a CWT with a cnf claim binding to the DPoP proof key.
 
    Access Token (CWT):
 
