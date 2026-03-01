@@ -35,14 +35,26 @@ author:
     email: fluffy@cisco.com
 
 normative:
-  RFC2119:
-  RFC7519:
   RFC7515:
+  RFC7519:
+  RFC7638:
+  RFC8392:
+  RFC8747:
+  RFC8949:
+  RFC9052:
+  RFC9053:
   RFC9449:
+  RFC9679:
   MOQTransport: I-D.draft-ietf-moq-transport-16
 
 informative:
   RFC6749:
+  CTA-5007-B:
+    title: "Common Access Token"
+    author:
+      - org: Consumer Technology Association
+    date: 2025-04
+    target: https://shop.cta.tech/products/common-access-token
 
 --- abstract
 
@@ -50,7 +62,10 @@ This document describes a generic framework for Demonstrating Proof of
 Possession (DPoP) that extends beyond HTTP-specific implementations. Building
 upon RFC 9449, this framework provides a protocol-agnostic approach for
 sender-constraining tokens through cryptographic proof of possession, enabling
-secure token binding across various application protocols and contexts.
+secure token binding across various application protocols and contexts. The
+framework supports both JWT-based proofs (for compatibility with existing OAuth
+deployments) and CWT-based proofs (for compact binary encoding and
+interoperability with Common Access Token systems).
 
 --- middle
 
@@ -81,6 +96,11 @@ Authorization Framework" {{RFC6749}}.
 
 The terms "JSON Web Token (JWT)", "JOSE Header", and "JWS" are defined in
 {{RFC7519}} and {{RFC7515}}.
+
+The terms "CBOR Web Token (CWT)", "COSE", and "COSE Key" are defined in
+{{RFC8392}}, {{RFC9052}}, and {{RFC9053}}.
+
+The term "CWT Confirmation" is defined in {{RFC8747}}.
 
 Application protocol:
 : The protocol which uses DPoP tokens as proof of authorization. This may be
@@ -115,9 +135,11 @@ private key.
 {: #fig-generic-dpop-flow title="Generic DPoP Flow"}
 
 The main data structure introduced by this specification is a generic DPoP
-proof JWT that can be used across various application protocols and contexts,
-as described in detail below. A client uses a generic DPoP proof JWT to prove
-the possession of a private key corresponding to a certain public key.
+proof that can be used across various application protocols and contexts,
+as described in detail below. This proof can be encoded as either a JWT
+(JSON Web Token) or CWT (CBOR Web Token), depending on deployment requirements.
+A client uses a generic DPoP proof to prove the possession of a private key
+corresponding to a certain public key.
 
 Roughly speaking, a generic DPoP proof is a signature over:
 
@@ -128,7 +150,7 @@ Roughly speaking, a generic DPoP proof is a signature over:
 * a hash of the associated access token when an access token is present
   within the request.
 
-The application protocol needs to define binding fields that make the proof JWT
+The application protocol needs to define binding fields that make the proof
 unique to a specific protocol interaction. These binding fields replace the
 HTTP method (`htm`) and HTTP URI (`htu`) fields used in RFC 9449, providing
 protocol-specific context that prevents replay attacks across different
@@ -234,11 +256,44 @@ generated.
 
 # Application-Agnostic DPoP Proof Structure
 
-This proof structure has the same general structure as a standard DPoP proof
-as defined in RFC 9449, with the key difference being that the HTTP-specific
-claims (`htm` for HTTP method and `htu` for HTTP URI) are replaced with the
-Authorization Context (`actx`) object to provide application protocol-specific
-binding information.
+This framework supports DPoP proofs in two formats:
+
+1. **JWT-based DPoP Proofs**: Using JSON Web Token structure as defined in
+   {{RFC7519}}, consistent with RFC 9449
+2. **CWT-based DPoP Proofs**: Using CBOR Web Token structure as defined in
+   {{RFC8392}}, enabling compact binary encoding suitable for constrained
+   environments and interoperability with Common Access Token (CAT)
+   {{CTA-5007-B}}
+
+Both formats share the same core structure as a standard DPoP proof as defined
+in RFC 9449, with the key difference being that the HTTP-specific claims (`htm`
+for HTTP method and `htu` for HTTP URI) are replaced with the Authorization
+Context (`actx`) object to provide application protocol-specific binding
+information.
+
+## Choosing Between JWT and CWT Formats
+
+Implementations should choose between JWT and CWT formats based on their
+deployment requirements:
+
+**Use JWT-based DPoP proofs when:**
+
+- Integrating with existing OAuth 2.0 infrastructure that uses JWT
+- Interoperating with systems that expect JSON-based tokens
+- Human readability of tokens is beneficial for debugging
+- The deployment does not have strict size constraints
+
+**Use CWT-based DPoP proofs when:**
+
+- Integrating with Common Access Token (CAT) {{CTA-5007-B}} systems
+- Operating in bandwidth-constrained environments where compact encoding
+  matters
+- The protocol already uses CBOR encoding for other data structures
+- Interoperating with IoT or constrained device deployments
+
+Servers MAY support both formats simultaneously. When doing so, they MUST
+validate the format indicator in the proof header (`dpop-proof+jwt` or
+`dpop-proof+cwt`) and process the proof according to the indicated format.
 
 ## Authorization Context Object
 
@@ -267,7 +322,12 @@ The Authorization Context (`actx`) object MUST contain:
 }
 ~~~
 
-## JWT Header Requirements
+## JWT-based DPoP Proof Structure {#jwt-dpop}
+
+This section defines the JWT-based DPoP proof format for use with JSON-based
+systems and standard OAuth deployments.
+
+### JWT Header Requirements
 
 The JWT header for a generic DPoP proof MUST contain the same elements as
 specified in {{RFC9449}}:
@@ -276,7 +336,7 @@ specified in {{RFC9449}}:
 - alg: An asymmetric signature algorithm identifier
 - jwk: The public key used for verification
 
-## JWT Payload Requirements
+### JWT Payload Requirements
 
 The JWT payload for a generic DPoP proof MUST contain:
 
@@ -288,6 +348,115 @@ Additional claims MAY be included based on context requirements:
 
 - nonce: Server-provided nonce for replay protection
 - ath: Access token hash (when presenting access tokens)
+
+## CWT-based DPoP Proof Structure {#cwt-dpop}
+
+This section defines the CWT-based DPoP proof format for use with CBOR-based
+systems, constrained environments, and systems using Common Access Token (CAT)
+{{CTA-5007-B}}.
+
+### CWT Protected Header Requirements
+
+The CWT protected header for a generic DPoP proof MUST contain the following
+parameters defined in {{RFC9052}}:
+
+- alg (label 1): A COSE algorithm identifier for an asymmetric signature
+  algorithm (e.g., -7 for ES256, -35 for ES384, -36 for ES512)
+- typ (label 16): MUST be "dpop-proof+cwt"
+- COSE_Key (label 4): The public key used for verification, encoded as a
+  COSE_Key structure per {{RFC9052}}
+
+### CWT Claims Requirements
+
+The CWT claims set for a generic DPoP proof MUST contain:
+
+- cti (label 7): A unique identifier for the CWT, encoded as a byte string
+- iat (label 6): Issued-at time as a NumericDate
+- actx (label TBD): Authorization Context object
+
+Additional claims MAY be included based on context requirements:
+
+- nonce (label TBD): Server-provided nonce for replay protection, encoded as
+  a text string
+- ath (label TBD): Access token hash, encoded as a byte string containing the
+  SHA-256 hash of the access token
+
+### CWT Authorization Context Structure
+
+The Authorization Context in CWT format uses CBOR encoding with integer keys
+for compact representation:
+
+~~~cddl
+actx = {
+  type: tstr,           ; Protocol type identifier (key 0)
+  * int => any          ; Protocol-specific fields
+}
+~~~
+
+For MOQT contexts, the CWT Authorization Context uses:
+
+~~~cddl
+moqt-actx = {
+  0: "moqt",            ; type
+  1: tstr,              ; action
+  2: tstr,              ; tns (track namespace)
+  ? 3: tstr,            ; tn (track name)
+  ? 4: any              ; parameters
+}
+~~~
+
+### CDDL Definition for CWT DPoP Proof
+
+The complete CDDL definition for a CWT-based DPoP proof is:
+
+~~~cddl
+dpop-proof-cwt = COSE_Sign1
+
+dpop-protected-header = {
+  1 => int,                    ; alg
+  16 => "dpop-proof+cwt",      ; typ
+  4 => COSE_Key                ; COSE_Key
+}
+
+dpop-cwt-claims = {
+  7 => bstr,                   ; cti (unique identifier)
+  6 => numericdate,            ; iat (issued at)
+  actx-label => actx,          ; actx (authorization context)
+  ? nonce-label => tstr,       ; nonce (optional)
+  ? ath-label => bstr,         ; ath (optional, SHA-256 hash)
+}
+
+actx-label = TBD              ; To be assigned by IANA
+nonce-label = TBD             ; To be assigned by IANA
+ath-label = TBD               ; To be assigned by IANA
+
+numericdate = int / float
+~~~
+
+### Token Binding with CWT Access Tokens
+
+When using CWT-based access tokens (such as Common Access Token), the DPoP
+binding is established using the confirmation claim (`cnf`, label 8) as
+defined in {{RFC8747}}. The `cnf` claim contains the key confirmation:
+
+- For JWT DPoP proofs: Use the `jkt` confirmation method containing the
+  JWK SHA-256 Thumbprint as defined in {{RFC7638}}
+- For CWT DPoP proofs: Use the `ckt` confirmation method containing the
+  COSE Key Thumbprint as defined in {{RFC9679}}
+
+Example CWT access token with DPoP binding:
+
+~~~cbor-diag
+{
+  / iss / 1: "auth.example.com",
+  / aud / 3: "resource.example.com",
+  / exp / 4: 1705209856,
+  / iat / 6: 1705123456,
+  / cnf / 8: {
+    / jkt / 323: h'fUHyO2r2Z3DZ53EsNrWBb1xWXM4VbCqpW5G-o9GqC7Y'
+  }
+}
+~~~
 
 # Protocol Type Registry
 
@@ -374,13 +543,15 @@ Servers processing MOQ authorization contexts MUST:
 6. If present, validate any parameters according to usage context
 
 
-# Application-Agnostic DPoP Proof JWT Examples
+# Application-Agnostic DPoP Proof Examples
 
-This section provides complete examples of application-agnostic DPoP proof JWTs,
-illustrating the use of the Authorization Context object in place of
-HTTP-specific claims.
+This section provides complete examples of application-agnostic DPoP proofs in
+both JWT and CWT formats, illustrating the use of the Authorization Context
+object in place of HTTP-specific claims.
 
-## Example: MOQT Context DPoP Proof
+## JWT Format Examples
+
+### Example: MOQT Context DPoP Proof (JWT)
 
 The following example shows a complete DPoP proof JWT for a MOQT context:
 
@@ -417,7 +588,7 @@ JWT Payload:
 }
 ~~~
 
-## Comparing with HTTP DPoP
+### Comparing with HTTP DPoP
 
 For comparison, an equivalent HTTP DPoP proof would contain `htm` and `htu`
 claims instead of the `actx` object:
@@ -435,6 +606,98 @@ claims instead of the `actx` object:
 The key difference is that the application-agnostic framework uses the `actx` object to
 provide protocol-specific authorization context, while HTTP DPoP uses `htm` and
 `htu` for HTTP method and URI.
+
+## CWT Format Examples
+
+### Example: MOQT Context DPoP Proof (CWT)
+
+The following example shows a complete DPoP proof CWT for a MOQT context using
+CBOR diagnostic notation:
+
+CWT Protected Header:
+
+~~~cbor-diag
+{
+  / alg: ES256 / 1: -7,
+  / typ / 16: "dpop-proof+cwt",
+  / COSE_Key / 4: {
+    / kty: EC2 / 1: 2,
+    / crv: P-256 / -1: 1,
+    / x / -2: h'97cb45ae1c7f37855d788810883698f730a40e5a4194
+                 0e24502bbf915a56606b',
+    / y / -3: h'f55138a5ff13ca4f7e06b4d2cbcd0c1697f3de37c6d4
+                 a6eb5735ebd5fc01483f'
+  }
+}
+~~~
+
+CWT Claims Set:
+
+~~~cbor-diag
+{
+  / cti / 7: h'756e697175652d72657175657374',
+  / iat / 6: 1705123456,
+  / actx / TBD: {
+    / type / 0: "moqt",
+    / action / 1: "SUBSCRIBE",
+    / tns / 2: "example.2ecom-app-scope-video",
+    / tn / 3: "camera1"
+  },
+  / ath / TBD: h'7d41f23b6af667701de7712c36b5816f5c5619
+                 cc555cca63ab099fa8f46a8ca6'
+}
+~~~
+
+### Example: CWT DPoP Proof with Common Access Token
+
+When using CWT DPoP proofs with Common Access Token (CAT) {{CTA-5007-B}}, the
+access token is a CWT with a `cnf` claim binding to the DPoP proof key.
+
+Access Token (CWT):
+
+~~~cbor-diag
+{
+  / iss / 1: "auth.example.com",
+  / aud / 3: "resource.example.com",
+  / exp / 4: 1705209856,
+  / iat / 6: 1705123456,
+  / cti / 7: h'746f6b656e2d6964',
+  / cnf / 8: {
+    / jkt / 323: h'7d41f23b6af667701de7712c36b5816f5c5619
+                   cc555cca63ab099fa8f46a8ca6'
+  },
+  / catdpop / 321: {
+    / window / 0: 300,
+    / jti / 1: 1
+  }
+}
+~~~
+
+The `catdpop` claim (label 321) provides DPoP-specific settings as defined in
+{{CTA-5007-B}}:
+
+- `window` (key 0): Acceptable time window for DPoP proofs in seconds
+- `jti` (key 1): JTI processing semantics (0=ignore, 1=may honor for replay
+  detection)
+
+The corresponding DPoP proof binds to this access token through the `ath`
+claim containing the SHA-256 hash of the access token.
+
+### Comparing JWT and CWT Formats
+
+The following table summarizes the mapping between JWT and CWT DPoP proof
+elements:
+
+| JWT Element | CWT Element | Description |
+|-------------|-------------|-------------|
+| Header.typ | Protected.typ (16) | "dpop-proof+jwt" or "dpop-proof+cwt" |
+| Header.alg | Protected.alg (1) | Signature algorithm |
+| Header.jwk | Protected.COSE_Key (4) | Public key for verification |
+| Payload.jti | Claims.cti (7) | Unique identifier |
+| Payload.iat | Claims.iat (6) | Issued-at timestamp |
+| Payload.actx | Claims.actx (TBD) | Authorization context |
+| Payload.nonce | Claims.nonce (TBD) | Server-provided nonce |
+| Payload.ath | Claims.ath (TBD) | Access token hash |
 
 
 # Relationship to RFC 9449
@@ -532,6 +795,30 @@ This requirement prevents cross-application attacks where an attacker might
 attempt to use a valid DPoP proof from one application context in a different
 application context.
 
+## CWT-Specific Security Considerations
+
+When using CWT-based DPoP proofs, the following additional considerations
+apply:
+
+1. **Algorithm Selection**: CWT DPoP proofs MUST use COSE algorithms
+   registered for use with COSE_Sign1 as defined in {{RFC9053}}. The same
+   algorithm restrictions from {{RFC9449}} apply: symmetric algorithms MUST
+   NOT be used.
+
+2. **Key Confirmation Methods**: When binding CWT access tokens to DPoP
+   proofs, implementations SHOULD prefer the `jkt` confirmation method for
+   interoperability with JWT-based DPoP proofs, or `ckt` (COSE Key Thumbprint)
+   when both token and proof are CWT-based.
+
+3. **Binary Encoding**: While CWT provides compact encoding, implementations
+   MUST ensure that the encoded proof does not exceed transport-specific size
+   limits.
+
+4. **Cross-Format Attacks**: Servers that accept both JWT and CWT DPoP proofs
+   MUST validate the format indicator (`dpop-proof+jwt` vs `dpop-proof+cwt`)
+   and reject proofs where the format indicator does not match the actual
+   encoding.
+
 # IANA Considerations
 
 ## DPoP Authorization Context Types Registry
@@ -606,7 +893,60 @@ Claim Value Type: Object
 
 Change Controller: IETF
 
-Specification Document: This document, Section 4.1
+Specification Document: This document, {{jwt-dpop}}
+
+## CWT Claims Registration
+
+This document registers the following claims in the "CBOR Web Token (CWT)
+Claims" registry defined in {{RFC8392}}:
+
+### actx Claim
+
+Claim Name: actx
+
+Claim Description: Authorization Context Object for DPoP proofs
+
+JWT Claim Name: actx
+
+Claim Key: TBD (requested: 400)
+
+Claim Value Type: map
+
+Change Controller: IETF
+
+Specification Document: This document, {{cwt-dpop}}
+
+### nonce Claim (DPoP)
+
+Claim Name: dpop_nonce
+
+Claim Description: Server-provided nonce for DPoP replay protection
+
+JWT Claim Name: nonce
+
+Claim Key: TBD (requested: 401)
+
+Claim Value Type: text string
+
+Change Controller: IETF
+
+Specification Document: This document, {{cwt-dpop}}
+
+### ath Claim
+
+Claim Name: ath
+
+Claim Description: Access Token Hash for DPoP proof binding
+
+JWT Claim Name: ath
+
+Claim Key: TBD (requested: 402)
+
+Claim Value Type: byte string
+
+Change Controller: IETF
+
+Specification Document: This document, {{cwt-dpop}}
 
 ## Media Types Registration
 
@@ -625,14 +965,56 @@ Optional Parameters: none
 
 Encoding Considerations: Binary; base64url encoding of JWT
 
-Security Considerations: See Section 8 of this document
+Security Considerations: See {{security-considerations}} of this document
 
 Interoperability Considerations: Multi-Protocol DPoP proofs extend
 HTTP-specific DPoP while maintaining backward compatibility
 
 Published Specification: This document
+
 Applications that use this media type: Applications implementing generic DPoP
 authorization
+
+Fragment Identifier Considerations: none
+
+Additional Information: none
+
+Person and email address to contact: Media Over QUIC Working Group
+<moq@ietf.org>
+
+Intended Usage: COMMON
+
+Restrictions on Usage: none
+
+Author: Media Over QUIC Working Group
+
+Change Controller: IETF
+
+### application/dpop-proof+cwt
+
+This document registers the "application/dpop-proof+cwt" media type for
+generic DPoP proof CWTs in the "Media Types" registry.
+
+Type Name: application
+
+Subtype Name: dpop-proof+cwt
+
+Required Parameters: none
+
+Optional Parameters: none
+
+Encoding Considerations: Binary; CBOR encoding as defined in {{RFC8949}}
+
+Security Considerations: See {{security-considerations}} of this document
+
+Interoperability Considerations: CWT-based DPoP proofs provide compact binary
+encoding suitable for constrained environments and interoperability with
+Common Access Token (CAT) systems
+
+Published Specification: This document
+
+Applications that use this media type: Applications implementing generic DPoP
+authorization with CBOR/CWT-based tokens
 
 Fragment Identifier Considerations: none
 
