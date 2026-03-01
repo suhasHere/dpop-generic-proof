@@ -19,7 +19,8 @@ secure token binding across various application protocols and contexts.
 <meta content="Proof of Possession" name="keyword">
 <meta content="Authentication" name="keyword">
 <meta content="Authorization" name="keyword">
-<meta content="draft-nandakumar-oauth-dpop-proof-latest" name="ietf.draft">
+<meta content="MOQ" name="keyword">
+<meta content="draft-nandakumar-moq-dpop-proof-latest" name="ietf.draft">
 <!-- Generator version information:
   xml2rfc 3.31.0
     Python 3.12.12
@@ -34,7 +35,7 @@ secure token binding across various application protocols and contexts.
     requests 2.32.5
     wcwidth 0.3.0
 -->
-<link href="draft-nandakumar-oauth-dpop-proof.xml" rel="alternate" type="application/rfc+xml">
+<link href="draft-nandakumar-moq-dpop-proof.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
 <style type="text/css">@font-face {
   font-family: 'Lora';
@@ -1065,9 +1066,9 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <div id="internal-metadata" class="document-information">
 <dl id="identifiers">
 <dt class="label-workgroup">Workgroup:</dt>
-<dd class="workgroup">OAuth Working Group</dd>
+<dd class="workgroup">Media Over QUIC</dd>
 <dt class="label-internet-draft">Internet-Draft:</dt>
-<dd class="internet-draft">draft-nandakumar-oauth-dpop-proof-latest</dd>
+<dd class="internet-draft">draft-nandakumar-moq-dpop-proof-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
 <time datetime="2026-03-01" class="published">1 March 2026</time>
@@ -1104,15 +1105,15 @@ secure token binding across various application protocols and contexts.<a href="
       </h2>
 <p id="section-note.1-1">This note is to be removed before publishing as an RFC.<a href="#section-note.1-1" class="pilcrow">¶</a></p>
 <p id="section-note.1-2">
-        The latest revision of this draft can be found at <span><a href="https://oauth-wg.github.io/oauth-dpop-generic/draft-generic-dpop-framework.html">https://oauth-wg.github.io/oauth-dpop-generic/draft-generic-dpop-framework.html</a></span>.
-        Status information for this document may be found at <span><a href="https://datatracker.ietf.org/doc/draft-nandakumar-oauth-dpop-proof/">https://datatracker.ietf.org/doc/draft-nandakumar-oauth-dpop-proof/</a></span>.<a href="#section-note.1-2" class="pilcrow">¶</a></p>
+        The latest revision of this draft can be found at <span><a href="https://moq-wg.github.io/dpop-generic-proof/draft-nandakumar-moq-dpop-proof.html">https://moq-wg.github.io/dpop-generic-proof/draft-nandakumar-moq-dpop-proof.html</a></span>.
+        Status information for this document may be found at <span><a href="https://datatracker.ietf.org/doc/draft-nandakumar-moq-dpop-proof/">https://datatracker.ietf.org/doc/draft-nandakumar-moq-dpop-proof/</a></span>.<a href="#section-note.1-2" class="pilcrow">¶</a></p>
 <p id="section-note.1-3">
         Discussion of this document takes place on the
-        OAuth Working Group Working Group mailing list (<span><a href="mailto:oauth@ietf.org">mailto:oauth@ietf.org</a></span>),
-        which is archived at <span><a href="https://mailarchive.ietf.org/arch/browse/oauth/">https://mailarchive.ietf.org/arch/browse/oauth/</a></span>.
-        Subscribe at <span><a href="https://www.ietf.org/mailman/listinfo/oauth/">https://www.ietf.org/mailman/listinfo/oauth/</a></span>.<a href="#section-note.1-3" class="pilcrow">¶</a></p>
+        Media Over QUIC Working Group mailing list (<span><a href="mailto:moq@ietf.org">mailto:moq@ietf.org</a></span>),
+        which is archived at <span><a href="https://mailarchive.ietf.org/arch/browse/moq/">https://mailarchive.ietf.org/arch/browse/moq/</a></span>.
+        Subscribe at <span><a href="https://www.ietf.org/mailman/listinfo/moq/">https://www.ietf.org/mailman/listinfo/moq/</a></span>.<a href="#section-note.1-3" class="pilcrow">¶</a></p>
 <p id="section-note.1-4">Source for this draft and an issue tracker can be found at
-        <span><a href="https://github.com/oauth-wg/oauth-dpop-generic">https://github.com/oauth-wg/oauth-dpop-generic</a></span>.<a href="#section-note.1-4" class="pilcrow">¶</a></p>
+        <span><a href="https://github.com/moq-wg/dpop-generic-proof">https://github.com/moq-wg/dpop-generic-proof</a></span>.<a href="#section-note.1-4" class="pilcrow">¶</a></p>
 </section>
 <div id="status-of-memo">
 <section id="section-boilerplate.1">
@@ -2209,11 +2210,11 @@ Applications that use this media type: Applications implementing generic DPoP
 authorization<a href="#section-9.3.1-9" class="pilcrow">¶</a></p>
 <p id="section-9.3.1-10">Fragment Identifier Considerations: none<a href="#section-9.3.1-10" class="pilcrow">¶</a></p>
 <p id="section-9.3.1-11">Additional Information: none<a href="#section-9.3.1-11" class="pilcrow">¶</a></p>
-<p id="section-9.3.1-12">Person and email address to contact: OAuth Working Group
-<a href="mailto:oauth@ietf.org">oauth@ietf.org</a><a href="#section-9.3.1-12" class="pilcrow">¶</a></p>
+<p id="section-9.3.1-12">Person and email address to contact: Media Over QUIC Working Group
+<a href="mailto:moq@ietf.org">moq@ietf.org</a><a href="#section-9.3.1-12" class="pilcrow">¶</a></p>
 <p id="section-9.3.1-13">Intended Usage: COMMON<a href="#section-9.3.1-13" class="pilcrow">¶</a></p>
 <p id="section-9.3.1-14">Restrictions on Usage: none<a href="#section-9.3.1-14" class="pilcrow">¶</a></p>
-<p id="section-9.3.1-15">Author: OAuth Working Group<a href="#section-9.3.1-15" class="pilcrow">¶</a></p>
+<p id="section-9.3.1-15">Author: Media Over QUIC Working Group<a href="#section-9.3.1-15" class="pilcrow">¶</a></p>
 <p id="section-9.3.1-16">Change Controller: IETF<a href="#section-9.3.1-16" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -2234,7 +2235,7 @@ authorization<a href="#section-9.3.1-9" class="pilcrow">¶</a></p>
 <dl class="references">
 <dt id="MOQTransport">[MOQTransport]</dt>
         <dd>
-<span class="refAuthor">Nandakumar, S.</span>, <span class="refAuthor">Vasiliev, V.</span>, <span class="refAuthor">Swett, I.</span>, and <span class="refAuthor">A. Frindell</span>, <span class="refTitle">"Media over QUIC Transport"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-moq-transport-13</span>, <time datetime="2025-07-07" class="refDate">7 July 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-moq-transport-13">https://datatracker.ietf.org/doc/html/draft-ietf-moq-transport-13</a>&gt;</span>. </dd>
+<span class="refAuthor">Nandakumar, S.</span>, <span class="refAuthor">Vasiliev, V.</span>, <span class="refAuthor">Swett, I.</span>, and <span class="refAuthor">A. Frindell</span>, <span class="refTitle">"Media over QUIC Transport"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-moq-transport-16</span>, <time datetime="2026-01-13" class="refDate">13 January 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-moq-transport-16">https://datatracker.ietf.org/doc/html/draft-ietf-moq-transport-16</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC2119">[RFC2119]</dt>
         <dd>

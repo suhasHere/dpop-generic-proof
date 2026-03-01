@@ -2,14 +2,14 @@
 
 
 
-OAuth Working Group                                        S. Nandakumar
+Media Over QUIC                                            S. Nandakumar
 Internet-Draft                                               C. Jennings
 Intended status: Standards Track                           Cisco Systems
 Expires: 2 September 2026                                   1 March 2026
 
 
 Application-Agnostic Demonstration Proof of Possession (DPoP) Framework
-                draft-nandakumar-oauth-dpop-proof-latest
+                 draft-nandakumar-moq-dpop-proof-latest
 
 Abstract
 
@@ -24,18 +24,18 @@ About This Document
 
    This note is to be removed before publishing as an RFC.
 
-   The latest revision of this draft can be found at https://oauth-
-   wg.github.io/oauth-dpop-generic/draft-generic-dpop-framework.html.
+   The latest revision of this draft can be found at https://moq-
+   wg.github.io/dpop-generic-proof/draft-nandakumar-moq-dpop-proof.html.
    Status information for this document may be found at
-   https://datatracker.ietf.org/doc/draft-nandakumar-oauth-dpop-proof/.
+   https://datatracker.ietf.org/doc/draft-nandakumar-moq-dpop-proof/.
 
-   Discussion of this document takes place on the OAuth Working Group
-   Working Group mailing list (mailto:oauth@ietf.org), which is archived
-   at https://mailarchive.ietf.org/arch/browse/oauth/.  Subscribe at
-   https://www.ietf.org/mailman/listinfo/oauth/.
+   Discussion of this document takes place on the Media Over QUIC
+   Working Group mailing list (mailto:moq@ietf.org), which is archived
+   at https://mailarchive.ietf.org/arch/browse/moq/.  Subscribe at
+   https://www.ietf.org/mailman/listinfo/moq/.
 
    Source for this draft and an issue tracker can be found at
-   https://github.com/oauth-wg/oauth-dpop-generic.
+   https://github.com/moq-wg/dpop-generic-proof.
 
 Status of This Memo
 
@@ -763,14 +763,14 @@ Table of Contents
 
    Additional Information: none
 
-   Person and email address to contact: OAuth Working Group
-   oauth@ietf.org (mailto:oauth@ietf.org)
+   Person and email address to contact: Media Over QUIC Working Group
+   moq@ietf.org (mailto:moq@ietf.org)
 
    Intended Usage: COMMON
 
    Restrictions on Usage: none
 
-   Author: OAuth Working Group
+   Author: Media Over QUIC Working Group
 
    Change Controller: IETF
 
@@ -781,9 +781,9 @@ Table of Contents
    [MOQTransport]
               Nandakumar, S., Vasiliev, V., Swett, I., and A. Frindell,
               "Media over QUIC Transport", Work in Progress, Internet-
-              Draft, draft-ietf-moq-transport-13, 7 July 2025,
+              Draft, draft-ietf-moq-transport-16, 13 January 2026,
               <https://datatracker.ietf.org/doc/html/draft-ietf-moq-
-              transport-13>.
+              transport-16>.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
