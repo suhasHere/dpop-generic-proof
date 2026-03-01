@@ -1214,7 +1214,7 @@ secure token binding across various application protocols and contexts.<a href="
             <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-protocol-type-registry" class="internal xref">Protocol Type Registry</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1">
-                <p id="section-toc.1-1.5.2.1.1"><a href="#section-5.1" class="auto internal xref">5.1</a>.  <a href="#name-moq-context-type" class="internal xref">MOQ Context Type</a></p>
+                <p id="section-toc.1-1.5.2.1.1"><a href="#section-5.1" class="auto internal xref">5.1</a>.  <a href="#name-moqt-context-type" class="internal xref">MOQT Context Type</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1.2.1">
                     <p id="section-toc.1-1.5.2.1.2.1.1"><a href="#section-5.1.1" class="auto internal xref">5.1.1</a>.  <a href="#name-required-fields" class="internal xref">Required Fields</a></p>
@@ -1236,7 +1236,7 @@ secure token binding across various application protocols and contexts.<a href="
             <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-application-agnostic-dpop-pr" class="internal xref">Application-Agnostic DPoP Proof JWT Examples</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1">
-                <p id="section-toc.1-1.6.2.1.1"><a href="#section-6.1" class="auto internal xref">6.1</a>.  <a href="#name-example-moq-context-dpop-pr" class="internal xref">Example: MOQ Context DPoP Proof</a></p>
+                <p id="section-toc.1-1.6.2.1.1"><a href="#section-6.1" class="auto internal xref">6.1</a>.  <a href="#name-example-moqt-context-dpop-p" class="internal xref">Example: MOQT Context DPoP Proof</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.2">
                 <p id="section-toc.1-1.6.2.2.1"><a href="#section-6.2" class="auto internal xref">6.2</a>.  <a href="#name-comparing-with-http-dpop" class="internal xref">Comparing with HTTP DPoP</a></p>
@@ -1704,23 +1704,24 @@ Context<a href="#section-5-2.1.1" class="pilcrow">¶</a></p>
       </ol>
 <div id="moq-context">
 <section id="section-5.1">
-        <h3 id="name-moq-context-type">
-<a href="#section-5.1" class="section-number selfRef">5.1. </a><a href="#name-moq-context-type" class="section-name selfRef">MOQ Context Type</a>
+        <h3 id="name-moqt-context-type">
+<a href="#section-5.1" class="section-number selfRef">5.1. </a><a href="#name-moqt-context-type" class="section-name selfRef">MOQT Context Type</a>
         </h3>
 <p id="section-5.1-1">This section defines the normative authorization context for Media Over QUIC
-(MOQ) as specified in this framework.<a href="#section-5.1-1" class="pilcrow">¶</a></p>
-<p id="section-5.1-2">Type Identifier: "moq"<a href="#section-5.1-2" class="pilcrow">¶</a></p>
+Transport (MOQT) as specified in this framework.<a href="#section-5.1-1" class="pilcrow">¶</a></p>
+<p id="section-5.1-2">Type Identifier: "moqt"<a href="#section-5.1-2" class="pilcrow">¶</a></p>
 <div id="required-fields">
 <section id="section-5.1.1">
           <h4 id="name-required-fields">
 <a href="#section-5.1.1" class="section-number selfRef">5.1.1. </a><a href="#name-required-fields" class="section-name selfRef">Required Fields</a>
           </h4>
-<p id="section-5.1.1-1">The MOQ authorization context <span class="bcp14">MUST</span> contain the following fields:<a href="#section-5.1.1-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.1-1">The MOQT authorization context <span class="bcp14">MUST</span> contain the following fields:<a href="#section-5.1.1-1" class="pilcrow">¶</a></p>
 <p id="section-5.1.1-2">action:<a href="#section-5.1.1-2" class="pilcrow">¶</a></p>
 <p id="section-5.1.1-3">A string specifying the MOQ operation (Section 9 of <span>[<a href="#MOQTransport" class="cite xref">MOQTransport</a>]</span>
 being authorized.<a href="#section-5.1.1-3" class="pilcrow">¶</a></p>
 <p id="section-5.1.1-4">tns:<a href="#section-5.1.1-4" class="pilcrow">¶</a></p>
-<p id="section-5.1.1-5">Track Namespace as defined in Section 2.4.1 of <span>[<a href="#MOQTransport" class="cite xref">MOQTransport</a>]</span>.<a href="#section-5.1.1-5" class="pilcrow">¶</a></p>
+<p id="section-5.1.1-5">Track Namespace tuple serialized using the canonical encoding format defined
+in <a href="#moq-context" class="auto internal xref">Section 5.1</a>.<a href="#section-5.1.1-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="optional-fields">
@@ -1728,11 +1729,12 @@ being authorized.<a href="#section-5.1.1-3" class="pilcrow">¶</a></p>
           <h4 id="name-optional-fields">
 <a href="#section-5.1.2" class="section-number selfRef">5.1.2. </a><a href="#name-optional-fields" class="section-name selfRef">Optional Fields</a>
           </h4>
-<p id="section-5.1.2-1">The MOQ authorization context <span class="bcp14">MAY</span> contain the following fields:<a href="#section-5.1.2-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.2-1">The MOQT authorization context <span class="bcp14">MAY</span> contain the following fields:<a href="#section-5.1.2-1" class="pilcrow">¶</a></p>
 <p id="section-5.1.2-2">tn:<a href="#section-5.1.2-2" class="pilcrow">¶</a></p>
-<p id="section-5.1.2-3">Track Name as defined in Section 2.4.1 of <span>[<a href="#MOQTransport" class="cite xref">MOQTransport</a>]</span>.<a href="#section-5.1.2-3" class="pilcrow">¶</a></p>
+<p id="section-5.1.2-3">Track Name serialized using the canonical encoding format defined in
+<a href="#moq-context" class="auto internal xref">Section 5.1</a>.<a href="#section-5.1.2-3" class="pilcrow">¶</a></p>
 <p id="section-5.1.2-4">parameters:<a href="#section-5.1.2-4" class="pilcrow">¶</a></p>
-<p id="section-5.1.2-5">An object containing additional MOQ-specific parameters relevant to the
+<p id="section-5.1.2-5">An object containing additional MOQT-specific parameters relevant to the
 operation. The structure and contents of this field are context-dependent.<a href="#section-5.1.2-5" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -1742,50 +1744,40 @@ operation. The structure and contents of this field are context-dependent.<a hre
 <a href="#section-5.1.3" class="section-number selfRef">5.1.3. </a><a href="#name-string-encoding-for-binary-" class="section-name selfRef">String Encoding for Binary Data</a>
           </h4>
 <p id="section-5.1.3-1">As defined in Section 2.4.1 of <span>[<a href="#MOQTransport" class="cite xref">MOQTransport</a>]</span>, Track Namespace is an ordered
-N-tuple of bytes (where N can be between 1 and 32), and Track Name is a
-sequence of bytes. Both are not constrained to specific encoding and carry
-arbitrary byte sequences that are compared by exact byte matching.<a href="#section-5.1.3-1" class="pilcrow">¶</a></p>
-<p id="section-5.1.3-2">For representation in the JSON <code>tns</code> and <code>tn</code> fields of the Authorization
-Context, the following encoding approach <span class="bcp14">MUST</span> be used:<a href="#section-5.1.3-2" class="pilcrow">¶</a></p>
-<ol start="1" type="1" class="normal type-1" id="section-5.1.3-3">
-<li id="section-5.1.3-3.1">
-              <p id="section-5.1.3-3.1.1"><strong>Track Namespace Tuple Encoding</strong>: The Track Namespace tuple <span class="bcp14">MUST</span> be
-encoded as a URL-safe string where:<a href="#section-5.1.3-3.1.1" class="pilcrow">¶</a></p>
+N-tuple of bytes and Track Name is a sequence of bytes.<a href="#section-5.1.3-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.3-2">The <code>tns</code> and <code>tn</code> fields in the Authorization Context <span class="bcp14">MUST</span> use the canonical
+serialization format defined in Section 1.5.1 of <span>[<a href="#MOQTransport" class="cite xref">MOQTransport</a>]</span>:<a href="#section-5.1.3-2" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-5.1.3-3.1.2.1">
-                  <p id="section-5.1.3-3.1.2.1.1">Each tuple field is base64url-encoded (without padding)<a href="#section-5.1.3-3.1.2.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-5.1.3-3.1">
+              <p id="section-5.1.3-3.1.1">The <code>tns</code> field contains namespace tuple elements, each serialized per
+Section 1.5.1, joined by hyphens (-)<a href="#section-5.1.3-3.1.1" class="pilcrow">¶</a></p>
 </li>
-                <li class="normal" id="section-5.1.3-3.1.2.2">
-                  <p id="section-5.1.3-3.1.2.2.1">Tuple fields are separated by forward slashes ("/")<a href="#section-5.1.3-3.1.2.2.1" class="pilcrow">¶</a></p>
-</li>
-                <li class="normal" id="section-5.1.3-3.1.2.3">
-                  <p id="section-5.1.3-3.1.2.3.1">The entire namespace is prefixed with "moq://"<a href="#section-5.1.3-3.1.2.3.1" class="pilcrow">¶</a></p>
-</li>
-              </ul>
-</li>
-            <li id="section-5.1.3-3.2">
-              <p id="section-5.1.3-3.2.1"><strong>Track Name Encoding</strong>: The Track Name bytes <span class="bcp14">MUST</span> be base64url-encoded
-(without padding) when containing non-printable bytes or when exact byte
-preservation is required<a href="#section-5.1.3-3.2.1" class="pilcrow">¶</a></p>
-</li>
-          </ol>
-<p id="section-5.1.3-4"><strong>TODO:</strong> A better way to encode that promotes readability is
-being thought about<a href="#section-5.1.3-4" class="pilcrow">¶</a></p>
-<p id="section-5.1.3-5">Example encodings:<a href="#section-5.1.3-5" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-5.1.3-6.1">
-              <p id="section-5.1.3-6.1.1">Namespace tuple [0x01, 0x02], [0x03, 0x04]: <code>"moq://AQ/Aw"</code><a href="#section-5.1.3-6.1.1" class="pilcrow">¶</a></p>
-</li>
-            <li class="normal" id="section-5.1.3-6.2">
-              <p id="section-5.1.3-6.2.1">ASCII track name: <code>"camera1"</code><a href="#section-5.1.3-6.2.1" class="pilcrow">¶</a></p>
-</li>
-            <li class="normal" id="section-5.1.3-6.3">
-              <p id="section-5.1.3-6.3.1">Binary track name [0xFF, 0xFE]: <code>"_v4"</code><a href="#section-5.1.3-6.3.1" class="pilcrow">¶</a></p>
-</li>
-            <li class="normal" id="section-5.1.3-6.4">
-              <p id="section-5.1.3-6.4.1">UTF-8 track name with special chars: <code>"música%20en%20vivo"</code> (URL percent-encoded)<a href="#section-5.1.3-6.4.1" class="pilcrow">¶</a></p>
+            <li class="normal" id="section-5.1.3-3.2">
+              <p id="section-5.1.3-3.2.1">The <code>tn</code> field (when present) contains the track name serialized per
+Section 1.5.1<a href="#section-5.1.3-3.2.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
+<div id="examples">
+<section id="section-5.1.3.1">
+            <h5 id="name-examples">
+<a href="#section-5.1.3.1" class="section-number selfRef">5.1.3.1. </a><a href="#name-examples" class="section-name selfRef">Examples</a>
+            </h5>
+<ul class="normal">
+<li class="normal" id="section-5.1.3.1-1.1">
+                <p id="section-5.1.3.1-1.1.1">Namespace ("example.net", "team2", "project_x") with track name "report":
+<code>"tns": "example.2enet-team2-project_x"</code>, <code>"tn": "report"</code><a href="#section-5.1.3.1-1.1.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-5.1.3.1-1.2">
+                <p id="section-5.1.3.1-1.2.1">Namespace ("conference", "room1") with track name "audio.opus":
+<code>"tns": "conference-room1"</code>, <code>"tn": "audio.2eopus"</code><a href="#section-5.1.3.1-1.2.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-5.1.3.1-1.3">
+                <p id="section-5.1.3.1-1.3.1">Namespace with binary bytes [0xFF, 0x01] and [0x02]:
+<code>"tns": ".ff.01-.02"</code><a href="#section-5.1.3.1-1.3.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
+</section>
+</div>
 </section>
 </div>
 <div id="validation-requirements">
@@ -1796,7 +1788,7 @@ being thought about<a href="#section-5.1.3-4" class="pilcrow">¶</a></p>
 <p id="section-5.1.4-1">Servers processing MOQ authorization contexts <span class="bcp14">MUST</span>:<a href="#section-5.1.4-1" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-5.1.4-2">
 <li id="section-5.1.4-2.1">
-              <p id="section-5.1.4-2.1.1">Verify that the <code>action</code> field contains a recognized MOQ operation<a href="#section-5.1.4-2.1.1" class="pilcrow">¶</a></p>
+              <p id="section-5.1.4-2.1.1">Verify that the <code>action</code> field contains a recognized MOQT operation<a href="#section-5.1.4-2.1.1" class="pilcrow">¶</a></p>
 </li>
             <li id="section-5.1.4-2.2">
               <p id="section-5.1.4-2.2.1">Validate that the <code>tns</code> field represents a properly formatted track
@@ -1832,12 +1824,12 @@ track name<a href="#section-5.1.4-2.5.1" class="pilcrow">¶</a></p>
 <p id="section-6-1">This section provides complete examples of application-agnostic DPoP proof JWTs,
 illustrating the use of the Authorization Context object in place of
 HTTP-specific claims.<a href="#section-6-1" class="pilcrow">¶</a></p>
-<div id="example-moq-context-dpop-proof">
+<div id="example-moqt-context-dpop-proof">
 <section id="section-6.1">
-        <h3 id="name-example-moq-context-dpop-pr">
-<a href="#section-6.1" class="section-number selfRef">6.1. </a><a href="#name-example-moq-context-dpop-pr" class="section-name selfRef">Example: MOQ Context DPoP Proof</a>
+        <h3 id="name-example-moqt-context-dpop-p">
+<a href="#section-6.1" class="section-number selfRef">6.1. </a><a href="#name-example-moqt-context-dpop-p" class="section-name selfRef">Example: MOQT Context DPoP Proof</a>
         </h3>
-<p id="section-6.1-1">The following example shows a complete DPoP proof JWT for a MOQ context:<a href="#section-6.1-1" class="pilcrow">¶</a></p>
+<p id="section-6.1-1">The following example shows a complete DPoP proof JWT for a MOQT context:<a href="#section-6.1-1" class="pilcrow">¶</a></p>
 <p id="section-6.1-2">JWT Header:<a href="#section-6.1-2" class="pilcrow">¶</a></p>
 <div class="lang-json sourcecode" id="section-6.1-3">
 <pre>
@@ -1860,9 +1852,9 @@ HTTP-specific claims.<a href="#section-6-1" class="pilcrow">¶</a></p>
   "jti": "unique-request-id-789",
   "iat": 1705123456,
   "actx": {
-    "type": "moq",
+    "type": "moqt",
     "action": "SUBSCRIBE",
-    "tns": "moq://example.com/app/scope/video",
+    "tns": "example.2ecom-app-scope-video",
     "tn": "camera1"
   },
   "ath": "fUHyO2r2Z3DZ53EsNrWBb1xWXM4VbCqpW5G-o9GqC7Y"
@@ -2152,8 +2144,8 @@ Internet-Draft that has been adopted by a working group.<a href="#section-9.1-7"
             </thead>
             <tbody>
               <tr>
-                <td class="text-left" rowspan="1" colspan="1">moq</td>
-                <td class="text-left" rowspan="1" colspan="1">Media Over QUIC authorization context</td>
+                <td class="text-left" rowspan="1" colspan="1">moqt</td>
+                <td class="text-left" rowspan="1" colspan="1">Media Over QUIC Transport authorization context</td>
                 <td class="text-left" rowspan="1" colspan="1">action, tns</td>
                 <td class="text-left" rowspan="1" colspan="1">tn, parameters</td>
                 <td class="text-left" rowspan="1" colspan="1"> </td>
