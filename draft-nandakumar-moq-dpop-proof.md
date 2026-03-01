@@ -319,7 +319,8 @@ being authorized.
 
 tns:
 
-Track Namespace as defined in Section 2.4.1 of {{MOQTransport}}.
+Track Namespace tuple serialized using the canonical encoding format defined
+in {{moq-context}}.
 
 ### Optional Fields
 
@@ -327,7 +328,8 @@ The MOQ authorization context MAY contain the following fields:
 
 tn:
 
-Track Name as defined in Section 2.4.1 of {{MOQTransport}}.
+Track Name serialized using the canonical encoding format defined in
+{{moq-context}}.
 
 parameters:
 
@@ -337,32 +339,24 @@ operation. The structure and contents of this field are context-dependent.
 ### String Encoding for Binary Data
 
 As defined in Section 2.4.1 of {{MOQTransport}}, Track Namespace is an ordered
-N-tuple of bytes (where N can be between 1 and 32), and Track Name is a
-sequence of bytes. Both are not constrained to specific encoding and carry
-arbitrary byte sequences that are compared by exact byte matching.
+N-tuple of bytes and Track Name is a sequence of bytes.
 
-For representation in the JSON `tns` and `tn` fields of the Authorization
-Context, the following encoding approach MUST be used:
+The `tns` and `tn` fields in the Authorization Context MUST use the canonical
+serialization format defined in Section 1.5.1 of {{MOQTransport}}:
 
-1. **Track Namespace Tuple Encoding**: The Track Namespace tuple MUST be
-   encoded as a URL-safe string where:
-   - Each tuple field is base64url-encoded (without padding)
-   - Tuple fields are separated by forward slashes ("/")
-   - The entire namespace is prefixed with "moq://"
+- The `tns` field contains namespace tuple elements, each serialized per
+  Section 1.5.1, joined by hyphens (-)
+- The `tn` field (when present) contains the track name serialized per
+  Section 1.5.1
 
-2. **Track Name Encoding**: The Track Name bytes MUST be base64url-encoded
-   (without padding) when containing non-printable bytes or when exact byte
-   preservation is required
+#### Examples
 
-**TODO:** A better way to encode that promotes readability is
-being thought about
-
-Example encodings:
-
-- Namespace tuple [0x01, 0x02], [0x03, 0x04]: `"moq://AQ/Aw"`
-- ASCII track name: `"camera1"`
-- Binary track name [0xFF, 0xFE]: `"_v4"`
-- UTF-8 track name with special chars: `"música%20en%20vivo"` (URL percent-encoded)
+- Namespace ("example.net", "team2", "project_x") with track name "report":
+  `"tns": "example.2enet-team2-project_x"`, `"tn": "report"`
+- Namespace ("conference", "room1") with track name "audio.opus":
+  `"tns": "conference-room1"`, `"tn": "audio.2eopus"`
+- Namespace with binary bytes [0xFF, 0x01] and [0x02]:
+  `"tns": ".ff.01-.02"`
 
 ### Validation Requirements
 
@@ -416,7 +410,7 @@ JWT Payload:
   "actx": {
     "type": "moq",
     "action": "SUBSCRIBE",
-    "tns": "moq://example.com/app/scope/video",
+    "tns": "example.2ecom-app-scope-video",
     "tn": "camera1"
   },
   "ath": "fUHyO2r2Z3DZ53EsNrWBb1xWXM4VbCqpW5G-o9GqC7Y"
