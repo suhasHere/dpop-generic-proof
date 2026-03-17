@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-03-15T00:32:47.159375+00:00",
+  "timestamp": "2026-03-17T00:28:02.368419+00:00",
   "repo": "suhasHere/dpop-generic-proof",
   "labels": [
     {
@@ -49,7 +49,24 @@
       "color": "ffffff"
     }
   ],
-  "issues": [],
+  "issues": [
+    {
+      "number": 4,
+      "id": "I_kwDOPoGw787zFhS3",
+      "title": "Define how DPoP proof is carried in MoQT messages",
+      "url": "https://github.com/suhasHere/dpop-generic-proof/issues/4",
+      "state": "OPEN",
+      "author": "afrind",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "This draft defines the generic DPoP proof format and the MOQT authorization context type, but doesn't\nspecify how the proof and access token are actually carried in MoQT messages.\n\nSpecifically, the draft is missing:\n\n1. How the DPoP proof and access token are serialized into the MoQT AUTHORIZATION parameter value. For\nexample, a structure like:\n```\nDPoP Authorization {\n  Access Token Length (i)\n  Access Token (..)\n  DPoP Proof Length (i)\n  DPoP Proof (..)\n}\n```\n2. Registration of a token type in the IANA \"MOQT Auth Token Type\" table so the relay knows to expect\nand validate a DPoP proof.\n3. Which MoQT messages the proof can appear on (SETUP, SUBSCRIBE, FETCH, PUBLISH, PUBLISH_NAMESPACE) and whether\na single proof covers the connection or one is needed per operation.\n\nThe draft already defines MOQT-specific context types, fields, validation rules, and examples, so it\nseems like the natural place to also define the MoQT transport binding. Without this, no document fully\nspecifies how to use DPoP with MoQT.\n\nFor comparison, draft-ietf-moq-privacy-pass-auth defines both the token format and how it maps to the\nAUTHORIZATION parameter in a single document.\n\nThis is also related to moq-wg/moq-transport#968, which discussed adding a PoP signature field to MoQT.\nIt seems like we can put this into the Auth Token instead though.",
+      "createdAt": "2026-03-15T12:46:06Z",
+      "updatedAt": "2026-03-15T12:46:38Z",
+      "closedAt": null,
+      "comments": []
+    }
+  ],
   "pulls": [
     {
       "number": 1,
